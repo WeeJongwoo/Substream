@@ -15,10 +15,24 @@ public class Lobby_UIController : MonoBehaviour
     private Button _popupLineWindowButton;
     private VisualElement _lineWindow;
 
+    [SerializeField] private List<string> _mainContentButtons;
+    private VisualElement _loadingScreen;
+    private ProgressBar _loadingProgressBar;
+    private SceneLoader sceneLoader;
+
     void Start()
     {
-        var root = this.gameObject.GetComponent<UIDocument>().rootVisualElement;
+        VisualElement root = this.gameObject.GetComponent<UIDocument>().rootVisualElement;
 
+        PannelInit(root);
+        PopupLineWindowInit(root);
+        HiddenContainerInit(root);
+        ExitPannelButtonInit(root);
+        MainContentButtonInit(root);
+    }
+
+    private void PannelInit(VisualElement root)
+    {
         foreach (string name in _popupPannelButtons)
         {
             Button button = root.Q<Button>(name);
@@ -26,24 +40,41 @@ public class Lobby_UIController : MonoBehaviour
         }
         _pannel = root.Q<VisualElement>("Window_Container");
         _pannel.style.display = DisplayStyle.None;
+    }
 
+    private void PopupLineWindowInit(VisualElement root)
+    {
         _popupLineWindowButton = root.Q<Button>("LD_Button");
         _popupLineWindowButton.RegisterCallback<ClickEvent>(OnPopupLine);
 
         _lineWindow = root.Q<VisualElement>("Line_Window");
         _lineWindow.style.display = DisplayStyle.None;
+    }
 
+    private void HiddenContainerInit(VisualElement root)
+    {
         _hiddenButtonContainer = root.Q<VisualElement>("Hidden_Button_Container");
         _hiddenButtonContainer.RemoveFromClassList("hidden_button-container_unfold");
         _hiddenButtonContainer.style.display = DisplayStyle.None;
-        _hiddenButtonContainer.RegisterCallback<TransitionEndEvent>(OnFoldContainer);
+        _hiddenButtonContainer.RegisterCallback<TransitionEndEvent>(OnTransitionEndEvents);
 
         _foldButton = root.Q<Button>("Fold_Button");
         _foldButton.RegisterCallback<ClickEvent>(OnFoldingButton);
+    }
 
+    private void ExitPannelButtonInit(VisualElement root)
+    {
         _exitPannelButton = root.Q<Button>("Exit_Pannel_Button");
         _exitPannelButton.RegisterCallback<ClickEvent>(OnExitPannel);
+    }
 
+    private void MainContentButtonInit(VisualElement root)
+    {
+        foreach (string name in _mainContentButtons)
+        {
+            Button button = root.Q<Button>(name);
+            button.RegisterCallback<ClickEvent>(OnLoadingScreen);
+        }
     }
 
     private void OnFoldingButton(ClickEvent evt)
@@ -62,7 +93,7 @@ public class Lobby_UIController : MonoBehaviour
         }
     }
 
-    private void OnFoldContainer(TransitionEndEvent evt)
+    private void OnTransitionEndEvents(TransitionEndEvent evt)
     {
         if (!_hiddenButtonContainer.ClassListContains("hidden_button-container_unfold"))
         {
@@ -96,5 +127,10 @@ public class Lobby_UIController : MonoBehaviour
     private void OnPopdownLine()
     {
         _lineWindow.RemoveFromClassList("line_window-popup");
+    }
+
+    private void OnLoadingScreen(ClickEvent ect)
+    {
+
     }
 }
