@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 1610619458}
   - component: {fileID: 1610619460}
   m_Layer: 0
-  m_Name: UI
+  m_Name: UI_ToolKitBuild
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -277,6 +277,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b15f714db31d75f4996193a520696900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _popupPannelButtons:
+  - User_Profile
+  - Setting
+  - MailBox
+  - Announcement
 --- !u!1 &2035700651
 GameObject:
   m_ObjectHideFlags: 0
