@@ -163,14 +163,14 @@
     transition-duration: 1s;
     transition-timing-function: ease-out;
     transition-delay: 0s;
-    transition-property: translate;
+    transition-property: all;
 }
 
 .hidden_button-container_unfold {
-    translate: 0 0;
     flex-grow: 1;
     transition-timing-function: ease-out;
     transition-duration: 1s;
+    translate: 0 0.1%;
 }
 
 .line_window-popdown {
@@ -188,7 +188,7 @@
 }
 
 .line_window-popup {
-    translate: 0 0;
+    translate: 0 0.1%;
     opacity: 1;
     transition-timing-function: ease-in-circ;
     transition-duration: 0.8s;

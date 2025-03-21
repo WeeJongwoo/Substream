@@ -18,7 +18,12 @@ public class CoroutineHandle
 public class CoroutineManager : MonoBehaviour
 {
     // 각 코루틴을 고유 키 값으로 관리
-    private Dictionary<string, CoroutineHandle> coroutineHandles = new Dictionary<string, CoroutineHandle>();
+    private Dictionary<string, CoroutineHandle> coroutineHandles;
+
+    private void Awake()
+    {
+        coroutineHandles = new Dictionary<string, CoroutineHandle>();
+    }
 
     /// <summary>
     /// 코루틴을 시작하여 관리함

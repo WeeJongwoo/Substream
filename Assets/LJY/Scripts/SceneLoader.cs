@@ -2,11 +2,24 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneLoader
+public class SceneLoader : MonoBehaviour
 {
     private AsyncOperation asyncLoader = null;
     [HideInInspector] public CoroutineHandle coroutineHandle = null;
-    [HideInInspector] public CoroutineManager coroutineManager = new CoroutineManager();
+    [HideInInspector] public CoroutineManager coroutineManager;
+
+    private void Awake()
+    {
+        if (coroutineManager == null)
+        {
+            coroutineManager = GetComponent<CoroutineManager>();
+        }
+
+        if (coroutineManager == null)
+        {
+            Debug.LogError("CoroutineManager가 할당되지 않았습니다");
+        }
+    }
 
     /// <summary>
     /// 다른 씬으로의 비동기 전환을 시작함

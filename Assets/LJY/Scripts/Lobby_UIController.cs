@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -16,6 +18,7 @@ public class Lobby_UIController : MonoBehaviour
     private VisualElement _lineWindow;
 
     [SerializeField] private List<string> _mainContentButtons;
+    private Dictionary<string, string> _mainContentScenes = new Dictionary<string, string>();
     private VisualElement _loadingScreen;
     private ProgressBar _loadingProgressBar;
     private SceneLoader sceneLoader;
@@ -28,7 +31,8 @@ public class Lobby_UIController : MonoBehaviour
         PopupLineWindowInit(root);
         HiddenContainerInit(root);
         ExitPannelButtonInit(root);
-        MainContentButtonInit(root);
+        MainContentInit(root);
+        sceneLoader = GameObject.FindGameObjectWithTag("SceneLoader").gameObject.GetComponent<SceneLoader>();
     }
 
     private void PannelInit(VisualElement root)
@@ -68,13 +72,35 @@ public class Lobby_UIController : MonoBehaviour
         _exitPannelButton.RegisterCallback<ClickEvent>(OnExitPannel);
     }
 
-    private void MainContentButtonInit(VisualElement root)
+    private void MainContentInit(VisualElement root)
     {
+        // 메인 컨텐츠 씬으로 이동하는 버튼 연결 작업
         foreach (string name in _mainContentButtons)
         {
             Button button = root.Q<Button>(name);
             button.RegisterCallback<ClickEvent>(OnLoadingScreen);
         }
+
+        // 연결된 메인 컨텐츠용 버튼과 각 씬의 연결 작업
+        List<string> SceneNameList =
+            _mainContentButtons.Select(
+            button => button.Contains("-") 
+            ? button.Substring(0, button.IndexOf("-")) + "Scene" : button + "Scene").ToList();
+
+        foreach (string name in _mainContentButtons)
+        {
+            _mainContentScenes.Add(name, SceneNameList[_mainContentButtons.IndexOf(name)]);
+        }
+
+        _loadingScreen = root.Q<VisualElement>("Loading_Screen");
+        _loadingProgressBar = root.Q<ProgressBar>("Loading_Progress_Bar");
+        VisualElement gauge = _loadingProgressBar.Q<VisualElement>("unity-progressbar-value");
+        if (gauge != null)
+        {
+            gauge.style.backgroundColor = Color.cyan;
+        }
+        _loadingScreen.style.display = DisplayStyle.None;
+
     }
 
     private void OnFoldingButton(ClickEvent evt)
@@ -129,8 +155,46 @@ public class Lobby_UIController : MonoBehaviour
         _lineWindow.RemoveFromClassList("line_window-popup");
     }
 
-    private void OnLoadingScreen(ClickEvent ect)
+    // 클릭한 버튼의 이름(key)을 이용해 해당 씬 이름을 딕셔너리에서 가져온 후 로딩 처리 시작
+    private void OnLoadingScreen(ClickEvent evt)
     {
+        Button clickedButton = evt.currentTarget as Button;
+        if (clickedButton != null)
+        {
+            if (_mainContentScenes.TryGetValue(clickedButton.name, out string sceneName))
+            {
+                // 로딩 화면 페이드 아웃과 프로그래스바 업데이트를 포함한 코루틴 실행
+                StartCoroutine(LoadSceneWithFade(sceneName));
+            }
+        }
+    }
 
+    // 로딩 화면 및 프로그래스바를 페이드 아웃시키고 씬 로딩 진행도를 업데이트하는 코루틴
+    private IEnumerator LoadSceneWithFade(string sceneName)
+    {
+        _loadingScreen.style.display = DisplayStyle.Flex;
+        _loadingProgressBar.value = 0;
+        _loadingScreen.style.opacity = 0;
+        _loadingProgressBar.style.opacity = 0;
+
+        float fadeDuration = 1f;
+        float timer = 0f;
+
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            float alpha = (timer / fadeDuration);
+            _loadingScreen.style.opacity = alpha;
+            _loadingProgressBar.style.opacity = alpha;
+            yield return null;
+        }
+
+        sceneLoader.StartLoadingScene(sceneName);
+
+        while (sceneLoader.GetLoadingProgress() < 1f)
+        {
+            _loadingProgressBar.value = sceneLoader.GetLoadingProgress();
+            yield return null;
+        }
     }
 }

@@ -4,5 +4,38 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/LJY/Scenes/Lobby_UI.unity
+    guid: 35a9041df790c894cb8e91874e16609f
+  - enabled: 1
+    path: Assets/LJY/Scenes/CharacterScene.unity
+    guid: e45346ea43e17214da3e56e5906bb891
+  - enabled: 1
+    path: Assets/LJY/Scenes/DungeonScene.unity
+    guid: 06118a8d9d0dfd34da9a0505ab56c252
+  - enabled: 1
+    path: Assets/LJY/Scenes/EncyclopediaScene.unity
+    guid: ddee1d056bd1b1843934d07bd75fd4b0
+  - enabled: 1
+    path: Assets/LJY/Scenes/GroupFormationScene.unity
+    guid: be3e2bcd3b819d241bb0c93392d8281e
+  - enabled: 1
+    path: Assets/LJY/Scenes/OfficeScene.unity
+    guid: 8f31e6d00d024f141a99bad668a23337
+  - enabled: 1
+    path: Assets/LJY/Scenes/RoguelikeScene.unity
+    guid: 97dd97258bdee7f488fc728bcf039bb4
+  - enabled: 1
+    path: Assets/LJY/Scenes/ShopScene.unity
+    guid: 964e305fa64b71b40903d84fc1a28892
+  - enabled: 1
+    path: Assets/LJY/Scenes/StatisticsScene.unity
+    guid: 6148195a450820b46a3bc50dddca0fb4
+  - enabled: 1
+    path: Assets/LJY/Scenes/StorageScene.unity
+    guid: 3974412a57ed6744dbabe8af80e175dc
+  - enabled: 1
+    path: Assets/LJY/Scenes/StoryScene.unity
+    guid: 03b86de83f9fa4a489bad6adece7070d
   m_configObjects: {}
