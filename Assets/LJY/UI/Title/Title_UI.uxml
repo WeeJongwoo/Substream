@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/LJY/UI/Title/Title_StyleSheet.uss?fileID=7433441132597879392&amp;guid=607a95e4b3b0b9441b7ee1064c040001&amp;type=3#Title_StyleSheet" />
+    <ui:VisualElement name="Mask" style="flex-grow: 1; overflow: hidden; flex-shrink: 0; width: 100%; height: 100%; align-items: center; justify-content: center;">
+        <ui:VisualElement name="BackGround" class="title_backGround" />
+    </ui:VisualElement>
+    <ui:VisualElement name="image-Container" class="start_UI-off">
+        <ui:Label tabindex="-1" text="Touch to Start" parse-escape-sequences="true" display-tooltip-when-elided="true" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 100%; height: 100%; font-size: 30%; -unity-font-style: bold; -unity-text-align: middle-center; -unity-text-outline-color: rgb(0, 181, 207); -unity-text-outline-width: 2px; color: rgb(255, 255, 255); align-items: auto; align-self: center; justify-content: center;" />
+    </ui:VisualElement>
+    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="Start-Button" style="position: absolute; flex-grow: 1; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 100%; height: 100%; background-color: rgba(188, 188, 188, 0);" />
+</ui:UXML>

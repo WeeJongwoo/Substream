@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/LJY/Scenes/Lobby_UI.unity
+    path: Assets/LJY/Scenes/LobbyScene.unity
     guid: 35a9041df790c894cb8e91874e16609f
   - enabled: 1
     path: Assets/LJY/Scenes/CharacterScene.unity

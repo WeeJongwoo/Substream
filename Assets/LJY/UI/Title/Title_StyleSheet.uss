@@ -1,0 +1,44 @@
+.title_backGround {
+    flex-grow: 1;
+    justify-content: flex-end;
+    align-items: auto;
+    background-image: url("project://database/Assets/LJY/UI/Title/titleBackGround.png?fileID=21300000&guid=5c710be6241f17149a40a245974e7f18&type=3#titleBackGround");
+    -unity-background-scale-mode: scale-to-fit;
+    translate: 0 0;
+    width: 200%;
+    flex-shrink: 0;
+    position: absolute;
+    height: 100%;
+    align-self: center;
+    transition-property: translate;
+    transition-duration: 20s;
+}
+
+.title_backGround-left {
+    translate: 25% 0;
+    transition-duration: 10s;
+}
+
+.title_backGround-right {
+    translate: -25% 0;
+    transition-duration: 10s;
+}
+
+.start_UI-off {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 40%;
+    height: 10%;
+    align-self: center;
+    bottom: 6%;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: auto;
+    opacity: 0;
+    transition-duration: 2s;
+}
+
+.start_UI-on {
+    opacity: 1;
+}

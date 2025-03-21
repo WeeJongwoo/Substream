@@ -3,16 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 각 코루틴의 실행 상태 및 관련 정보를 담는 핸들 클래스
-/// </summary>
-public class CoroutineHandle
-{
-    public Coroutine RunningCoroutine { get; set; }
-    public IEnumerator Enumerator { get; set; }
-    public bool IsRunning { get; set; }
-}
-
-/// <summary>
 /// 코루틴을 시작하고 관리하는 매니저 클래스
 /// </summary>
 public class CoroutineManager : MonoBehaviour
@@ -98,4 +88,14 @@ public class CoroutineManager : MonoBehaviour
         }
         return null;
     }
+}
+
+/// <summary>
+/// 각 코루틴의 실행 상태 및 관련 정보를 담는 핸들 클래스
+/// </summary>
+public class CoroutineHandle
+{
+    public Coroutine RunningCoroutine { get; set; }
+    public IEnumerator Enumerator { get; set; }
+    public bool IsRunning { get; set; }
 }
