@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,20 +18,19 @@ public class Lobby_UIController : MonoBehaviour
 
     [SerializeField] private List<string> _mainContentButtons;
     private Dictionary<string, string> _mainContentScenes = new Dictionary<string, string>();
-    private VisualElement _loadingScreen;
-    private ProgressBar _loadingProgressBar;
-    private SceneLoader sceneLoader;
+
+    private SceneLoader _sceneLoader;
 
     void Start()
     {
         VisualElement root = this.gameObject.GetComponent<UIDocument>().rootVisualElement;
+        _sceneLoader = GameObject.FindGameObjectWithTag("SceneLoader").GetComponent<SceneLoader>();
 
         PannelInit(root);
         PopupLineWindowInit(root);
         HiddenContainerInit(root);
         ExitPannelButtonInit(root);
         MainContentInit(root);
-        sceneLoader = GameObject.FindGameObjectWithTag("SceneLoader").gameObject.GetComponent<SceneLoader>();
     }
 
     private void PannelInit(VisualElement root)
@@ -91,16 +89,6 @@ public class Lobby_UIController : MonoBehaviour
         {
             _mainContentScenes.Add(name, SceneNameList[_mainContentButtons.IndexOf(name)]);
         }
-
-        _loadingScreen = root.Q<VisualElement>("Loading_Screen");
-        _loadingProgressBar = root.Q<ProgressBar>("Loading_Progress_Bar");
-        VisualElement gauge = _loadingProgressBar.Q<VisualElement>("unity-progressbar-value");
-        if (gauge != null)
-        {
-            gauge.style.backgroundColor = Color.cyan;
-        }
-        _loadingScreen.style.display = DisplayStyle.None;
-
     }
 
     private void OnFoldingButton(ClickEvent evt)
@@ -164,37 +152,8 @@ public class Lobby_UIController : MonoBehaviour
             if (_mainContentScenes.TryGetValue(clickedButton.name, out string sceneName))
             {
                 // 로딩 화면 페이드 아웃과 프로그래스바 업데이트를 포함한 코루틴 실행
-                StartCoroutine(LoadSceneWithFade(sceneName));
+                StartCoroutine(_sceneLoader.LoadSceneWithFade(sceneName));
             }
-        }
-    }
-
-    // 로딩 화면 및 프로그래스바를 페이드 아웃시키고 씬 로딩 진행도를 업데이트하는 코루틴
-    private IEnumerator LoadSceneWithFade(string sceneName)
-    {
-        _loadingScreen.style.display = DisplayStyle.Flex;
-        _loadingProgressBar.value = 0;
-        _loadingScreen.style.opacity = 0;
-        _loadingProgressBar.style.opacity = 0;
-
-        float fadeDuration = 1f;
-        float timer = 0f;
-
-        while (timer < fadeDuration)
-        {
-            timer += Time.deltaTime;
-            float alpha = (timer / fadeDuration);
-            _loadingScreen.style.opacity = alpha;
-            _loadingProgressBar.style.opacity = alpha;
-            yield return null;
-        }
-
-        sceneLoader.StartLoadingScene(sceneName);
-
-        while (sceneLoader.GetLoadingProgress() < 1f)
-        {
-            _loadingProgressBar.value = sceneLoader.GetLoadingProgress();
-            yield return null;
         }
     }
 }

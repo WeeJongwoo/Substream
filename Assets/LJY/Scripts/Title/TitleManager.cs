@@ -9,14 +9,15 @@ public class TitleManager : MonoBehaviour
 
     private Button _startButton;
     private VisualElement _startUI;
-    private bool _startGame;
     private VisualElement _titleBackGround;
+    private bool _startGame;
+
     private SceneLoader _sceneLoader;
 
     private void Awake()
     {
         _startGame = false;
-        _sceneLoader = this.gameObject.GetComponent<SceneLoader>();
+        _sceneLoader = GameObject.FindGameObjectWithTag("SceneLoader").GetComponent<SceneLoader>();
 
         VisualElement root = this.gameObject.GetComponent<UIDocument>().rootVisualElement;
 
@@ -36,7 +37,7 @@ public class TitleManager : MonoBehaviour
     private void OnStartGame(ClickEvent evt)
     {
         _startGame = true;
-        _sceneLoader.StartLoadingScene("LobbyScene");
+        StartCoroutine(_sceneLoader.LoadSceneWithFade("LobbyScene"));
     }
 
     private IEnumerator OnBlinkEvent()
