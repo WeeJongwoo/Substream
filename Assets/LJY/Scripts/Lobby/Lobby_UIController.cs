@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,10 +22,14 @@ public class Lobby_UIController : MonoBehaviour
 
     private SceneLoader _sceneLoader;
 
+    private SoundManager _soundManager;
+    [SerializeField] private List<AudioClip> audioClips;
+
     void Start()
     {
         VisualElement root = this.gameObject.GetComponent<UIDocument>().rootVisualElement;
         _sceneLoader = GameObject.FindGameObjectWithTag("SceneLoader").GetComponent<SceneLoader>();
+        _soundManager = GetComponent<SoundManager>();
 
         PannelInit(root);
         PopupLineWindowInit(root);
@@ -77,6 +82,8 @@ public class Lobby_UIController : MonoBehaviour
         {
             Button button = root.Q<Button>(name);
             button.RegisterCallback<ClickEvent>(OnLoadingScreen);
+            _soundManager.SetHoverSoundEvent(button, audioClips[0]);
+            _soundManager.SetSelectSoundEvent(button, audioClips[1]);
         }
 
         // 연결된 메인 컨텐츠용 버튼과 각 씬의 연결 작업
