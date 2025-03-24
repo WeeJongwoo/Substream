@@ -226,3 +226,7 @@
     border-bottom-color: rgba(0, 0, 0, 0.39);
     background-color: rgba(0, 0, 0, 0.6);
 }
+
+.unity-progress-bar__progress {
+    background-color: cyan;
+}

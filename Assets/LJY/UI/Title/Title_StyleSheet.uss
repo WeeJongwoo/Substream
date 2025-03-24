@@ -42,3 +42,7 @@
 .start_UI-on {
     opacity: 1;
 }
+
+.unity-progress-bar__progress {
+    background-color: cyan;
+}

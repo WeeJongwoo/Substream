@@ -82,8 +82,8 @@ public class Lobby_UIController : MonoBehaviour
         {
             Button button = root.Q<Button>(name);
             button.RegisterCallback<ClickEvent>(OnLoadingScreen);
-            _soundManager.SetHoverSoundEvent(button, audioClips[0]);
-            _soundManager.SetSelectSoundEvent(button, audioClips[1]);
+            _soundManager.SetButtonSoundEvent<PointerEnterEvent>(button, audioClips[(int)SoundTrack.b_hover]);
+            _soundManager.SetButtonSoundEvent<ClickEvent>(button, audioClips[(int)SoundTrack.b_clicked]);
         }
 
         // 연결된 메인 컨텐츠용 버튼과 각 씬의 연결 작업

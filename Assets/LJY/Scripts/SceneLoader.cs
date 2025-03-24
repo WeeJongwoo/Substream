@@ -11,12 +11,10 @@ public class SceneLoader : MonoBehaviour
     [HideInInspector] public CoroutineHandle coroutineHandle = null;
     [HideInInspector] public CoroutineManager coroutineManager;
 
-    // UI 요소
     private VisualElement _loadingScreen;
     private ProgressBar _loadingProgressBar;
 
-    // 페이드 효과 지속 시간
-    private float fadeDuration = 1f;
+    private float fadeDuration = 1f; // 페이드 인, 아웃 효과 지속 시간
 
     private void Awake()
     {
@@ -50,19 +48,15 @@ public class SceneLoader : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // 씬 로드 후 새 UI 참조 재설정 및 페이드 인 효과 시작
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) // 씬 로드 후 새 UI 참조 재설정 및 페이드 인 효과 시작
     {
-        InitializeUI();
-        // 새 씬에 진입할 때는 로딩 UI가 보이는 상태(투명도 1)로 준비된 것으로 가정
-        // 여기서 페이드 인 효과를 실행
-        StartCoroutine(FadeInNewScene());
+        InitializeUI(); // 새 씬에 진입할 경우, 로딩 UI가 보이는 상태(투명도 1)로 준비된 것으로 세팅
+        StartCoroutine(FadeInNewScene()); // 여기서 페이드 인 효과를 실행
     }
 
     private void InitializeUI()
     {
-        // Manager라는 GameObject에 있는 UIDocument를 할당
-        UIDocument uiDocument = GameObject.Find("Manager")?.GetComponent<UIDocument>();
+        UIDocument uiDocument = GameObject.Find("Manager")?.GetComponent<UIDocument>(); // Manager라는 GameObject에 있는 UIDocument를 할당
         if (uiDocument == null)
         {
             Debug.LogWarning("새 씬에서 Manager GameObject의 UIDocument를 찾을 수 없습니다");
@@ -73,15 +67,7 @@ public class SceneLoader : MonoBehaviour
         _loadingScreen = root.Q<VisualElement>("Loading_Screen");
         _loadingProgressBar = root.Q<ProgressBar>("Loading_Progress_Bar");
 
-        // 프로그래스바 게이지 색상 설정
-        VisualElement gauge = _loadingProgressBar?.Q<VisualElement>("unity-progressbar-value");
-        if (gauge != null)
-        {
-            gauge.style.backgroundColor = Color.cyan;
-        }
-
-        // 기본 상태 재설정
-        if (_loadingScreen != null)
+        if (_loadingScreen != null) // 기본 상태 재설정
         {
             _loadingScreen.style.display = DisplayStyle.None;
             _loadingScreen.style.opacity = 0;
@@ -119,17 +105,16 @@ public class SceneLoader : MonoBehaviour
         StartLoadingScene(sceneName);
 
         // 로딩 진행도 업데이트 (비동기 진행도에 맞춰 프로그래스바 업데이트)
-        while (_loadingProgressBar != null && GetLoadingProgress() < 1f)
+        while (_loadingProgressBar != null && GetLoadingProgress() < 0.9f)
         {
-            _loadingProgressBar.value = GetLoadingProgress();
+            _loadingProgressBar.value = _loadingProgressBar.highValue * GetLoadingProgress();
             yield return null;
         }
         _loadingProgressBar.value = 1f;
 
-        // 현재 씬에서는 여기서 추가적인 페이드 아웃 처리 없이 씬 전환 후 OnSceneLoaded에서 페이드 인 효과가 실행
     }
 
-    // 씬 로딩 시작 (코루틴 관리)
+    // 씬 로딩 시작
     private void StartLoadingScene(string name)
     {
         coroutineHandle = coroutineManager.StartManagedCoroutine(name, StartLoading(name));
@@ -158,6 +143,7 @@ public class SceneLoader : MonoBehaviour
         _loadingScreen.style.display = DisplayStyle.Flex;
         _loadingScreen.style.opacity = 1;
         _loadingProgressBar.style.opacity = 1;
+        _loadingProgressBar.value = _loadingProgressBar.highValue;
 
         float timer = fadeDuration;
         while (timer > 0)
