@@ -14,7 +14,7 @@ public class SceneLoader : MonoBehaviour
     private VisualElement _loadingScreen;
     private ProgressBar _loadingProgressBar;
 
-    private float fadeDuration = 1f; // ÆäÀÌµå ÀÎ, ¾Æ¿ô È¿°ú Áö¼Ó ½Ã°£
+    private float fadeDuration = 1f; // í˜ì´ë“œ ì¸, ì•„ì›ƒ íš¨ê³¼ ì§€ì† ì‹œê°„
 
     private void Awake()
     {
@@ -39,7 +39,7 @@ public class SceneLoader : MonoBehaviour
 
         if (coroutineManager == null)
         {
-            Debug.LogError("CoroutineManager°¡ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù");
+            Debug.LogError("CoroutineManagerê°€ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤");
         }
     }
 
@@ -48,18 +48,18 @@ public class SceneLoader : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) // ¾À ·Îµå ÈÄ »õ UI ÂüÁ¶ Àç¼³Á¤ ¹× ÆäÀÌµå ÀÎ È¿°ú ½ÃÀÛ
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) // ì”¬ ë¡œë“œ í›„ ìƒˆ UI ì°¸ì¡° ì¬ì„¤ì • ë° í˜ì´ë“œ ì¸ íš¨ê³¼ ì‹œì‘
     {
-        InitializeUI(); // »õ ¾À¿¡ ÁøÀÔÇÒ °æ¿ì, ·Îµù UI°¡ º¸ÀÌ´Â »óÅÂ(Åõ¸íµµ 1)·Î ÁØºñµÈ °ÍÀ¸·Î ¼¼ÆÃ
-        StartCoroutine(FadeInNewScene()); // ¿©±â¼­ ÆäÀÌµå ÀÎ È¿°ú¸¦ ½ÇÇà
+        InitializeUI(); // ìƒˆ ì”¬ì— ì§„ì…í•  ê²½ìš°, ë¡œë”© UIê°€ ë³´ì´ëŠ” ìƒíƒœ(íˆ¬ëª…ë„ 1)ë¡œ ì¤€ë¹„ëœ ê²ƒìœ¼ë¡œ ì„¸íŒ…
+        StartCoroutine(FadeInNewScene()); // ì—¬ê¸°ì„œ í˜ì´ë“œ ì¸ íš¨ê³¼ë¥¼ ì‹¤í–‰
     }
 
     private void InitializeUI()
     {
-        UIDocument uiDocument = GameObject.Find("Manager")?.GetComponent<UIDocument>(); // Manager¶ó´Â GameObject¿¡ ÀÖ´Â UIDocument¸¦ ÇÒ´ç
+        UIDocument uiDocument = GameObject.Find("Manager")?.GetComponent<UIDocument>(); // Managerë¼ëŠ” GameObjectì— ìˆëŠ” UIDocumentë¥¼ í• ë‹¹
         if (uiDocument == null)
         {
-            Debug.LogWarning("»õ ¾À¿¡¼­ Manager GameObjectÀÇ UIDocument¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù");
+            Debug.LogWarning("ìƒˆ ì”¬ì—ì„œ Manager GameObjectì˜ UIDocumentë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤");
             return;
         }
 
@@ -67,7 +67,7 @@ public class SceneLoader : MonoBehaviour
         _loadingScreen = root.Q<VisualElement>("Loading_Screen");
         _loadingProgressBar = root.Q<ProgressBar>("Loading_Progress_Bar");
 
-        if (_loadingScreen != null) // ±âº» »óÅÂ Àç¼³Á¤
+        if (_loadingScreen != null) // ê¸°ë³¸ ìƒíƒœ ì¬ì„¤ì •
         {
             _loadingScreen.style.display = DisplayStyle.None;
             _loadingScreen.style.opacity = 0;
@@ -80,12 +80,12 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇöÀç ¾À¿¡¼­ ´ÙÀ½ ¾ÀÀ¸·Î ÀüÈ¯ÇÏ±â Àü¿¡ ÆäÀÌµå ¾Æ¿ô È¿°ú¸¦ ½ÇÇàÇÏ°í, ·Îµù ÁøÇàµµ¸¦ °»½Å
+    /// í˜„ì¬ ì”¬ì—ì„œ ë‹¤ìŒ ì”¬ìœ¼ë¡œ ì „í™˜í•˜ê¸° ì „ì— í˜ì´ë“œ ì•„ì›ƒ íš¨ê³¼ë¥¼ ì‹¤í–‰í•˜ê³ , ë¡œë”© ì§„í–‰ë„ë¥¼ ê°±ì‹ 
     /// </summary>
-    /// <param name="sceneName">ÀüÈ¯ÇÒ ¾À ÀÌ¸§</param>
+    /// <param name="sceneName">ì „í™˜í•  ì”¬ ì´ë¦„</param>
     public IEnumerator LoadSceneWithFade(string sceneName)
     {
-        // ÇöÀç ¾À¿¡¼­ ·Îµù UI¸¦ È°¼ºÈ­ÇÏ°í, ÆäÀÌµå ¾Æ¿ô(Åõ¸íµµ 0 -> 1)À» ½ÇÇà
+        // í˜„ì¬ ì”¬ì—ì„œ ë¡œë”© UIë¥¼ í™œì„±í™”í•˜ê³ , í˜ì´ë“œ ì•„ì›ƒ(íˆ¬ëª…ë„ 0 -> 1)ì„ ì‹¤í–‰
         _loadingScreen.style.display = DisplayStyle.Flex;
         _loadingProgressBar.value = 0;
         _loadingScreen.style.opacity = 0;
@@ -101,10 +101,10 @@ public class SceneLoader : MonoBehaviour
             yield return null;
         }
 
-        // ·Îµù UI°¡ ¿ÏÀüÈ÷ ºÒÅõ¸íÇØÁö¸é ¾À ·Îµù ½ÃÀÛ
+        // ë¡œë”© UIê°€ ì™„ì „íˆ ë¶ˆíˆ¬ëª…í•´ì§€ë©´ ì”¬ ë¡œë”© ì‹œì‘
         StartLoadingScene(sceneName);
 
-        // ·Îµù ÁøÇàµµ ¾÷µ¥ÀÌÆ® (ºñµ¿±â ÁøÇàµµ¿¡ ¸ÂÃç ÇÁ·Î±×·¡½º¹Ù ¾÷µ¥ÀÌÆ®)
+        // ë¡œë”© ì§„í–‰ë„ ì—…ë°ì´íŠ¸ (ë¹„ë™ê¸° ì§„í–‰ë„ì— ë§ì¶° í”„ë¡œê·¸ë˜ìŠ¤ë°” ì—…ë°ì´íŠ¸)
         while (_loadingProgressBar != null && GetLoadingProgress() < 0.9f)
         {
             _loadingProgressBar.value = _loadingProgressBar.highValue * GetLoadingProgress();
@@ -114,7 +114,7 @@ public class SceneLoader : MonoBehaviour
 
     }
 
-    // ¾À ·Îµù ½ÃÀÛ
+    // ì”¬ ë¡œë”© ì‹œì‘
     private void StartLoadingScene(string name)
     {
         coroutineHandle = coroutineManager.StartManagedCoroutine(name, StartLoading(name));
@@ -133,7 +133,7 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// »õ ¾À ÁøÀÔ ÈÄ, ·Îµù UI¸¦ ÆäÀÌµå ÀÎÇÏ¿© »õ ¾ÀÀ» ³ëÃâ
+    /// ìƒˆ ì”¬ ì§„ì… í›„, ë¡œë”© UIë¥¼ í˜ì´ë“œ ì¸í•˜ì—¬ ìƒˆ ì”¬ì„ ë…¸ì¶œ
     /// </summary>
     private IEnumerator FadeInNewScene()
     {
@@ -159,7 +159,7 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// ·ÎµùµÇ´Â ¾ÀÀÇ ÁøÇàµµ¸¦ ¹İÈ¯
+    /// ë¡œë”©ë˜ëŠ” ì”¬ì˜ ì§„í–‰ë„ë¥¼ ë°˜í™˜
     /// </summary>
     private float GetLoadingProgress()
     {

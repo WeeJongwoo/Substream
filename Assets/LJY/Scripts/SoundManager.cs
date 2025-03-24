@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// °øÅëÀ¸·Î »ç¿ëµÇ´Â »ç¿îµå Æ®·¢ÀÇ ¿­°ÅÁıÇÕ
-/// <para>>> int ÇüÀ¸·Î Ä³½ºÆÃ ÇÊ¿ä</para>
-/// <para>>> »ç¿îµå Æ®·¢ Ãß°¡°¡ ÇÊ¿äÇÒ °æ¿ì SoundManager¿¡¼­ ¼öÁ¤ °¡´É</para>
+/// ê³µí†µìœ¼ë¡œ ì‚¬ìš©ë˜ëŠ” ì‚¬ìš´ë“œ íŠ¸ë™ì˜ ì—´ê±°ì§‘í•©
+/// <para>>> int í˜•ìœ¼ë¡œ ìºìŠ¤íŒ… í•„ìš”</para>
+/// <para>>> ì‚¬ìš´ë“œ íŠ¸ë™ ì¶”ê°€ê°€ í•„ìš”í•  ê²½ìš° SoundManagerì—ì„œ ìˆ˜ì • ê°€ëŠ¥</para>
 /// </summary>
 public enum SoundTrack
 {
@@ -29,11 +29,11 @@ public class SoundManager : MonoBehaviour
     }
 
     /// <summary>
-    /// UI Element¿¡¼­ Á¦°øÇÏ´Â ¹öÆ°ÀÇ »ç¿îµå ÀÌº¥Æ® ¿¬°á ÇÔ¼ö
+    /// UI Elementì—ì„œ ì œê³µí•˜ëŠ” ë²„íŠ¼ì˜ ì‚¬ìš´ë“œ ì´ë²¤íŠ¸ ì—°ê²° í•¨ìˆ˜
     /// </summary>
-    /// <typeparam name="T">>> UI Element¿¡¼­ Á¦°øÇÏ´Â ÀÌº¥Æ® Å¬·¡½º</typeparam>
-    /// <param name="button">>> UI Element¿¡¼­ Á¦°øÇÏ´Â ¹öÆ° ¿ÀºêÁ§Æ®</param>
-    /// <param name="clip">>> ¿Àµğ¿À Å¬¸³</param>
+    /// <typeparam name="T">>> UI Elementì—ì„œ ì œê³µí•˜ëŠ” ì´ë²¤íŠ¸ í´ë˜ìŠ¤</typeparam>
+    /// <param name="button">>> UI Elementì—ì„œ ì œê³µí•˜ëŠ” ë²„íŠ¼ ì˜¤ë¸Œì íŠ¸</param>
+    /// <param name="clip">>> ì˜¤ë””ì˜¤ í´ë¦½</param>
     public void SetButtonSoundEvent<T>(Button button, AudioClip clip) where T : EventBase
     {
         if (typeof(T) == typeof(PointerEnterEvent))

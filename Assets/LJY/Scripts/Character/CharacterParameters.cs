@@ -23,5 +23,5 @@ public class CharacterParameters : ScriptableObject
     public float CriticalDamage { get => criticalDamage; set => criticalDamage = Mathf.Floor(value); }
     public float AetherRecoveryPoint { get => aetherRecoveryPoint; set => aetherRecoveryPoint = Mathf.Floor(value); }
 
-    // ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ³ª È¿°úÀ½ µî Á¤º¸µµ Ãß°¡ÇÒ ÇÊ¿ä ÀÖÀ½
+    // ì• ë‹ˆë©”ì´ì…˜ì´ë‚˜ íš¨ê³¼ìŒ ë“± ì •ë³´ë„ ì¶”ê°€í•  í•„ìš” ìžˆìŒ
 }

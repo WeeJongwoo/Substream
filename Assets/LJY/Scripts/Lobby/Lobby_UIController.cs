@@ -77,7 +77,7 @@ public class Lobby_UIController : MonoBehaviour
 
     private void MainContentInit(VisualElement root)
     {
-        // ¸ŞÀÎ ÄÁÅÙÃ÷ ¾ÀÀ¸·Î ÀÌµ¿ÇÏ´Â ¹öÆ° ¿¬°á ÀÛ¾÷
+        // ë©”ì¸ ì»¨í…ì¸  ì”¬ìœ¼ë¡œ ì´ë™í•˜ëŠ” ë²„íŠ¼ ì—°ê²° ì‘ì—…
         foreach (string name in _mainContentButtons)
         {
             Button button = root.Q<Button>(name);
@@ -86,7 +86,7 @@ public class Lobby_UIController : MonoBehaviour
             _soundManager.SetButtonSoundEvent<ClickEvent>(button, audioClips[(int)SoundTrack.b_clicked]);
         }
 
-        // ¿¬°áµÈ ¸ŞÀÎ ÄÁÅÙÃ÷¿ë ¹öÆ°°ú °¢ ¾ÀÀÇ ¿¬°á ÀÛ¾÷
+        // ì—°ê²°ëœ ë©”ì¸ ì»¨í…ì¸ ìš© ë²„íŠ¼ê³¼ ê° ì”¬ì˜ ì—°ê²° ì‘ì—…
         List<string> SceneNameList =
             _mainContentButtons.Select(
             button => button.Contains("-") 
@@ -150,7 +150,7 @@ public class Lobby_UIController : MonoBehaviour
         _lineWindow.RemoveFromClassList("line_window-popup");
     }
 
-    // Å¬¸¯ÇÑ ¹öÆ°ÀÇ ÀÌ¸§(key)À» ÀÌ¿ëÇØ ÇØ´ç ¾À ÀÌ¸§À» µñ¼Å³Ê¸®¿¡¼­ °¡Á®¿Â ÈÄ ·Îµù Ã³¸® ½ÃÀÛ
+    // í´ë¦­í•œ ë²„íŠ¼ì˜ ì´ë¦„(key)ì„ ì´ìš©í•´ í•´ë‹¹ ì”¬ ì´ë¦„ì„ ë”•ì…”ë„ˆë¦¬ì—ì„œ ê°€ì ¸ì˜¨ í›„ ë¡œë”© ì²˜ë¦¬ ì‹œì‘
     private void OnLoadingScreen(ClickEvent evt)
     {
         Button clickedButton = evt.currentTarget as Button;
@@ -158,7 +158,7 @@ public class Lobby_UIController : MonoBehaviour
         {
             if (_mainContentScenes.TryGetValue(clickedButton.name, out string sceneName))
             {
-                // ·Îµù È­¸é ÆäÀÌµå ¾Æ¿ô°ú ÇÁ·Î±×·¡½º¹Ù ¾÷µ¥ÀÌÆ®¸¦ Æ÷ÇÔÇÑ ÄÚ·çÆ¾ ½ÇÇà
+                // ë¡œë”© í™”ë©´ í˜ì´ë“œ ì•„ì›ƒê³¼ í”„ë¡œê·¸ë˜ìŠ¤ë°” ì—…ë°ì´íŠ¸ë¥¼ í¬í•¨í•œ ì½”ë£¨í‹´ ì‹¤í–‰
                 StartCoroutine(_sceneLoader.LoadSceneWithFade(sceneName));
             }
         }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ÄÚ·çÆ¾À» ½ÃÀÛÇÏ°í °ü¸®ÇÏ´Â ¸Å´ÏÀú Å¬·¡½º
+/// ì½”ë£¨í‹´ì„ ì‹œì‘í•˜ê³  ê´€ë¦¬í•˜ëŠ” ë§¤ë‹ˆì € í´ë˜ìŠ¤
 /// </summary>
 public class CoroutineManager : MonoBehaviour
 {
-    // °¢ ÄÚ·çÆ¾À» °íÀ¯ Å° °ªÀ¸·Î °ü¸®
+    // ê° ì½”ë£¨í‹´ì„ ê³ ìœ  í‚¤ ê°’ìœ¼ë¡œ ê´€ë¦¬
     private Dictionary<string, CoroutineHandle> coroutineHandles;
 
     private void Awake()
@@ -16,11 +16,11 @@ public class CoroutineManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÄÚ·çÆ¾À» ½ÃÀÛÇÏ¿© °ü¸®ÇÔ
+    /// ì½”ë£¨í‹´ì„ ì‹œì‘í•˜ì—¬ ê´€ë¦¬í•¨
     /// </summary>
-    /// <param name="id">ÄÚ·çÆ¾À» ½Äº°ÇÒ °íÀ¯ Å°</param>
-    /// <param name="coroutine">½ÇÇàÇÒ IEnumerator</param>
-    /// <returns>>> ÄÚ·çÆ¾ÀÇ »óÅÂ¸¦ ´ãÀº ÇÚµé</returns>
+    /// <param name="id">ì½”ë£¨í‹´ì„ ì‹ë³„í•  ê³ ìœ  í‚¤</param>
+    /// <param name="coroutine">ì‹¤í–‰í•  IEnumerator</param>
+    /// <returns>>> ì½”ë£¨í‹´ì˜ ìƒíƒœë¥¼ ë‹´ì€ í•¸ë“¤</returns>
     public CoroutineHandle StartManagedCoroutine(string id, IEnumerator coroutine)
     {
         List<string> keysToRemove = new List<string>();
@@ -36,7 +36,7 @@ public class CoroutineManager : MonoBehaviour
             coroutineHandles.Remove(key);
         }
 
-        // ÀÌ¹Ì µ¿ÀÏÇÑ id·Î ÄÚ·çÆ¾ÀÌ ½ÇÇà ÁßÀÌ¶ó¸é Á¤¸®ÇÕ´Ï´Ù.
+        // ì´ë¯¸ ë™ì¼í•œ idë¡œ ì½”ë£¨í‹´ì´ ì‹¤í–‰ ì¤‘ì´ë¼ë©´ ì •ë¦¬í•©ë‹ˆë‹¤.
         if (coroutineHandles.ContainsKey(id))
         {
             StopManagedCoroutine(id);
@@ -48,13 +48,13 @@ public class CoroutineManager : MonoBehaviour
             IsRunning = true
         };
 
-        // ³»ºÎ ÄÚ·çÆ¾À¸·Î °¨½Î¼­ ½ÇÇà ÈÄ »óÅÂ ¾÷µ¥ÀÌÆ®
+        // ë‚´ë¶€ ì½”ë£¨í‹´ìœ¼ë¡œ ê°ì‹¸ì„œ ì‹¤í–‰ í›„ ìƒíƒœ ì—…ë°ì´íŠ¸
         handle.RunningCoroutine = StartCoroutine(RunCoroutine(id, coroutine, handle));
         coroutineHandles[id] = handle;
         return handle;
     }
 
-    // ÄÚ·çÆ¾ ½ÇÇà ÈÄ ¿Ï·áµÇ¸é »óÅÂ¸¦ º¯°æ
+    // ì½”ë£¨í‹´ ì‹¤í–‰ í›„ ì™„ë£Œë˜ë©´ ìƒíƒœë¥¼ ë³€ê²½
     private IEnumerator RunCoroutine(string id, IEnumerator coroutine, CoroutineHandle handle)
     {
         yield return coroutine;
@@ -62,7 +62,7 @@ public class CoroutineManager : MonoBehaviour
     }
 
     /// <summary>
-    /// id·Î ½ÇÇà ÁßÀÎ ÄÚ·çÆ¾À» Áß´Ü
+    /// idë¡œ ì‹¤í–‰ ì¤‘ì¸ ì½”ë£¨í‹´ì„ ì¤‘ë‹¨
     /// </summary>
     public void StopManagedCoroutine(string id)
     {
@@ -78,7 +78,7 @@ public class CoroutineManager : MonoBehaviour
     }
 
     /// <summary>
-    /// id·Î ÄÚ·çÆ¾ÀÇ »óÅÂ Á¤º¸¸¦ ¹İÈ¯
+    /// idë¡œ ì½”ë£¨í‹´ì˜ ìƒíƒœ ì •ë³´ë¥¼ ë°˜í™˜
     /// </summary>
     public CoroutineHandle GetCoroutineHandle(string id)
     {
@@ -91,7 +91,7 @@ public class CoroutineManager : MonoBehaviour
 }
 
 /// <summary>
-/// °¢ ÄÚ·çÆ¾ÀÇ ½ÇÇà »óÅÂ ¹× °ü·Ã Á¤º¸¸¦ ´ã´Â ÇÚµé Å¬·¡½º
+/// ê° ì½”ë£¨í‹´ì˜ ì‹¤í–‰ ìƒíƒœ ë° ê´€ë ¨ ì •ë³´ë¥¼ ë‹´ëŠ” í•¸ë“¤ í´ë˜ìŠ¤
 /// </summary>
 public class CoroutineHandle
 {
