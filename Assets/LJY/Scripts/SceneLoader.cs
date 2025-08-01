@@ -22,7 +22,7 @@ public class SceneLoader : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded; // 게임 실행 이후 새로운 씬이 실행될 때마다 위 함수가 호출됨
         }
         else
         {
