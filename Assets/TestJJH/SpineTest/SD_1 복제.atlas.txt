@@ -1,0 +1,30 @@
+SD_1 복제.png
+size:1753,981
+filter:MipMap,MipMap
+pma:true
+scale:0.5
+다리
+bounds:694,29,557,576
+rotate:90
+머리 2
+bounds:1272,2,418,435
+rotate:90
+목
+bounds:1272,519,67,67
+offsets:7,0,74,67
+몸 2
+bounds:2,421,558,690
+offsets:0,124,1093,824
+rotate:90
+몸2-1
+bounds:1516,734,235,245
+offsets:0,115,331,360
+오른팔
+bounds:362,21,327,398
+offsets:2,1,372,399
+옷뒤
+bounds:2,84,358,335
+왼팔
+bounds:1516,422,204,310
+칼 2
+bounds:694,588,820,391
