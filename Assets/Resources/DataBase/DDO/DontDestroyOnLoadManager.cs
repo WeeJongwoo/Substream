@@ -39,7 +39,6 @@ public class DontDestroyOnLoadManager : MonoBehaviour
     }
 
     private Dictionary<string, DataScriptableObjects> m_DataBase;
-#endif
 
     [SerializeField]
     private CardTableDataBase m_cardTable;

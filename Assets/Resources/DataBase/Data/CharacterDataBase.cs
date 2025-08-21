@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Unity.VisualScripting;
@@ -58,5 +58,11 @@ public class CharacterDataBase : DataScriptableObjects
             data.BattleReward = LocalUserDataDic[data.ID].BattleReward;
             */
         }
+    }
+
+    public override void ClearContainer()
+    {
+        CharacterList.Clear();
+        Character.Clear();
     }
 }
