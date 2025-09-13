@@ -1,0 +1,17 @@
+ID,Name,CardType,CardRarity,Cost,CardText,Texture,SkillID[]
+1,Card1,E_ATTACK,E_NORMAL,1,적 1명에게 공격력의 100%의 피해를 입힌다.,Card1Texture,1
+2,Card2,E_ATTACK,E_NORMAL,2,적 3명에게 공격력의 150%의 피해를 입힌다.,Card2Texture,2
+3,Card3,E_ATTACK,E_RARE,2,적 1명에게 공격력의 200%의 피해를 입힌다.,Card3Texture,3
+4,Card4,E_ATTACK,E_SUPERRARE,4,적 3명에게 공격력의 150%의 피해를 입히고 출혈을 부여한다.,Card4Texture,4
+5,Card5,E_ATTACK,E_RARE,2,적 2명에게 공격력의 120%의 피해를 입힌다. 입힌 피해의 50%를 회복한다.,Card5Texture,5
+6,Card6,E_ATTACK,E_RARE,1,적 2명에게 공격력의 120%의 피해를 입힌다. 입힌 피해의 50%를 회복한다.,Card6Texture,6
+7,Card7,E_SKILL,E_RARE,1,적 1명에게 공격력의 80%의 피해를 2회 입힌다.,Card7Texture,7
+8,Card8,E_SKILL,E_RARE,2,에테르를 2 회복한다.,Card8Texture,8
+9,Card9,E_SKILL,E_RARE,2,카드를 2장 드로우한다.,Card9Texture,9
+10,Card10,E_SKILL,E_NORMAL,1,본인의 방어력이 40% 증가한다.,Card10Texture,10
+11,Card11,E_ATTACK,E_RARE,1,적 1명에게 공격력의 120% 피해를 입히고, 출혈을 부여한다.,Card11Texture,11
+12,Card12,E_ATTACK,E_RARE,1,적 1명에게 공격력의 90% 피해를 2회 입힌다.,Card12Texture,12
+13,Card13,E_SKILL,E_RARE,1,본인의 속도가 3 증가하고, 카드를 1장 드로우한다.,Card13Texture,[13,14]
+14,Card14,E_ATTACK,E_RARE,1,적 전체에게 공격력의 100% 피해를 입힌다.,Card14Texture,15
+15,Card15,E_SKILL,E_RARE,1,아군 1명에게 방어력의 30%만큼의 실드를 제공한다.,Card15Texture,16
+16,Card16,E_ATTACK,E_RARE,1,적 1명에게 공격력의 100% 피해를 입히고, 감전을 부여한다.,Card16Texture,17
