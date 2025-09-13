@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.PlasticSCM.Editor.WebApi;
@@ -44,14 +44,15 @@ public class StageManager : MonoBehaviour
                 StageNode stageNode = new StageNode();
                 stageNode.Initialize(i, j);
                 stageLevel.Add(stageNode);
+                //스테이지 데이터 세팅
             }
             stages.Add(stageLevel);
         }
 
-        for (int i = 0; i < stages.Count; i++)
-        {
-            //Debug.Log("Level " + i + " has " + stages[i].Count + " nodes.");
-        }
+        //for (int i = 0; i < stages.Count; i++)
+        //{
+        //    Debug.Log("Level " + i + " has " + stages[i].Count + " nodes.");
+        //}
 
         for (int i = 0; i < maxLevel - 1; i++)
         {

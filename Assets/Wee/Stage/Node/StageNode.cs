@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ public class StageNode
     public string StageID;
     public int levelIndex;
     public List<StageNode> nextNodes;
-    public StageNodeData stageNodeData;
+    private int stageDateType;
 
     public bool isCleared;
     public bool isActive;
