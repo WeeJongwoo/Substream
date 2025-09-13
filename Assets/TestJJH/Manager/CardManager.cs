@@ -1,10 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using Unity.VisualScripting;
-using UnityEngine.UIElements;
 
 public class CardManager : BaseManager
 {
@@ -14,21 +9,21 @@ public class CardManager : BaseManager
         public List<Card> s_card;
     };
 
-    private UnitCardPair tcs_hand;
-    private Dictionary<Unit,List<Card>> tcs_deck;
-    private Dictionary<Unit,List<Card>> tcs_graveyard;
+    private UnitCardPair m_hand;
+    private Dictionary<Unit,List<Card>> m_deck;
+    private Dictionary<Unit,List<Card>> m_graveyard;
 
     public List<Card> Hand
     {
-        get { return tcs_hand.s_card; }
+        get { return m_hand.s_card; }
     }
     public List<Card> Deck
     {
-        get { return tcs_deck[tcs_hand.s_unit]; }
+        get { return m_deck[m_hand.s_unit]; }
     }
     public List<Card> Graveyard
     {
-        get { return tcs_graveyard[tcs_hand.s_unit]; }
+        get { return m_graveyard[m_hand.s_unit]; }
     }
     public override void Initialize(MasterManager masterManager, TurnManager turnManager)
     {
@@ -38,11 +33,11 @@ public class CardManager : BaseManager
     public override void DataInitialize(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager)
     {
         /***************test Code about Struct**************/
-        tcs_hand = new UnitCardPair();
-        tcs_hand.s_card = new List<Card>();
+        m_hand = new UnitCardPair();
+        m_hand.s_card = new List<Card>();
 
-        tcs_deck = new Dictionary<Unit,List<Card>>();
-        tcs_graveyard = new Dictionary<Unit,List<Card>>();
+        m_deck = new Dictionary<Unit,List<Card>>();
+        m_graveyard = new Dictionary<Unit,List<Card>>();
 
         foreach (var character in characterManager.Character)
         {
@@ -56,77 +51,77 @@ public class CardManager : BaseManager
                     if(CTD.ID == uc.Value.PrototypeUnitID)
                     {
                         Card newCard = new Card();
-                        newCard.Initialize(DataBase.CardTable(uc.Value.CardID));
+                        newCard.Initialize(pair.s_unit, DataBase.CardTable(uc.Value.CardID), m_masterManager.SkillScheduleManager);
                         pair.s_card.Add(newCard);
                     }
                 }
             }
-            tcs_deck.Add(pair.s_unit,pair.s_card);
-            tcs_graveyard.Add(pair.s_unit,new List<Card>());
+            m_deck.Add(pair.s_unit,pair.s_card);
+            m_graveyard.Add(pair.s_unit,new List<Card>());
         }
-        TCSHandShaker(turnManager,characterManager);
+        HandShaker(turnManager,characterManager);
     }
 
-    public void TCSHandShaker(TurnManager turnManager, CharacterManager characterManager)
+    public void HandShaker(TurnManager turnManager, CharacterManager characterManager)
     {
-        foreach(var g in tcs_hand.s_card)
+        foreach(var g in m_hand.s_card)
         {
-            tcs_graveyard[tcs_hand.s_unit].Add(g);
+            m_graveyard[m_hand.s_unit].Add(g);
         }
-        tcs_hand.s_card.Clear();
+        m_hand.s_card.Clear();
 
         if (turnManager.CurrentTurnUnit is not CharacterTableData c)
         {
             return;
         }
 
-        tcs_hand.s_unit = turnManager.CurrentTurnUnit;
-        Unit key = tcs_hand.s_unit;
+        m_hand.s_unit = turnManager.CurrentTurnUnit;
+        Unit key = m_hand.s_unit;
 
-        if (tcs_deck[key].Count < 6)
+        if (m_deck[key].Count < 6)
         {
-            foreach (var d in tcs_deck[key])
+            foreach (var d in m_deck[key])
             {
-                tcs_hand.s_card.Add(d);
+                m_hand.s_card.Add(d);
             }
-            tcs_deck[key].Clear();
-            foreach (var g in tcs_graveyard[key])
+            m_deck[key].Clear();
+            foreach (var g in m_graveyard[key])
             {
-                tcs_deck[key].Add(g);
+                m_deck[key].Add(g);
             }
-            tcs_graveyard[key].Clear();
+            m_graveyard[key].Clear();
         }
         else
         {
             for (int i = 0; i < 5; i++)
             {
-                int address = Random.Range(0, tcs_deck[key].Count);
-                tcs_hand.s_card.Add(tcs_deck[key][address]);
-                tcs_deck[key].RemoveAt(address);
+                int address = Random.Range(0, m_deck[key].Count);
+                m_hand.s_card.Add(m_deck[key][address]);
+                m_deck[key].RemoveAt(address);
             }
         }
 
-        if (tcs_deck[key].Count < 1)
+        if (m_deck[key].Count < 1)
         {
-            foreach (var g in tcs_graveyard[key])
+            foreach (var g in m_graveyard[key])
             {
-                tcs_deck[key].Add(g);
+                m_deck[key].Add(g);
             }
-            tcs_graveyard[key].Clear();
+            m_graveyard[key].Clear();
         }
     }
 
     public override void SetTurn(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager, CardManager cardManager)
     {
-        TCSHandShaker(turnManager, characterManager);
+        HandShaker(turnManager, characterManager);
     }
 
     public void CharacterDying(Unit unit)
     {
-        tcs_deck[unit].Clear();
-        tcs_graveyard[unit].Clear();
+        m_deck[unit].Clear();
+        m_graveyard[unit].Clear();
 
-        tcs_deck.Remove(unit);
-        tcs_graveyard.Remove(unit);
+        m_deck.Remove(unit);
+        m_graveyard.Remove(unit);
     }
 }

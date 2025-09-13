@@ -1,11 +1,18 @@
-ID,SkillType,SkillSource,EffectValue,UpgradeEffectValue,StatusType,TargetType,TargetCount,HitCount,#CardText,#NextSkillID,Sound
-1,E_DAMAGE,E_ATK,1,1.5,E_NONE,E_SINGLE_ALLY,1,1,적 1명에게 공격력의 100%의 피해를 입힌다.,0,
-2,E_DAMAGE,E_ATK,1.5,2,E_NONE,E_MULTI_ENEMY,3,1,적 3명에게 공격력의 150%의 피해를 입힌다.,0,
-3,E_DAMAGE,E_ATK,2,3,E_NONE,E_SINGLE_ALLY,1,1,적 1명에게 공격력의 200%의 피해를 입힌다.,0,
-4,E_DAMAGE,E_ATK,1.5,2,E_BLEED,E_MULTI_ENEMY,3,1,적 3명에게 공격력의 150%의 피해를 입히고 출혈을 부여한다.,0,
-5,E_DAMAGE,E_ATK,1.2,1.7,E_NONE,E_MULTI_ENEMY,2,1,적 2명에게 공격력의 120%의 피해를 입힌다. 입힌 피해의 50%를 회복한다.,6,
-6,E_HEAL,E_DAMAGED_INFLICTED,0,0,E_NONE,E_SELF,1,1,적 2명에게 공격력의 120%의 피해를 입힌다. 입힌 피해의 50%를 회복한다.,0,
-7,E_DAMAGE,E_ATK,0.8,1.3,E_NONE,E_SINGLE_ALLY,1,2,적 1명에게 공격력의 80%의 피해를 2회 입힌다.,0,
-8,E_INCREASE,E_AETHER,2,3,E_NONE,E_NONE,0,0,에테르를 2 회복한다.,0,
-9,E_DRAW,E_DECK,2,3,E_NONE,E_NONE,0,0,카드를 2장 드로우한다.,0,
-10,E_INCREASE,E_DEFENSE,0.4,0.6,E_NONE,E_SELF,1,1,본인의 방어력이 40% 증가한다.,0,
+ID,SkillType,SkillSource,EffectValue,UpgradeEffectValue,StatusType,TargetType,TargetCount,HitCount,CardText,NextSkillID,Sound
+1,E_DAMAGE,E_ATK,1,1.5,E_NONE,E_SINGLE_ENEMY,1,1,"적 1명에게 공격력의 100%의 피해를 입힌다.",0,0
+2,E_DAMAGE,E_ATK,1.5,2,E_NONE,E_MULTI_ENEMY,3,1,"적 3명에게 공격력의 150%의 피해를 입힌다.",0,0
+3,E_DAMAGE,E_ATK,2,3,E_NONE,E_SINGLE_ENEMY,1,1,"적 1명에게 공격력의 200%의 피해를 입힌다.",0,0
+4,E_DAMAGE,E_ATK,1.5,2,E_BLEED,E_MULTI_ENEMY,3,1,"적 3명에게 공격력의 150%의 피해를 입히고 출혈을 부여한다.",0,0
+5,E_DAMAGE,E_ATK,1.2,1.7,E_NONE,E_MULTI_ENEMY,2,1,"적 2명에게 공격력의 120%의 피해를 입힌다. 입힌 피해의 50%를 회복한다.",6,0
+6,E_HEAL,E_DAMAGED_INFLICTED,0,0,E_NONE,E_SELF,1,1,"적 2명에게 공격력의 120%의 피해를 입힌다. 입힌 피해의 50%를 회복한다.",0,0
+7,E_DAMAGE,E_ATK,0.8,1.3,E_NONE,E_SINGLE_ENEMY,1,2,"적 1명에게 공격력의 80%의 피해를 2회 입힌다.",0,0
+8,E_INCREASE,E_AETHER,2,3,E_NONE,E_NONE,0,0,"에테르를 2 회복한다.",0,0
+9,E_DRAW,E_DECK,2,3,E_NONE,E_NONE,0,0,"카드를 2장 드로우한다.",0,0
+10,E_INCREASE,E_DEF,0.4,0.6,E_NONE,E_SELF,1,1,"본인의 방어력이 40% 증가한다.",0,0
+11,E_ATTACK,E_ATK,1.2,1.5,E_BLEED,E_SINGLE_ENEMY,1,1,"적 1명에게 공격력의 120% 피해를 입히고, 출혈을 부여한다.",0,0
+12,E_ATTACK,E_ATK,0.9,1.1,E_NONE,E_SINGLE_ENEMY,1,2,"적 1명에게 공격력의 90% 피해를 2회 입힌다.",0,0
+13,E_INCREASE,E_SPEED,3,5,E_NONE,E_SELF,1,1,"본인의 속도가 3 증가하고, 카드를 1장 드로우한다.",14,0
+14,E_DRAW,E_DECK,1,1,E_NONE,E_NONE,0,0,"본인의 속도가 3 증가하고, 카드를 1장 드로우한다.",0,0
+15,E_ATTACK,E_ATK,1,1.3,E_NONE,E_ALL_ENEMY,99,1,"적 전체에게 공격력의 100% 피해를 입힌다.",0,0
+16,E_SHIELD,E_DEF,0.3,0.5,E_NONE,E_SINGLE_CHARACTER,1,1,"아군 1명에게 방어력의 30%만큼의 실드를 제공한다.",0,0
+17,E_DAMAGE,E_ATK,1,1.2,E_PARALYSE,E_SINGLE_ENEMY,1,1,"적 1명에게 공격력의 100% 피해를 입히고, 감전을 부여한다.",0,0

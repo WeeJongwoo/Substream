@@ -18,17 +18,22 @@ public class MasterManager : MonoBehaviour
     [SerializeField]
     private CardUIManager m_cardUIManager;
     [SerializeField]
-
     private MonsterManager m_monsterManager;
     [SerializeField]
     private MonsterUIManager m_monsterUIManager;
+
+    [SerializeField]
+    private SkillScheduleManager m_skillScheduleManager;
 
     private LinkedList<BaseManager> m_managers;
 
     [SerializeField]
     private DontDestroyOnLoadManager DDOManager;
 
-
+    public SkillScheduleManager SkillScheduleManager
+    {
+        get { return m_skillScheduleManager; }
+    }
     public void Awake()
     {
         DDOManager.Initialize();
@@ -43,6 +48,7 @@ public class MasterManager : MonoBehaviour
         m_managers.AddLast(m_turnUIManager);
         m_managers.AddLast(m_cardManager);
         m_managers.AddLast(m_cardUIManager);
+        m_managers.AddLast(m_skillScheduleManager);
         
         for (LinkedListNode<BaseManager> node = m_managers.First; node != null; node = node.Next)
         {
@@ -50,12 +56,13 @@ public class MasterManager : MonoBehaviour
             BaseManager temtManager;
             if (!node.Value.TryGetComponent<BaseManager>(out temtManager)) continue;
             temtManager.ConnectsDataBase();
-
+            temtManager.DataInitialize(m_turnManager, m_characterManager, m_monsterManager);
         }
 
         for (LinkedListNode<BaseManager> node = m_managers.First; node != null; node = node.Next)
         {
-            node.Value.DataInitialize(m_turnManager, m_characterManager, m_monsterManager);
+            IUpdatableManager temtManager;
+            if(node.Value.TryGetComponent<IUpdatableManager>(out temtManager)) m_IUpdatableManagers.AddFirst(temtManager); ;
         }
 
         m_characterUIManager.Synchronization(m_characterManager);

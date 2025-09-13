@@ -9,12 +9,12 @@ using UnityEngine;
 public class CardTableData
 {
     public int ID;
-    public string CardName;
+    public string Name;
     public ECardType CardType;
     public ECardRarity CardRarity;
     public int Cost;
     public string CardText;
-    public string CardTexture;
+    public string Texture;
     public int SkillID;
 }
 
