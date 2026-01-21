@@ -35,7 +35,7 @@ public class StageManager : MonoBehaviour
         currentLevel = 0;
         stages = new List<List<StageNode>>();
 
-        for (int i = 0; i < maxLevel; i++)
+        for (int i = 0; i < maxLevel - 1; i++)
         {
             List<StageNode> stageLevel = new List<StageNode>();
             int numOfNodes = Random.Range(1, 4);
@@ -48,6 +48,11 @@ public class StageManager : MonoBehaviour
             }
             stages.Add(stageLevel);
         }
+        List<StageNode> fivalStageLevel = new List<StageNode>();
+        StageNode finalStageNode = new StageNode();
+        finalStageNode.Initialize(maxLevel - 1, 0);
+        fivalStageLevel.Add(finalStageNode);
+        stages.Add(fivalStageLevel);
 
         //for (int i = 0; i < stages.Count; i++)
         //{
@@ -59,29 +64,76 @@ public class StageManager : MonoBehaviour
             var nextNodes = stages[i + 1];
             var currentNodes = stages[i];
 
-            foreach (var nextNode in nextNodes)
+            if(nextNodes.Count == 1)
             {
-                int numberOfConnections = Random.Range(1, currentNodes.Count + 1);
-
-                List<int> currentNodeIndex = Enumerable.Range(0, currentNodes.Count).ToList();
-                currentNodeIndex = currentNodeIndex.OrderBy(_ => Random.value).ToList();
-                currentNodeIndex = currentNodeIndex.Take(numberOfConnections).ToList();
-
-                foreach (var index in currentNodeIndex)
+                foreach (var node in currentNodes)
                 {
-                    currentNodes[index].nextNodes.Add(nextNode);
-                    numberOfConnections--;
+                    node.nextNodes.Add(nextNodes[0]);
+                }
+            }
+            if(currentNodes.Count == 1)
+            {
+                foreach (var node in nextNodes)
+                {
+                    currentNodes[0].nextNodes.Add(node);
                 }
             }
 
-            foreach (var node in currentNodes)
+            if(currentNodes.Count == nextNodes.Count)
             {
-                if (node.nextNodes.Count == 0)
+                for (int n = 0; n < currentNodes.Count; n++)
                 {
-                    int randomIndex = Random.Range(0, nextNodes.Count);
-                    node.nextNodes.Add(nextNodes[randomIndex]);
+                    currentNodes[n].nextNodes.Add(nextNodes[n]);
                 }
+
+                int extraCurrentIndex = Random.Range(0, currentNodes.Count);
+                int extraNextIndex = Random.Range(0, nextNodes.Count);
+
+                currentNodes[extraCurrentIndex].nextNodes.Add(nextNodes[extraNextIndex]);
             }
+
+            if(currentNodes.Count == 3 && nextNodes.Count == 2)
+            {
+                currentNodes[0].nextNodes.Add(nextNodes[0]);
+
+                currentNodes[1].nextNodes.Add(nextNodes[0]);
+                currentNodes[1].nextNodes.Add(nextNodes[1]);
+
+                currentNodes[2].nextNodes.Add(nextNodes[1]);
+            }
+
+            if(currentNodes.Count == 2 && nextNodes.Count == 3)
+            {
+                currentNodes[0].nextNodes.Add(nextNodes[0]);
+                currentNodes[1].nextNodes.Add(nextNodes[2]);
+
+                int randomIndex = Random.Range(0, 2);
+                currentNodes[randomIndex].nextNodes.Add(nextNodes[1]);
+            }
+
+            //foreach (var nextNode in nextNodes)
+            //{
+            //    int numberOfConnections = Random.Range(1, currentNodes.Count + 1);
+
+            //    List<int> currentNodeIndex = Enumerable.Range(0, currentNodes.Count).ToList();
+            //    currentNodeIndex = currentNodeIndex.OrderBy(_ => Random.value).ToList();
+            //    currentNodeIndex = currentNodeIndex.Take(numberOfConnections).ToList();
+
+            //    foreach (var index in currentNodeIndex)
+            //    {
+            //        currentNodes[index].nextNodes.Add(nextNode);
+            //        numberOfConnections--;
+            //    }
+            //}
+
+            //foreach (var node in currentNodes)
+            //{
+            //    if (node.nextNodes.Count == 0)
+            //    {
+            //        int randomIndex = Random.Range(0, nextNodes.Count);
+            //        node.nextNodes.Add(nextNodes[randomIndex]);
+            //    }
+            //}
         }
 
         for (int i = 0; i < stages.Count; i++)
@@ -90,12 +142,12 @@ public class StageManager : MonoBehaviour
             {
                 for (int k = 0; k < stages[i][j].nextNodes.Count; k++)
                 {
-                    //Debug.Log("Node " + j + " in Level " + i + " has " + stages[i][j].nextNodes[k].StageID + " next nodes.");
+                    //Debug.Log("Node " + i + "-" + j +  " has " + stages[i][j].nextNodes[k].StageID + " next nodes.");
                 }
             }
         }
 
-        // UI 생성
+        // ----------------------------------UI 생성-------------------------------------
         float xSpacing = 250f; // 레벨 간 가로 간격
         float ySpacing = 150f; // 노드 간 세로 간격
 

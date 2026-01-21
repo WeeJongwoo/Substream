@@ -5367,8 +5367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel: 0
-  currentStage: {fileID: 0}
-  maxLevel: 3
+  maxLevel: 5
   stageNodeUIPrefab: {fileID: 315149133035385514, guid: 1c6c888209d956e41b7dafba9f856a45, type: 3}
   stageUIContainer: {fileID: 914699335}
 --- !u!1660057539 &9223372036854775807
