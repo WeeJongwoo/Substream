@@ -6,6 +6,7 @@ public class StageNode
 {
     public string StageID;
     public int levelIndex;
+    public int stageIndex;
     public List<StageNode> nextNodes;
     private int stageDateType;
 
@@ -15,6 +16,7 @@ public class StageNode
     public void Initialize(int inLevelInedex, int IDNum)
     {
         levelIndex = inLevelInedex;
+        stageIndex = IDNum;
         isCleared = false;
         isActive = false;
         nextNodes = new List<StageNode>();

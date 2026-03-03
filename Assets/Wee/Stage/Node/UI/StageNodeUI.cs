@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,6 +9,8 @@ public class StageNodeUI : MonoBehaviour
     public TextMeshProUGUI stageIDText;
     public Button button;
     public StageNode linkedNode;
+    public bool isCleared;
+    public bool isActive;
 
     // Start is called before the first frame update
     void Start()
@@ -26,6 +28,7 @@ public class StageNodeUI : MonoBehaviour
     {
         linkedNode = node;
         stageIDText.text = linkedNode.StageID;
+        isCleared = linkedNode.isCleared;
         //button.onClick.AddListener(OnClick);
         Debug.Log("Init NodeUI" + linkedNode.isActive);
     }
@@ -39,13 +42,18 @@ public class StageNodeUI : MonoBehaviour
             Debug.Log("Enter Stage: " + linkedNode.StageID);
 
             //임시 테스트
-            StageManager.Instance.StageClear(linkedNode);
+            //StageManager.Instance.StageClear(linkedNode);
         }
     }
 
     public void UpdateState()
     {
-        button.interactable = linkedNode.isActive;
+        isActive = linkedNode.isActive;
+        button.interactable = isActive;
+        if (isCleared)
+        {
+
+        }
         Debug.Log("UI Stage Active: " + linkedNode.StageID + " " + linkedNode.isActive);
     }
 }

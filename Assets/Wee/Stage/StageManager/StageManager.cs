@@ -21,9 +21,7 @@ public class StageManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // 씬 이동에도 유지하고 싶다면
     }
 
-    public List<List<StageNode>> stages;
-    public int currentLevel;
-    public StageNode currentStage;
+    public StageData stageData;
     public int maxLevel;
 
     public GameObject stageNodeUIPrefab;
@@ -32,8 +30,49 @@ public class StageManager : MonoBehaviour
 
     public void Initialize()
     {
-        currentLevel = 0;
-        stages = new List<List<StageNode>>();
+        stageData = GameManager.Instance.stageData;
+
+        if (!stageData.isInitialized)
+        {
+            InitializeStages();
+        }
+
+        LoadStagesFromData();
+    }
+
+    void UIActive(StageNode node)
+    {
+        nodeUIMap[node].UpdateState();
+    }
+
+    //public void StageClear(StageNode node)
+    //{
+    //    node.ClearStage();
+    //    UIActive(node);
+
+    //    foreach (var sameLevelNode in stages[node.levelIndex])
+    //    {
+    //        if (!sameLevelNode.isCleared)
+    //        {
+    //            sameLevelNode.SetActive(false);
+    //            UIActive(sameLevelNode);
+    //        }
+    //    }
+
+    //    foreach (var nextNode in node.nextNodes)
+    //    {
+    //        if (nextNode != null && !nextNode.isCleared)
+    //        {
+    //            UIActive(nextNode);
+    //        }
+    //    }
+    //}
+
+    void InitializeStages()
+    {
+        int currentLevel = 0;
+
+        List<List<StageNode>> stages = new List<List<StageNode>>();
 
         for (int i = 0; i < maxLevel - 1; i++)
         {
@@ -64,14 +103,14 @@ public class StageManager : MonoBehaviour
             var nextNodes = stages[i + 1];
             var currentNodes = stages[i];
 
-            if(nextNodes.Count == 1)
+            if (nextNodes.Count == 1)
             {
                 foreach (var node in currentNodes)
                 {
                     node.nextNodes.Add(nextNodes[0]);
                 }
             }
-            if(currentNodes.Count == 1)
+            if (currentNodes.Count == 1)
             {
                 foreach (var node in nextNodes)
                 {
@@ -79,7 +118,7 @@ public class StageManager : MonoBehaviour
                 }
             }
 
-            if(currentNodes.Count == nextNodes.Count)
+            if (currentNodes.Count == nextNodes.Count)
             {
                 for (int n = 0; n < currentNodes.Count; n++)
                 {
@@ -92,7 +131,7 @@ public class StageManager : MonoBehaviour
                 currentNodes[extraCurrentIndex].nextNodes.Add(nextNodes[extraNextIndex]);
             }
 
-            if(currentNodes.Count == 3 && nextNodes.Count == 2)
+            if (currentNodes.Count == 3 && nextNodes.Count == 2)
             {
                 currentNodes[0].nextNodes.Add(nextNodes[0]);
 
@@ -102,7 +141,7 @@ public class StageManager : MonoBehaviour
                 currentNodes[2].nextNodes.Add(nextNodes[1]);
             }
 
-            if(currentNodes.Count == 2 && nextNodes.Count == 3)
+            if (currentNodes.Count == 2 && nextNodes.Count == 3)
             {
                 currentNodes[0].nextNodes.Add(nextNodes[0]);
                 currentNodes[1].nextNodes.Add(nextNodes[2]);
@@ -147,11 +186,25 @@ public class StageManager : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < stages[0].Count; i++)
+        {
+            stages[0][i].SetActive(true);
+        }
+
+        stageData.currentLevel = currentLevel;
+        stageData.stages = stages;
+        stageData.maxLevel = maxLevel;
+        stageData.currentStage = null;
+        stageData.isInitialized = true;
+    }
+
+    void LoadStagesFromData()
+    {
         // ----------------------------------UI 생성-------------------------------------
         float xSpacing = 250f; // 레벨 간 가로 간격
         float ySpacing = 150f; // 노드 간 세로 간격
 
-        int totalLevels = stages.Count;
+        int totalLevels = stageData.stages.Count;
 
         // 전체 너비 기준으로 X축 중앙 정렬
         float totalWidth = (totalLevels - 1) * xSpacing;
@@ -159,7 +212,7 @@ public class StageManager : MonoBehaviour
 
         for (int level = 0; level < totalLevels; level++)
         {
-            var nodeList = stages[level];
+            var nodeList = stageData.stages[level];
             int nodeCount = nodeList.Count;
 
             // 레벨 내 노드들을 세로로 정렬 → 중앙 기준
@@ -181,41 +234,6 @@ public class StageManager : MonoBehaviour
                 ui.Initialize(node);
                 nodeUIMap[node] = ui;
                 nodeUIMap[node].UpdateState();
-            }
-        }
-
-        for (int i = 0; i < stages[0].Count; i++)
-        {
-            stages[0][i].SetActive(true);
-            nodeUIMap[stages[0][i]].UpdateState();
-            //UIActive(stages[0][i]);
-        }
-    }
-
-    void UIActive(StageNode node)
-    {
-        nodeUIMap[node].UpdateState();
-    }
-
-    public void StageClear(StageNode node)
-    {
-        node.ClearStage();
-        UIActive(node);
-
-        foreach (var sameLevelNode in stages[node.levelIndex])
-        {
-            if (!sameLevelNode.isCleared)
-            {
-                sameLevelNode.SetActive(false);
-                UIActive(sameLevelNode);
-            }
-        }
-
-        foreach (var nextNode in node.nextNodes)
-        {
-            if (nextNode != null && !nextNode.isCleared)
-            {
-                UIActive(nextNode);
             }
         }
     }
