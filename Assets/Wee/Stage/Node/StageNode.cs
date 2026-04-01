@@ -12,7 +12,7 @@ public enum StageType
 
 public class StageNode
 {
-    public string StageID;
+    public string stageID;
     public int levelIndex;
     public int stageIndex;
 
@@ -33,7 +33,7 @@ public class StageNode
         isCleared = false;
         isActive = false;
         nextNodeIDs = new List<string>();
-        StageID = inLevelInedex + "_" + IDNum;
+        stageID = inLevelInedex + "_" + IDNum;
 
         // 랜덤 오프셋 생성
         offsetX = Random.Range(-40f, 40f);
@@ -57,6 +57,6 @@ public class StageNode
     public void SetActive(bool state)
     {
         isActive = state;
-        Debug.Log("Node Set Active: " + StageID + " " + isActive);
+        Debug.Log("Node Set Active: " + stageID + " " + isActive);
     }
 }

@@ -155,7 +155,7 @@ public class StageManager : MonoBehaviour
             string info = "Level " + i + ": ";
             foreach (var node in level.nodes)
             {
-                info += "[" + node.StageID + " " + node.stageType + "] ";
+                info += "[" + node.stageID + " " + node.stageType + "] ";
             }
             Debug.Log(info);
         }
@@ -219,9 +219,9 @@ public class StageManager : MonoBehaviour
     /// </summary>
     void AddConnection(StageNode from, StageNode to)
     {
-        if (!from.nextNodeIDs.Contains(to.StageID))
+        if (!from.nextNodeIDs.Contains(to.stageID))
         {
-            from.nextNodeIDs.Add(to.StageID);
+            from.nextNodeIDs.Add(to.stageID);
         }
     }
 
@@ -280,8 +280,8 @@ public class StageManager : MonoBehaviour
                 StageNodeUI ui = uiObj.GetComponent<StageNodeUI>();
                 ui.Initialize(node);
 
-                nodeUIMap[node.StageID] = ui;
-                nodePositionMap[node.StageID] = new Vector2(x, y);
+                nodeUIMap[node.stageID] = ui;
+                nodePositionMap[node.stageID] = new Vector2(x, y);
             }
         }
 
@@ -304,8 +304,8 @@ public class StageManager : MonoBehaviour
         {
             foreach (var node in level.nodes)
             {
-                if (!nodePositionMap.ContainsKey(node.StageID)) continue;
-                Vector2 fromPos = nodePositionMap[node.StageID];
+                if (!nodePositionMap.ContainsKey(node.stageID)) continue;
+                Vector2 fromPos = nodePositionMap[node.stageID];
 
                 foreach (string nextID in node.nextNodeIDs)
                 {
@@ -383,12 +383,14 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    public void EnterStage(StageNode node)
+    public void EnterStage(StageEventData data)
     {
-        Debug.Log("Enter Stage: " + node.StageID + " Type: " + node.stageType);
+        Debug.Log("Enter Stage: " + data.stageID + " Type: " + data.stageType);
+
+        StageEvents.RaiseStageEnter(data);
 
         // GameManager를 통해 클리어 처리 (임시 - 추후 실제 스테이지 씬 로드로 교체)
-        GameManager.Instance.OnStageClear(node.StageID);
+        GameManager.Instance.OnStageClear(data.stageID);
         RefreshAllUI();
         HideStageInfo();
     }

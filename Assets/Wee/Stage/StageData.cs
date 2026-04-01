@@ -26,7 +26,7 @@ public class StageData
         {
             foreach (var node in level.nodes)
             {
-                if (node.StageID == id)
+                if (node.stageID == id)
                     return node;
             }
         }

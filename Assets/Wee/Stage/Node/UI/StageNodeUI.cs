@@ -15,7 +15,7 @@ public class StageNodeUI : MonoBehaviour
     public void Initialize(StageNode node)
     {
         linkedNode = node;
-        stageIDText.text = linkedNode.StageID + "\n" + GetStageTypeLabel(linkedNode.stageType);
+        stageIDText.text = linkedNode.stageID + "\n" + GetStageTypeLabel(linkedNode.stageType);
 
         if (buttonImage == null)
             buttonImage = button.GetComponent<Image>();
@@ -29,7 +29,7 @@ public class StageNodeUI : MonoBehaviour
     {
         if (!linkedNode.isActive || linkedNode.isCleared) return;
 
-        Debug.Log("Enter Stage: " + linkedNode.StageID);
+        Debug.Log("Enter Stage: " + linkedNode.stageID);
 
         // 팝업 표시
         StageManager stageManager = FindObjectOfType<StageManager>();

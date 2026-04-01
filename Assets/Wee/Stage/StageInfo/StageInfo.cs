@@ -42,7 +42,14 @@ public class StageInfo : MonoBehaviour
         StageManager stageManager = FindObjectOfType<StageManager>();
         if (stageManager != null)
         {
-            stageManager.EnterStage(currentNode);
+            StageEventData stageData = new StageEventData
+            {
+                stageID = currentNode.stageID, // 예시로 현재 레벨을 최대 레벨로 설정
+                stageType = currentNode.stageType,
+                level = currentNode.levelIndex
+            };
+
+            stageManager.EnterStage(stageData);
         }
     }
 
