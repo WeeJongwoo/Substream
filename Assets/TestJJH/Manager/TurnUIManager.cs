@@ -3,119 +3,120 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text;
-using Unity.Mathematics;
+using UnityEngine.TextCore.Text;
 
-public class TurnUIManager : BaseManager, IsynchronizeUI
+public class TurnUIManager : BaseUI<TurnManager>
 {
-    public struct UnitPortraitPair
-    {
-        public Image s_portrait;
-        public Unit s_unit;
-    }
+    [SerializeField]
+    private GameObject m_portraitPrefab;
+    [SerializeField]
+    private List<PortraitSlot> m_portraits;
+    [SerializeField]
+    private Transform m_portraitsParent;
 
     [SerializeField]
-    private List<Image> OrderByTurnSpeedImage;
+    private PortraitSlot m_currentTurnUnitPortrait;
+
+
 
     [SerializeField]
     private Button m_turnEndButton;
     [SerializeField]
     private Text m_turnText;
+    [SerializeField]
+    private Text m_aetherText1;
+    [SerializeField]
+    private Text m_aetherText2;
+    [SerializeField]
+    private Text m_aetherText3;
     private StringBuilder m_stringBuilder = new StringBuilder(32);
 
-    private List<UnitPortraitPair> m_unitPortraitPair;
 
-    // Start is called before the first frame update
-    public override void Initialize(MasterManager masterManager, TurnManager turnManager) 
+    public override void Initialize() 
     {
-        m_unitPortraitPair = new List<UnitPortraitPair>();
-        m_masterManager = masterManager;
-        SetTurnEtherInfo(turnManager);
+        m_portraits = new List<PortraitSlot>();
+
         m_turnEndButton.onClick.AddListener(() => {
             m_masterManager.SetTurn();
-        });  
+        });
     }
 
-    public override void DataInitialize(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager)
+    public override void DataInitialize()
     {
-        m_unitPortraitPair.Clear();
-        int i = 0;
-        foreach (var character in characterManager.Character)
+        m_portraits.Clear();
+
+        foreach (var unit in m_model.Units)
         {
-            OrderByTurnSpeedImage[i].transform.GetChild(0).GetComponent<Image>().sprite = ResourcesManager.Character_Portrait(character.ID);
-            UnitPortraitPair pair = new UnitPortraitPair();
-            pair.s_portrait = OrderByTurnSpeedImage[i];
-            pair.s_unit = character;
-            m_unitPortraitPair.Add(pair);
-            i++;
+            PortraitSlot NPS = Instantiate(m_portraitPrefab).GetComponent<PortraitSlot>();
+            NPS.transform.parent = m_portraitsParent;
+            NPS.transform.localScale = Vector3.one;
+            NPS.transform.localPosition = Vector3.zero;
+            m_portraits.Add(NPS);
         }
-        foreach (var monster in monsterManager.Monster)
-        {
-            UnitPortraitPair pair = new UnitPortraitPair();
-            pair.s_portrait = OrderByTurnSpeedImage[i];
-            pair.s_unit = monster;
-            m_unitPortraitPair.Add(pair);
-            i++;
-        }
-        SetPortrait(turnManager);
+
+        SetTurnEtherInfo();
+        SetPortrait();
     }
 
-    public void Synchronization(BaseManager baseManager)
+    public override void Synchronization()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) { }
 
-        if (baseManager is TurnManager turnManager)
-        {
-            SetTurnEtherInfo(turnManager);
-            SetPortrait(turnManager);
-        }
     }
 
-    public override void SetTurn(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager, CardManager cardManager)
-    {
-        SetTurnEtherInfo(turnManager);
-        SetPortrait(turnManager);
-    }
-
-    public void SetTurnEtherInfo(TurnManager turnManager)
+    public void SetTurnEtherInfo()
     {
         m_stringBuilder.Clear();
         m_stringBuilder
             .Append("Turn")
-            .Append(turnManager.TurnCount)
-            .Append("\n")
-            .Append(turnManager.EtherCount)
-            .Append(" / 15");
-
+            .Append(m_model.TurnCount);
         m_turnText.text = m_stringBuilder.ToString();
+
+        m_stringBuilder.Clear();
+        m_stringBuilder
+            .Append("\n")
+            .Append(m_model.CurrentAetherCount);
+        m_aetherText2.text = m_stringBuilder.ToString();
+        
+        m_stringBuilder.Clear();
+        m_stringBuilder    
+            .Append("\n")
+            .Append(m_model.CurrentTurnMaxEtherCount);
+        m_aetherText3.text = m_stringBuilder.ToString();
     }
 
 
-    public void SetPortrait(TurnManager turnManager)
+    public void SetPortrait()
     {
-        for (int i = turnManager.Units.Count + 1; i < OrderByTurnSpeedImage.Count; i++)
+        for (int i = m_model.Units.Count ; i < m_portraits.Count; i++)
         {
-            OrderByTurnSpeedImage[i].gameObject.SetActive(false);
+            m_portraits[i].gameObject.SetActive(false);
         }
+                
+        m_currentTurnUnitPortrait.Portrait.sprite = ResourcesManager.Unit_Portrait(m_model.CurrentTurnUnit.IngameUnitID());
+
         int j = 0;
-        foreach (var unitPortraitPair in m_unitPortraitPair)
+        foreach (var unit in m_model.Units)
         {
-            if (turnManager.CurrentTurnUnit.Equals(unitPortraitPair.s_unit))
-            {
-                unitPortraitPair.s_portrait.transform.SetAsFirstSibling();
-                j++;
-                break;
-            }
+            m_portraits[j].Portrait.sprite = ResourcesManager.Unit_Portrait(unit.IngameUnitID());
+            if (unit.IsCharacter) m_portraits[j].Arrow.color = Color.blue;
+            else m_portraits[j].Arrow.color = Color.red;
+            j++;
         }
-        foreach (var unitdata in turnManager.Units)
-        {
-            foreach (var unitPortraitPair in m_unitPortraitPair)
-            {
-                if (unitdata.Equals(unitPortraitPair.s_unit))
-                {
-                    unitPortraitPair.s_portrait.transform.SetSiblingIndex(j);
-                    j++;
-                }
-            }
-        }
+    }
+
+    public override void SetTurn()
+    {
+        SetTurnEtherInfo();
+        SetPortrait();
+    }
+
+    public override void UseCard(Card card)
+    {
+        SetTurnEtherInfo();
+    }
+
+    public override void UnitDying(Unit unit)
+    {
+        SetPortrait();
     }
 }

@@ -1,164 +1,60 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public interface ISkillScheduler
+public class SkillScheduler
 {
-    public Unit Caster();
-    public bool SkillQueueIsEmpty();
-    public void RegisteSkill(Unit unit, CardSkillTableData cardSkill, CardTableData Card);
-    public void Initialize(MasterManager masterManager, TurnManager turnManager);
-    public void Execute();
-    public void Enter();
-    public void Exit();
-}
-
-public class CardSkillScheduler : ISkillScheduler
-{
-    MasterManager m_masterManager;
-
-    Queue<CardSkill> m_skillQueue;
-    CardSkill NULLSKILL;
-    CardSkill m_currentSkill;
-
-    public Unit Caster()
+    private LinkedList<List<ActionContext>> m_skillList;
+    public void RegistSkill(List<ActionContext> skills)
     {
-        return m_currentSkill.CasterUnit;
+        m_skillList.AddLast(skills);
+    }
+
+    public void RegistSkill(ActionContext skill)
+    {
+        List<ActionContext> SkillList = new List<ActionContext>
+        {
+            skill
+        };
+        m_skillList.AddLast(SkillList);
+    }
+
+    public List<ActionContext> GetSkill()
+    {
+        List<ActionContext> skills = m_skillList.First.Value;
+        m_skillList.RemoveFirst();
+        return skills;
     }
 
     public bool SkillQueueIsEmpty()
     {
-        if (m_skillQueue.Count == 0)
-            return true;
+        if (m_skillList.Count == 0) return true;
         return false;
     }
 
-    public CardSkillScheduler()
+    public SkillScheduler()
     {
-        m_skillQueue = new Queue<CardSkill>();
-        NULLSKILL = new CardSkill(null, null, null);
-
-        m_currentSkill = NULLSKILL;
+        m_skillList = new LinkedList<List<ActionContext>>();
     }
 
-    public void Initialize(MasterManager masterManager, TurnManager turnManager)
+    public void UnitDying(Unit unit)
     {
-        m_masterManager = masterManager;
-    }
+        var node = m_skillList.First;
 
-    public void RegisteSkill(Unit unit, CardSkillTableData cardSkill, CardTableData Card)
-    {
-        CardSkill temt = new CardSkill(unit, cardSkill, Card);
-        m_skillQueue.Enqueue(temt);
-
-        if (cardSkill.NextSkillID != 0)
+        while (node != null)
         {
-            CardSkill NextSkill = new CardSkill(unit, DontDestroyOnLoadManager.Instance.CardSkillTable(cardSkill.NextSkillID), Card);
-            m_skillQueue.Enqueue(NextSkill);
-        }
-    }
+            var next = node.Next;
 
-    public void Enter()
-    {
-        if (m_skillQueue.Count == 0)
-        {
-            return;
-        }
-        m_currentSkill = m_skillQueue.Dequeue();
-        m_currentSkill.Enter();
-    }
+            if (node.Value.First().CasterUnit.Equals(unit))
+            {
+                m_skillList.Remove(node);
+            }
 
-    public void Execute()
-    {
-        Debug.Log(m_currentSkill.SkillData.ID+","+ m_currentSkill.CasterCard.ID + ":" + m_currentSkill.CasterCard.CardText );
-        m_currentSkill.Execute();
-    }
-
-    public void Exit()
-    {
-        if (m_currentSkill.SkillData.NextSkillID != 0)
-        {
-            m_currentSkill = m_skillQueue.Dequeue();
-        }
-        else
-        {
-            m_currentSkill.End();
-            m_currentSkill = NULLSKILL;
-        }
-    }
-}
-
-public class UnitSkillScheduler : ISkillScheduler
-{
-    MasterManager m_masterManager;
-
-    Queue<CardSkill> m_skillQueue;
-    CardSkill NULLSKILL;
-    CardSkill m_currentSkill;
-
-    public Unit Caster()
-    {
-        return m_currentSkill.CasterUnit;
-    }
-
-    public bool SkillQueueIsEmpty()
-    {
-        if (m_skillQueue.Count == 0)
-            return true;
-        return false;
-    }
-
-    public UnitSkillScheduler()
-    {
-        m_skillQueue = new Queue<CardSkill>();
-        NULLSKILL = new CardSkill(null, null, null);
-
-        m_currentSkill = NULLSKILL;
-    }
-
-    public void Initialize(MasterManager masterManager, TurnManager turnManager)
-    {
-        m_masterManager = masterManager;
-    }
-
-    public void RegisteSkill(Unit unit, CardSkillTableData cardSkill, CardTableData Card)
-    {
-        CardSkill temt = new CardSkill(unit, cardSkill, Card);
-        m_skillQueue.Enqueue(temt);
-
-        if (cardSkill.NextSkillID != 0)
-        {
-            CardSkill NextSkill = new CardSkill(unit, DontDestroyOnLoadManager.Instance.CardSkillTable(cardSkill.NextSkillID), Card);
-            m_skillQueue.Enqueue(NextSkill);
-        }
-    }
-
-    public void Enter()
-    {
-        if (m_skillQueue.Count == 0)
-        {
-            return;
-        }
-        m_currentSkill = m_skillQueue.Dequeue();
-        m_currentSkill.Enter();
-    }
-
-    public void Execute()
-    {
-        Debug.Log(m_currentSkill.CasterCard.ID + ":" + m_currentSkill.CasterCard.CardText);
-        m_currentSkill.Execute();
-    }
-
-    public void Exit()
-    {
-        if (m_currentSkill.SkillData.NextSkillID != 0)
-        {
-            m_currentSkill = m_skillQueue.Dequeue();
-        }
-        else
-        {
-            m_currentSkill.End();
-            m_currentSkill = NULLSKILL;
+            node = next;
         }
     }
 }
