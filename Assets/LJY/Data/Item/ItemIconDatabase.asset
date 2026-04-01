@@ -1,0 +1,195 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcf601d0940d4c54da3a52e8ed9d46f3, type: 3}
+  m_Name: ItemIconDatabase
+  m_EditorClassIdentifier: 
+  _iconList:
+  - Name: "\uB0A1\uC740 \uD68C\uC911\uC2DC\uACC4"
+    ID: 1001
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uBD80\uC11C\uC9C4 \uBF08 \uBD80\uC801"
+    ID: 1002
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uD54F\uBE5B \uD5DD\uAC8A"
+    ID: 1003
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC740\uBE5B \uB291\uB300\uC758 \uC1A1\uACF3\uB2C8"
+    ID: 1004
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC774\uB2E8\uC790\uC758 \uC131\uC778"
+    ID: 1005
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uADF8\uC744\uB9B0 \uB9C8\uB140\uC758 \uC7AC"
+    ID: 1006
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC2EC\uC5F0\uC758 \uB208\uB3D9\uC790"
+    ID: 1007
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC6A9\uB9F9\uD55C \uAE30\uC0AC\uC758 \uC2EC\uC7A5"
+    ID: 1008
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC78A\uD600\uC9C4 \uC655\uC758 \uC655\uAD00"
+    ID: 1009
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uD0DC\uCD08\uC758 \uBD88\uC528"
+    ID: 1010
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uB179\uC2A8 \uAD6C\uB9AC \uC5F4\uC1E0"
+    ID: 1011
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uAE68\uC9C4 \uAC70\uC6B8 \uC870\uAC01"
+    ID: 1012
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uB9D0\uB77C\uBE44\uD2C0\uC5B4\uC9C4 \uC57D\uCD08"
+    ID: 1013
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uBE5B\uBC14\uB79C \uC740\uD654"
+    ID: 1014
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uBF1B\uAC00\uB8E8 \uBCD1"
+    ID: 1015
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uCC98\uD615\uC778\uC758 \uC7A5\uAC11"
+    ID: 1016
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC800\uC8FC\uBC1B\uC740 \uD39C\uB358\uD2B8"
+    ID: 1017
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uBB34\uBA85 \uAE30\uC0AC\uC758 \uBC18\uC9C0"
+    ID: 1018
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uAE4C\uB9C8\uADC0 \uAE43\uD138 \uB9DD\uD1A0"
+    ID: 1019
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uB3C5\uC774 \uBC1C\uB9B0 \uBE44\uC218"
+    ID: 1020
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC131\uAE30\uC0AC\uC758 \uBD80\uB7EC\uC9C4 \uAC80"
+    ID: 1021
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uD658\uC601\uC758 \uB098\uBE44"
+    ID: 1022
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uACE0\uC704 \uC0AC\uC81C\uC758 \uAE30\uB3C4\uCC3D"
+    ID: 1023
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uBD89\uC740 \uB2EC\uC758 \uC870\uAC01"
+    ID: 1024
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC774\uD615\uC758 \uB450\uAC1C\uACE8"
+    ID: 1025
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC5BC\uC5B4\uBD99\uC740 \uC601\uD63C\uC11D"
+    ID: 1026
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC2EC\uC5F0\uC744 \uAC77\uB294 \uC790\uC758 \uBC18\uC9C0"
+    ID: 1027
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uACE0\uB8E1\uC758 \uC5ED\uB9B0"
+    ID: 1028
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC5EC\uC2E0\uC758 \uB208\uBB3C"
+    ID: 1029
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uBA78\uB9DD\uD55C \uC655\uC758 \uC625\uC88C"
+    ID: 1030
+    Icon: {fileID: 21300000, guid: 95b11a3da0d940a499685dd23f5138d9, type: 3}
+  - Name: "\uC5F0\uC18D \uBCA0\uAE30"
+    ID: 2001
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uCC0C\uB974\uAE30"
+    ID: 2002
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uAD6C\uB974\uAE30"
+    ID: 2003
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uBC29\uD328 \uBC00\uCE58\uAE30"
+    ID: 2004
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uD654\uC5FC\uAD6C"
+    ID: 2005
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC751\uAE09 \uCC98\uCE58"
+    ID: 2006
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uADF8\uB9BC\uC790 \uAC78\uC74C"
+    ID: 2007
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uB9F9\uB3C5 \uBD80\uC5EC"
+    ID: 2008
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC6B4\uC11D \uB099\uD558"
+    ID: 2009
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC2DC\uAC04 \uC5ED\uD589"
+    ID: 2010
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC62C\uB824 \uBCA0\uAE30"
+    ID: 2011
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uB0B4\uB824 \uCC0D\uAE30"
+    ID: 2012
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uBC29\uC5B4 \uD0DC\uC138"
+    ID: 2013
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uBC31\uC2A4\uD15D"
+    ID: 2014
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uD22C\uCC99 \uB2E8\uAC80"
+    ID: 2015
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uD68C\uC804 \uBCA0\uAE30"
+    ID: 2016
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uBCBC\uB77D \uCC3D"
+    ID: 2017
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC5BC\uC74C \uD654\uC0B4"
+    ID: 2018
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uD53C\uC758 \uC77C\uACA9"
+    ID: 2019
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC804\uD22C \uD568\uC131"
+    ID: 2020
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uADF8\uB9BC\uC790 \uD658\uC601"
+    ID: 2021
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC131\uC2A4\uB7EC\uC6B4 \uBE5B"
+    ID: 2022
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uB300\uC9C0 \uD30C\uC1C4"
+    ID: 2023
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uD761\uD608\uC758 \uCE7C\uB0A0"
+    ID: 2024
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uB9C8\uB825 \uD3ED\uBC1C"
+    ID: 2025
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uD3ED\uD48D\uC758 \uB208"
+    ID: 2026
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC885\uB9D0\uC758 \uAC80"
+    ID: 2027
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC808\uB300 \uBC29\uBCBD"
+    ID: 2028
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC2DC\uACF5 \uC808\uB2E8"
+    ID: 2029
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}
+  - Name: "\uC2E0\uC758 \uC2EC\uD310"
+    ID: 2030
+    Icon: {fileID: 21300000, guid: 607ba1dbc55adba41a26b20e1bfbc965, type: 3}

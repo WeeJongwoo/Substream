@@ -1,0 +1,14 @@
+.popup-fade-base {
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in;
+}
+
+.popup-visible {
+    opacity: 1;
+}
+
+.popup-no-transition {
+    transition-duration: 0s;
+}

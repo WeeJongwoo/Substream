@@ -1,0 +1,55 @@
+.main-button {
+    height: auto;
+    width: 45%;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 10px;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    flex-grow: 1;
+    -unity-font-style: bold;
+    font-size: 30%;
+    background-color: rgba(0, 0, 0, 0.71);
+    color: rgb(218, 218, 218);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+}
+
+.main-button:hover {
+    scale: 1.065 1.065;
+    transition-duration: 0.25s;
+    background-color: rgba(172, 172, 172, 0.74);
+    color: rgb(0, 0, 0);
+    font-size: 30%;
+    -unity-font-style: bold;
+}
+
+.main-button:active {
+    transition-duration: 0.25s;
+    background-color: rgba(103, 239, 255, 0.74);
+    color: rgb(45, 45, 45);
+    -unity-font-style: bold;
+    font-size: 30%;
+    transition-timing-function: ease-out-bounce;
+}
+
+#Main_Buttons {
+    rotate: 0deg 15deg 0deg; 
+    transform-origin: center;
+    transition-property: rotate;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-out;
+}

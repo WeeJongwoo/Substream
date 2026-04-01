@@ -1,0 +1,6 @@
+EpisodeID,SpeakerNameKey,TextKey,PortraitKeys,FocusSlotIndex,AudioKey
+EP_01,NAME_PLAYER,EP01_TXT_001,"Player_Idle, NPC_Idle, Enemy_Hide",0,
+EP_01,NAME_NPC,EP01_TXT_002,"Player_Idle, NPC_Surprise, Enemy_Hide",1,
+EP_01,NAME_PLAYER,EP01_TXT_003,"Player_Alert, NPC_Surprise, Enemy_Hide","0, 1",
+EP_01,NAME_ENEMY,EP01_TXT_004,"Player_Alert, NPC_Surprise, Enemy_Angry","0, 1, 2",
+EP_01,NAME_NPC,EP01_TXT_005,"Player_Ready, NPC_Talk, Enemy_Angry",1,

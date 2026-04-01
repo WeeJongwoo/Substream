@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="LogEntryRoot" style="flex-direction: column; padding-bottom: 15px; margin-bottom: 15px; border-bottom-width: 1px; border-bottom-color: rgba(255, 255, 255, 0.1);">
+        
+        <ui:Label name="Log_Name" text="캐릭터 이름" style="color: rgb(255, 215, 0); font-size: 16px; -unity-font-style: bold; margin-bottom: 5px;" />
+        
+        <ui:Label name="Log_Text" text="대사 내용이 여기에 기록됩니다. 긴 대사는 자동으로 줄바꿈이 일어납니다." style="color: rgb(220, 220, 220); font-size: 15px; white-space: normal;" />
+        
+    </ui:VisualElement>
+</ui:UXML>
