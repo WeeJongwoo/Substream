@@ -36,3 +36,14 @@ public class TurnEndFlowInput : FlowInput
 
     }
 }
+
+public class SystemDrawCardFlowInput : FlowInput
+{
+    public Unit CasterUnit;
+    public int Amount;
+    public SystemDrawCardFlowInput(Unit unit, int amount)
+    {
+        CasterUnit = unit;
+        Amount = amount;    
+    }
+}

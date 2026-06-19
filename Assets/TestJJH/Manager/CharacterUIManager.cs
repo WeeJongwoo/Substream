@@ -51,16 +51,18 @@ public class CharacterUIManager : BaseUI<CharacterManager>
         int c = 0;
         foreach (var character in m_model.Units)
         {
-            m_unitUISlot[c].HealthPointSlider.maxValue = character.HealthPoint.Max;
-            m_unitUISlot[c].HealthPointSlider.value = character.HealthPoint.Now;
+            InitHP(c);
             c++;
         }
     }
     public void InitHP(int pos)
     {
-        m_unitUISlot[pos].HealthPointSlider.maxValue = m_model.Units[pos].HealthPoint.Max;
+        m_unitUISlot[pos].HealthPointSlider.maxValue = m_model.Units[pos].HealthPoint.Now + m_model.Units[pos].ShieldPoint.Now;
         m_unitUISlot[pos].HealthPointSlider.value = m_model.Units[pos].HealthPoint.Now;
+        if (m_model.Units[pos].ShieldPoint.Now > 0) m_unitUISlot[pos].ShieldSliderBGI.gameObject.SetActive(true);
+        else m_unitUISlot[pos].ShieldSliderBGI.gameObject.SetActive(false);
     }
+
 
     public override void UseCard(Card card)
     {
@@ -72,59 +74,73 @@ public class CharacterUIManager : BaseUI<CharacterManager>
         InitHP();
     }
 
-    public void SetHPSliderBGI(bool isCharacter, int exceptionPosition)
+    public void SetNowTurnIndicator(bool isCharacter, int exceptionPosition)
     {
         foreach (var unitUI in m_unitUISlot)
         {
-            unitUI.HPSliderBGI.gameObject.SetActive(false);
+            unitUI.NowTurnIndicator.gameObject.SetActive(false);
         }
         if (!isCharacter)
         {
             return;
         }
-        m_unitUISlot[exceptionPosition].HPSliderBGI.gameObject.SetActive(true);
+        m_unitUISlot[exceptionPosition].NowTurnIndicator.gameObject.SetActive(true);
     }
 
     public override void UnitDying(Unit unit)
     {
+        Debug.Log("캐릭터 사망 이벤트 출력");
         if (unit.IsCharacter)
         {
             m_unitUISlot[unit.Position].gameObject.SetActive(false);
         }
     }
 
-    public void DamageEvent(bool sourceUnitIsCharacter, int sourceUnitpos,
-        bool targetUnitIsCharacter, int targetUnitPos,
-        int damage)
+
+
+
+    public void AttackEvent(int sourceUnitpos,
+     bool targetUnitIsCharacter, int targetUnitpos)
     {
-        if (!sourceUnitIsCharacter)
-        {
+        // m_unitUISlot[sourceUnitpos];
+    }
+    public void CastEvent(int sourceUnitpos)
+    {
+        // m_unitUISlot[sourceUnitpos];
+    }
 
+
+    public void ChangeStatusEffectEvent(int targetUnitPos)
+    {
+        // 상태 이상 애니메이션 출력
+    }
+
+    public void ChangeHPEvent(int targetUnitPos, bool isDamage, ESkillStatusType statusType, int amount)
+    {
+        InitHP(targetUnitPos);
+        var text = m_textPool.GetObject();
+        if (isDamage)
+        {
+            text.Initialize(amount.ToString(), ESkillType.E_DAMAGE, statusType, m_unitUIPosition[targetUnitPos].position, m_textPool);
         }
-
-        if (!targetUnitIsCharacter)
+        else
         {
-            InitHP(targetUnitPos);
-            var text = m_textPool.GetObject();
-            text.Initialize(damage.ToString(), ESkillType.E_DAMAGE, m_unitUIPosition[targetUnitPos].position, m_textPool);
+            text.Initialize(amount.ToString(), ESkillType.E_HEAL, ESkillStatusType.E_NONE, m_unitUIPosition[targetUnitPos].position, m_textPool);
         }
     }
 
-    public void HealEvent(bool sourceUnitIsCharacter, int sourceUnitpos,
-    bool targetUnitIsCharacter, int targetUnitPos,
-    int amount)
+    public void ShieldEvent(int targetUnitPos, int amount)
     {
-        if (!sourceUnitIsCharacter)
-        {
+        InitHP(targetUnitPos);
+        var text = m_textPool.GetObject();
+        text.Initialize(amount.ToString(), ESkillType.E_SHIELD, ESkillStatusType.E_NONE, m_unitUIPosition[targetUnitPos].position, m_textPool);
+    }
 
-        }
 
-        if (!targetUnitIsCharacter)
-        {
-            InitHP(targetUnitPos);
-            var text = m_textPool.GetObject();
-            text.Initialize(amount.ToString(), ESkillType.E_HEAL, m_unitUIPosition[targetUnitPos].position, m_textPool);
-        }
+
+    public void ChangeStack(int targetUnitPos, ESkillStatusType statusType, int duration, int stack, bool isNew)
+    {
+        m_unitUISlot[targetUnitPos].ChangeStatusEffect(ResourcesManager.Status_Effect_Image((int)statusType), statusType, duration, stack, isNew);
     }
 }
     

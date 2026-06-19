@@ -18,8 +18,6 @@ public class CardPanelSlot : MonoBehaviour
     private Transform m_gridTranform;
     [SerializeField]
     private Image m_BGI;
-    [SerializeField]
-    private Button m_closeButton;
 
     private ObjectPool<CardSlot> m_slotObjectPool;
     private Dictionary<int, CardSlot> m_slotDic;
@@ -42,11 +40,6 @@ public class CardPanelSlot : MonoBehaviour
         {
             return m_gridTranform;
         }
-    }
-
-    public Button CloseButton
-    { 
-        get { return m_closeButton; } 
     }
 
     public void TurnOn()
@@ -73,17 +66,6 @@ public class CardPanelSlot : MonoBehaviour
 
         m_gridLayoutGroup = m_gridTranform.gameObject.GetComponent<GridLayoutGroup>();
     }
-
-    public void TurnOnCloseButton()
-    {
-        m_closeButton.gameObject.SetActive(true);
-    }
-
-    public void TurnOffCloseButton()
-    {
-        m_closeButton.gameObject.SetActive(false);
-    }
-
     public CardSlot GetObject()
     {
         var obj = m_slotObjectPool.GetObject();

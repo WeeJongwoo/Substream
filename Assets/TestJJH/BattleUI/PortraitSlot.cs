@@ -9,16 +9,21 @@ public class PortraitSlot : MonoBehaviour
     private Image m_portrait;
     [SerializeField]
     private Image m_arrowImage;
+    [SerializeField]
+    private Text m_nameText;
+
+    public Text NameText
+    {
+        get { return m_nameText; }
+    }
 
     public Image Portrait
     {
         get { return m_portrait; }
-        set { m_portrait = value; }
     }
 
     public Image Arrow
     {
         get { return m_arrowImage; }
-        set { m_arrowImage = value; }
     }
 }

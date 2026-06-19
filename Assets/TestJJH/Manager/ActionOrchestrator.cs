@@ -5,9 +5,15 @@ using UnityEngine;
 
 public class ActionOrchestrator
 {
+    private DontDestroyOnLoadManager m_dbLoader;
+
     public ActionOrchestrator()
     {
+    }
 
+    public void DataInitialize(DontDestroyOnLoadManager dbloader)
+    {
+        m_dbLoader = dbloader;
     }
 
     public List<ActionContext> AnalyzeFlow(Flow flow)
@@ -19,10 +25,13 @@ public class ActionOrchestrator
                 CreateSkillContext(Input.CasterUnit, Input.CasterCard, contexts);
                 break;
             case UnitDyingFlowInput Input:
-                contexts.Add(new ActionContext());
+                contexts.Add(new UnitDyingActionContext());
                 break;
             case TurnEndFlowInput Input:
-                contexts.Add(new ActionContext());
+                contexts.Add(new TurnEndActionContext());
+                break;
+            case SystemDrawCardFlowInput Input:
+                CreateDrawCardContext(Input.Amount, contexts);
                 break;
         }
         return contexts;
@@ -30,16 +39,25 @@ public class ActionOrchestrator
 
     private void CreateSkillContext(Unit unit, Card card, List<ActionContext> contexts)
     {
+        foreach (var id in card.CardData.SkillID)
+        {
+            BattleContext context = new BattleContext();
+
+            SkillTableData SkillData = m_dbLoader.SkillTable(id);
+
+            context.SkillData = SkillData;
+
+            contexts.Add(context);
+        }
+    }
+
+    private void CreateDrawCardContext(int amount, List<ActionContext> contexts)
+    {
 #if UNITY_EDITOR
         Debug.Log("###########액션 해석 시작###########");
 #endif
-        contexts = new List<ActionContext>();
-
-        foreach (var id in card.CardData.SkillID)
-        {
-            ActionContext context = new ActionContext();
-            context.SkillData = DontDestroyOnLoadManager.Instance.SkillTable(id);
-            contexts.Add(context);
-        }
+        DrawCardActionContext context = new DrawCardActionContext();
+        context.Amount = amount;
+        contexts.Add(context);
     }
 }

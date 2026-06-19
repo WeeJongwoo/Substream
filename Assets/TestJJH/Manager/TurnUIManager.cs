@@ -17,6 +17,8 @@ public class TurnUIManager : BaseUI<TurnManager>
     [SerializeField]
     private PortraitSlot m_currentTurnUnitPortrait;
 
+    private CharacterUIManager m_characterUIManager;
+    private MonsterUIManager m_monsterUIManager;
 
 
     [SerializeField]
@@ -41,6 +43,13 @@ public class TurnUIManager : BaseUI<TurnManager>
         });
     }
 
+    public override void InitializeReference(MasterManager masterManager)
+    {
+        m_masterManager = masterManager;
+        m_characterUIManager = masterManager.CharacterUIManager;
+        m_monsterUIManager = masterManager.MonsterUIManager;
+    }
+
     public override void DataInitialize()
     {
         m_portraits.Clear();
@@ -56,11 +65,7 @@ public class TurnUIManager : BaseUI<TurnManager>
 
         SetTurnEtherInfo();
         SetPortrait();
-    }
-
-    public override void Synchronization()
-    {
-
+        SetNowTurnIndicator();
     }
 
     public void SetTurnEtherInfo()
@@ -79,6 +84,27 @@ public class TurnUIManager : BaseUI<TurnManager>
         
         m_stringBuilder.Clear();
         m_stringBuilder    
+            .Append("\n")
+            .Append(m_model.CurrentTurnMaxEtherCount);
+        m_aetherText3.text = m_stringBuilder.ToString();
+    }
+
+    public void SetTurnAetherInfo( )
+    {
+        m_stringBuilder.Clear();
+        m_stringBuilder
+            .Append("Turn")
+            .Append(m_model.TurnCount);
+        m_turnText.text = m_stringBuilder.ToString();
+
+        m_stringBuilder.Clear();
+        m_stringBuilder
+            .Append("\n")
+            .Append(m_model.CurrentAetherCount);
+        m_aetherText2.text = m_stringBuilder.ToString();
+
+        m_stringBuilder.Clear();
+        m_stringBuilder
             .Append("\n")
             .Append(m_model.CurrentTurnMaxEtherCount);
         m_aetherText3.text = m_stringBuilder.ToString();
@@ -108,12 +134,21 @@ public class TurnUIManager : BaseUI<TurnManager>
     {
         SetTurnEtherInfo();
         SetPortrait();
+        SetNowTurnIndicator();
+    }
+
+    public void SetNowTurnIndicator()
+    {
+        m_characterUIManager.SetNowTurnIndicator(m_model.CurrentTurnUnit.IsCharacter, m_model.CurrentTurnUnit.Position);
+        m_monsterUIManager.SetNowTurnIndicator(m_model.CurrentTurnUnit.IsCharacter, m_model.CurrentTurnUnit.Position);
     }
 
     public override void UseCard(Card card)
     {
-        SetTurnEtherInfo();
+        //SetTurnEtherInfo();
     }
+
+
 
     public override void UnitDying(Unit unit)
     {

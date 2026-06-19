@@ -25,7 +25,7 @@ public class MasterManager : MonoBehaviour
     [SerializeField]
     private MonsterManager m_monsterManager;
     [SerializeField]
-    private FlowScheduleManager m_skillScheduleManager;
+    private FlowScheduleManager m_flowScheduleManager;
 #endif
 
 #if true // UI
@@ -38,6 +38,8 @@ public class MasterManager : MonoBehaviour
     [SerializeField]
     private MonsterUIManager m_monsterUIManager;
 #endif
+    [SerializeField]
+    private ActionButton m_actionButton;
 
 #if true // DataBase
     [SerializeField]
@@ -49,12 +51,13 @@ public class MasterManager : MonoBehaviour
     public TurnManager TurnManager { get => m_turnManager;}
     public CardManager CardManager { get => m_cardManager; }
     public MonsterManager MonsterManager { get => m_monsterManager; }
-    public FlowScheduleManager SkillScheduleManager { get => m_skillScheduleManager; }
+    public FlowScheduleManager SkillScheduleManager { get => m_flowScheduleManager; }
 
     public CharacterUIManager CharacterUIManager { get => m_characterUIManager; }
     public TurnUIManager TurnUIManager { get => m_turnUIManager; }
     public CardUIManager CardUIManager { get => m_cardUIManager; }
     public MonsterUIManager MonsterUIManager { get => m_monsterUIManager; }
+    public ActionButton ActionButton { get => m_actionButton; }
 #endif
 
 #if true // Container
@@ -71,12 +74,16 @@ public class MasterManager : MonoBehaviour
         m_managers.AddLast(m_monsterManager);
         m_managers.AddLast(m_turnManager);
         m_managers.AddLast(m_cardManager);
-        m_managers.AddLast(m_skillScheduleManager);
+
+        m_managers.AddLast(m_flowScheduleManager);
+        m_managers.AddLast(m_actionButton);
+
 
         m_UIManagers.AddLast(m_characterUIManager);
         m_UIManagers.AddLast(m_monsterUIManager);
         m_UIManagers.AddLast(m_turnUIManager);
         m_UIManagers.AddLast(m_cardUIManager);
+
 
         m_characterUIManager.Bind(m_characterManager);
         m_monsterUIManager.Bind(m_monsterManager);
@@ -88,14 +95,17 @@ public class MasterManager : MonoBehaviour
         for (LinkedListNode<BaseSystem> node = m_managers.First; node != null; node = node.Next)
         {
             IUpdatableManager temtManager;
-            if (node.Value.TryGetComponent<IUpdatableManager>(out temtManager)) m_IUpdatableManagers.AddFirst(temtManager);
+            if (node.Value.TryGetComponent<IUpdatableManager>(out temtManager)) 
+                m_IUpdatableManagers.AddFirst(temtManager);
         }
 
         for (LinkedListNode<BaseUI> node = m_UIManagers.First; node != null; node = node.Next)
         {
             IUpdatableManager temtManager;
-            if (node.Value.TryGetComponent<IUpdatableManager>(out temtManager)) m_IUpdatableManagers.AddFirst(temtManager);
+            if (node.Value.TryGetComponent<IUpdatableManager>(out temtManager))
+                m_IUpdatableManagers.AddFirst(temtManager);
         }
+
         /***************************************Initialize***************************************/
 
         for (LinkedListNode<BaseSystem> node = m_managers.First; node != null; node = node.Next)
@@ -136,7 +146,7 @@ public class MasterManager : MonoBehaviour
         }
 
         /************************************Synchronization************************************/
-        
+
         Synchronization();
     }
 
@@ -156,14 +166,11 @@ public class MasterManager : MonoBehaviour
         }
     }
 
-    public void SetTurn()
-    {
-        m_skillScheduleManager.RegistSetTurnEventFlow();
-    }
+
+
 
     public void ApplySetTurn()
     {
-        Debug.Log("SETTURN");
         foreach (var manager in m_managers)
         {
             manager.SetTurn();
@@ -178,39 +185,49 @@ public class MasterManager : MonoBehaviour
         }
     }
 
-
+    public void SetTurn()
+    {
+        m_flowScheduleManager.RegistSetTurnEventFlow();
+    }
 
     public bool UseCard(Card card)
     {
-        if(!m_turnManager.SetEther(card.CardData.Cost))
+        if(!m_turnManager.UseAether(card.CardData.Cost))
         {
             return false;
         }
-        m_turnUIManager.UseCard(card);
-        card.Execute();
+        m_turnUIManager.SetTurnAetherInfo();
+
+        m_flowScheduleManager.RegistAbilityFlow(card.Unit, card);
 
         return true;
     }
 
-    public void UnitDying(TargetPair unit)
+    public void UnitDying(Unit unit)
     {
-        Debug.Log(unit.isCharacter + "" + unit.position);
-        m_skillScheduleManager.UnitDying(unit);
+        m_flowScheduleManager.RegistUnitDyingInFlow(unit);
+        unit.isDead = true;
     }
 
-    public void ApplyUnitDying(Unit unit)
+    public void ApplyUnitDying(TargetPair unit)
     {
-        foreach (var manager in m_managers)
+        Unit victim;
+        if (unit.isCharacter)
         {
-            manager.UnitDying(unit);
+            victim = m_characterManager.Unit(unit.position);
         }
-    }
+        else
+        {
+            victim = m_monsterManager.Unit(unit.position);
+        }
 
-    public void ApplyUIUnitDying(Unit unit)
-    {
         foreach (var uiManager in m_UIManagers)
         {
-            uiManager.UnitDying(unit);
+            uiManager.UnitDying(victim);
+        }
+        foreach (var manager in m_managers)
+        {
+            manager.UnitDying(victim);
         }
     }
 }

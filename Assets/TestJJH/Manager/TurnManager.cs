@@ -10,8 +10,7 @@ public class TurnManager : BaseSystem
 {
     private CharacterManager m_characterManager;
     private MonsterManager m_monsterManager;
-    private CharacterUIManager m_characterUIManager;
-    private MonsterUIManager m_monsterUIManager;
+
 
     private int m_turnCount;
     private int m_currentAetherCount;
@@ -58,9 +57,7 @@ public class TurnManager : BaseSystem
     {
         m_masterManager = masterManager;
         m_characterManager = masterManager.CharacterManager;
-        m_characterUIManager = masterManager.CharacterUIManager;
         m_monsterManager = masterManager.MonsterManager;
-        m_monsterUIManager = masterManager.MonsterUIManager;
     }
 
     /// 유닛의 속도 용어 정리
@@ -140,22 +137,20 @@ public class TurnManager : BaseSystem
 
     public override void UseCard(Card card)
     {
-        SetEther(card.CardData.Cost);
+        UseAether(card.CardData.Cost);
     }
 
-    public bool SetEther(int EtherCount)
+    public bool UseAether(int AetherCount)
     {
-        if (m_currentAetherCount < EtherCount)
+        if (m_currentAetherCount < AetherCount)
             return false;
-        m_currentAetherCount -= EtherCount;
-        //Debug.Log(TurnCount + " / Cost : " + EtherCount + "남은거 : " + m_etherCount);
+        m_currentAetherCount -= AetherCount;
         return true;
     }
 
     public override void Synchronization()
     {
-        m_characterUIManager.SetHPSliderBGI(m_currentTurnUnit.IsCharacter, m_currentTurnUnit.Position);
-        m_monsterUIManager.SetHPSliderBGI(m_currentTurnUnit.IsCharacter, m_currentTurnUnit.Position);
+
     }
 
     public override void UnitDying(Unit unit)

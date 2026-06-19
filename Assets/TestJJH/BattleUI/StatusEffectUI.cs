@@ -1,24 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class StatusEffectUI : MonoBehaviour
+public class StatusEffectUI : UIObject
 {
-    private ObjectPool m_statusEffectUIPool;
     [SerializeField]
-    private Transform m_poolTransform;
+    private Image m_statusEffectImage;
     [SerializeField]
-    private GameObject m_statusEffectPrefab;
+    private Text m_statusEffectDuration;
     [SerializeField]
-    private int m_maxStatusEffectUICount;
+    private Text m_statusEffectStackCount;
 
-    public Transform PoolTransform
+
+    public void InitIalize(Sprite image, int duration, int stack)
     {
-        get { return m_poolTransform; }
+        m_statusEffectImage.sprite = image;
+        
+        m_statusEffectDuration.text = duration.ToString();
+        if (duration <= 0) m_statusEffectDuration.text = " ";
+
+        m_statusEffectStackCount.text = stack.ToString();
+        if (stack <= 0) m_statusEffectStackCount.text = " ";
     }
 
-    public void Initialize()
+    public void ReInit(int duration, int stack)
     {
-        m_statusEffectUIPool = new ObjectPool(m_statusEffectPrefab, m_maxStatusEffectUICount, m_poolTransform);
+        m_statusEffectDuration.text = duration.ToString();
+        if (duration <= 0) m_statusEffectDuration.text = " ";
+
+        m_statusEffectStackCount.text = stack.ToString();
+        if (stack <= 0) m_statusEffectStackCount.text = " ";
     }
 }

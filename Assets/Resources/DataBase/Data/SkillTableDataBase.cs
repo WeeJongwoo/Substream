@@ -11,16 +11,18 @@ public class SkillTableData
     public int ID;
     public int CardID;
     public ESkillType SkillType;
+    public EPresentationType PresentationType;
     public ESkillSource SkillSource;
     public float EffectValue;
     public float UpgradeEffectValue;
     public int HitCount;
     public ESkillStatusType StatusType;
+    public int StatusDuration;
     public ESkillTrigger Trigger;
     public int TriggerConditionValue;
     public ESkillTargetType TargetType;
     public int TargetCount;
-    public ESkillSource TargetSource;
+    public EStatType TargetSource;
     public string Sound;
 }
 

@@ -8,27 +8,29 @@ using UnityEngine.UI;
 public class UnitSlot : MonoBehaviour
 {
     [SerializeField]
-    private StatusEffectUI m_statusEffectUI;
+    private StatusEffectPanel m_statusEffectUIPanel;
     [SerializeField]
     private GameObject m_unitSpine;
     [SerializeField]
-    private Transform m_HPSliderBGI;
+    private Transform m_nowTurnIndicator;
+    [SerializeField]
+    private Transform m_shieldSliderBGI;
     [SerializeField]
     private Slider m_healthPointSlider;
-
-    public Transform StatusEffectTransform
-    {
-        get { return m_statusEffectUI.PoolTransform; }
-    }
 
     public Slider HealthPointSlider
     {
         get { return m_healthPointSlider; }
     }
-    public Transform HPSliderBGI
+    public Transform NowTurnIndicator
     {
-        get { return m_HPSliderBGI; }
+        get { return m_nowTurnIndicator; }
     }
+    public Transform ShieldSliderBGI
+    {
+        get { return m_shieldSliderBGI; }
+    }
+
     public GameObject UnitSpine
     {
         get { return m_unitSpine; }
@@ -36,7 +38,8 @@ public class UnitSlot : MonoBehaviour
 
     public void Initialize()
     {
-        m_statusEffectUI.Initialize();
+        m_statusEffectUIPanel.Initialize();
+        TurnOn();
     }
 
     public void TurnOff()
@@ -51,13 +54,18 @@ public class UnitSlot : MonoBehaviour
     {
         yield return null;
         m_healthPointSlider.gameObject.SetActive(false);
-        m_statusEffectUI.gameObject.SetActive(false);
+        m_statusEffectUIPanel.gameObject.SetActive(false);
     }
 
     public void TurnOn()
     {
         m_unitSpine.gameObject.SetActive(true);
         m_healthPointSlider.gameObject.SetActive(true);
-        m_statusEffectUI.gameObject.SetActive(true);
+        m_statusEffectUIPanel.gameObject.SetActive(true);
+    }
+
+    public void ChangeStatusEffect(Sprite uiSprite, ESkillStatusType statusType, int duration, int stack, bool isNew)
+    {
+        m_statusEffectUIPanel.ChangeStatusEffect(uiSprite, statusType, duration, stack, isNew);
     }
 }

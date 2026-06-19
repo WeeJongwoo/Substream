@@ -75,8 +75,7 @@ public class CardManager : BaseSystem
                 Card newCard = new Card();
                 newCard.Initialize(
                     NowTurnUnitpair.s_unit,
-                    DataBase.CardTable(uc.Value.CardID),
-                    m_masterManager.SkillScheduleManager);
+                    DataBase.CardTable(uc.Value.CardID));
                 NowTurnUnitpair.s_card.Add(newCard);
             }
         }
@@ -99,8 +98,7 @@ public class CardManager : BaseSystem
                     Card newCard = new Card();
                     newCard.Initialize(
                         pair.s_unit,
-                        DataBase.CardTable(uc.Value.CardID),
-                        m_masterManager.SkillScheduleManager);
+                        DataBase.CardTable(uc.Value.CardID));
                     pair.s_card.Add(newCard);
                 }
             }
@@ -195,7 +193,7 @@ public class CardManager : BaseSystem
         m_activeCardNum = m_hand.s_card.Count;
     }
 
-    public void DrawCard(ActionContext context, int amount)
+    public void DrawCard(Flow flow, int amount)
     {
         amount = amount < m_deck.Count ? amount : m_deck.Count;
         Unit key = m_hand.s_unit;
@@ -209,8 +207,6 @@ public class CardManager : BaseSystem
             
             m_deck[key].RemoveAt(address);
         }
-
-        context.UIApplyHelper.DrawCard(amount);
     }
 
     public void DiscardCard(int position)

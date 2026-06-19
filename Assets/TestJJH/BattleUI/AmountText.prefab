@@ -96,5 +96,5 @@ MonoBehaviour:
   DefaultColor: {r: 0, g: 0, b: 0, a: 0}
   DamageColor: {r: 0.7830189, g: 0, b: 0, a: 0}
   HealColor: {r: 0.095847495, g: 0.8584906, b: 0, a: 0}
-  DrawColor: {r: 1, g: 0.78632927, b: 0, a: 0}
-  ShieldColor: {r: 0, g: 1, b: 0.91761637, a: 0}
+  DrawColor: {r: 1, g: 1, b: 1, a: 0}
+  ShieldColor: {r: 0.9688573, g: 1, b: 0.41037738, a: 0}

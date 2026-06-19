@@ -30,19 +30,36 @@ public enum ECardRarity
 public enum ESkillType
 {
     E_DEFAULT = 0,
+    
     E_DAMAGE,
     E_CONDITIONAL_DAMAGE,
+    
     E_HEAL,
-    E_INCREASE,
     E_SHIELD,
-    E_DEBUFF,
-    E_ETC,
-    E_DRAW,
 
+    E_VARIATION,
+    E_STATUSEFFECT,
+    
+    E_ETC,
+    
+    E_DRAW,
     //100번부터는 스킬이 아닌 시스템 액션
     E_TURNEND = 100,
     E_UNITDYING
 }
+
+[System.Serializable]
+public enum EPresentationType
+{
+    E_DEFAULT = 0,
+
+    E_MAGICCAST,
+    E_PHSICALATTACK,
+    E_INSTANT,
+    E_PASSIVETRIGGER,
+    E_PAUSE
+}
+
 
 [System.Serializable]
 public enum ESkillSource
@@ -54,6 +71,7 @@ public enum ESkillSource
     E_DECK,
     E_DEF,
     E_SPEED,
+    E_FIXED,
 
     E_HP
 }
@@ -65,6 +83,20 @@ public enum ESkillStatusType
     E_BLEED,
     E_SHOCK,
     E_OVERLOAD,
+
+    M_ATK,
+    M_DEF,
+    M_SPEED,
+    M_CRITICALTRIGGERRATE,
+    M_CRITICALVALUERATE,
+
+    P_ATK,
+    P_DEF,
+    P_SPEED,
+    P_CRITICALTRIGGERRATE,
+    P_CRITICALVALUERATE,
+
+    E_NUM,
 }
 
 [System.Serializable]
@@ -90,4 +122,19 @@ public enum ESkillTrigger
     E_CARD_USE,
     E_ON_TARGET_HAS_SHOCK,
     E_WITH_FRONT
+}
+
+public enum EStatType
+{
+    E_NONE = 0, 
+    E_HP,
+    E_ATK,
+    E_DEF,
+    E_SPEED,
+    E_CRITICALTRIGGERRATE,
+    E_CRITICALVALUERATE,
+
+    E_SHIELD,
+    E_AETHER,
+    E_DECK
 }

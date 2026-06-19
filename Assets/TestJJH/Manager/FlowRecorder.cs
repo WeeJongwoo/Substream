@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class FlowRecorder
 {
-    private List<FlowRecord> m_records;
+    private List<FlowResultCollector> m_records;
 
     public FlowRecorder()
     {
-        m_records = new List<FlowRecord>();
+        m_records = new List<FlowResultCollector>();
     }
 
 }

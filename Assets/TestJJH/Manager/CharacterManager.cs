@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterManager : UnitManagerSystme
+public class CharacterManager : UnitManagingSystem
 {
     public override void Initialize()
     {
+        m_isSystemAboutCharacter = true;
         m_units = new List<Unit>();
         m_partyCount = 4;
     }

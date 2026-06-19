@@ -4,10 +4,11 @@ using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class MonsterManager : UnitManagerSystme
+public class MonsterManager : UnitManagingSystem
 {
     public override void Initialize()
     {
+        m_isSystemAboutCharacter = false;
         m_units = new List<Unit>();
     }
 

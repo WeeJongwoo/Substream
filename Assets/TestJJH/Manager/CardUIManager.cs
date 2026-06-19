@@ -16,46 +16,39 @@ public class CardUIManager : BaseUI<CardManager>
     private int m_thisTurnMaxCardCount;
 
     [SerializeField]
-    private CardPanelSlot m_cardPanelSlotPrefab;
-    [SerializeField]
     private Image m_notEnoughAetherImage;
     [SerializeField]
     private Text m_notEnoughAetherText;
 
     [SerializeField]
+    private CardPanelSlot m_cardPanelSlotPrefab;
+
+    [SerializeField]
     private CardPanelSlot m_handPanelSlot;
+
+    [SerializeField]
+    private Button m_viewDeckButton;
+    [SerializeField]
+    private Transform m_deckGraveyardPanel;
+    [SerializeField]
+    private Button m_closeCardPanelButton;
+
     [SerializeField]
     private CardPanelSlot m_deckPanelSlot;
     [SerializeField]
     private CardPanelSlot m_graveyardPanelSlot;
 
-    [SerializeField]
-    private Button m_openDeckButton;
-    [SerializeField]
-    private Button m_closeDeckButton;
-    [SerializeField]
-    private Button m_openGraveyardButton;
-    [SerializeField]
-    private Button m_closeGraveyardButton;
 
     [SerializeField]
-    private GameObject m_deckPanel;
+    private Button m_selectDeckButton;
     [SerializeField]
-    private GameObject m_graveyardPanel;
+    private Button m_selectGraveyardButton;
 
     public override void Initialize()
     {
-        m_deckPanelSlot = Instantiate(m_cardPanelSlotPrefab, m_cardUIManager2);
-        m_graveyardPanelSlot = Instantiate(m_cardPanelSlotPrefab, m_cardUIManager2);
-
-        m_deckPanel = m_deckPanelSlot.gameObject;
-        m_graveyardPanel = m_graveyardPanelSlot.gameObject;
-
-        m_closeDeckButton = m_deckPanelSlot.CloseButton;
-        m_closeGraveyardButton = m_graveyardPanelSlot.CloseButton;
-
         m_handPanelSlot.SetBGI(new Color(1, 1, 1, 0));
 
+        m_deckGraveyardPanel.gameObject.SetActive(false);
         m_handPanelSlot.TurnOn();
         m_deckPanelSlot.TurnOff();
         m_graveyardPanelSlot.TurnOff();
@@ -77,21 +70,34 @@ public class CardUIManager : BaseUI<CardManager>
         m_isDrag = false;
         m_isClick = false;
 
-        m_openDeckButton.onClick.AddListener(() =>
+        m_viewDeckButton.onClick.RemoveAllListeners();
+        m_selectDeckButton.onClick.RemoveAllListeners();
+        m_selectGraveyardButton.onClick.RemoveAllListeners();
+        m_closeCardPanelButton.onClick.RemoveAllListeners();
+
+        m_viewDeckButton.onClick.AddListener(() =>
         {
-            OpenDeck();
+            m_deckGraveyardPanel.gameObject.SetActive(true);
+            m_deckPanelSlot.TurnOn();
+            m_graveyardPanelSlot.TurnOff();
         });
-        m_closeDeckButton.onClick.AddListener(() =>
+
+        m_selectDeckButton.onClick.AddListener(() =>
         {
-            CloseDeck();
+            m_deckPanelSlot.TurnOn();
+            m_graveyardPanelSlot.TurnOff();
         });
-        m_openGraveyardButton.onClick.AddListener(() =>
+        m_selectGraveyardButton.onClick.AddListener(() =>
         {
-            OpenGraveyard();
+            m_deckPanelSlot.TurnOff();
+            m_graveyardPanelSlot.TurnOn();
         });
-        m_closeGraveyardButton.onClick.AddListener(() =>
+
+        m_closeCardPanelButton.onClick.AddListener(() =>
         {
-            CloseGraveyard();
+            m_deckGraveyardPanel.gameObject.SetActive(false);
+            m_deckPanelSlot.TurnOff();
+            m_graveyardPanelSlot.TurnOff();
         });
     }
 
@@ -134,26 +140,6 @@ public class CardUIManager : BaseUI<CardManager>
         Card.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
     }
 
-    public void OpenDeck()
-    {
-        m_deckPanel.SetActive(true);
-    }
-
-    public void CloseDeck()
-    {
-        m_deckPanel.SetActive(false);
-    }
-
-    public void OpenGraveyard()
-    {
-        m_graveyardPanel.SetActive(true);
-    }
-
-    public void CloseGraveyard()
-    {
-        m_graveyardPanel.SetActive(false);
-    }
-
     public override void UseCard(Card card)
     {
         
@@ -189,7 +175,7 @@ public class CardUIManager : BaseUI<CardManager>
         newSlot.gameObject.name = "새로 드로우한 카드";
         newSlot.ReInit(m_thisTurnMaxCardCount, card, card.CardData.Cost % 3,
             ResourcesManager.Card_Cost(card.CardData.Cost % 3),
-            card.CardData.Name,
+            card.CardData.CardText,
             ResourcesManager.Card_Image(1001),
             ResourcesManager.Card_Frame(card.CardData.Cost % 3)
             );
@@ -299,7 +285,7 @@ public class CardUIManager : BaseUI<CardManager>
             CardSlot newSlot = m_handPanelSlot.GetObject();
             newSlot.ReInit(i, cards[i], cards[i].CardData.Cost % 3,
                 resourceManager.Card_Cost(cards[i].CardData.Cost % 3),
-                cards[i].CardData.Name + "\n" + cards[i].CardData.ID,
+                cards[i].CardData.CardText,
                 resourceManager.Card_Image(1001),
                 resourceManager.Card_Frame(cards[i].CardData.Cost % 3)
                 );
