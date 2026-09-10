@@ -14,6 +14,8 @@ public class CardSlot : UIObject
     [SerializeField]
     private Text m_cardText;
     [SerializeField]
+    private Text m_cardName;
+    [SerializeField]
     private Image m_cardIllust;
     [SerializeField]
     private Image m_cardFrame;
@@ -23,12 +25,12 @@ public class CardSlot : UIObject
     private int m_num;
     [SerializeField]
     private Card m_card;
-    public bool s_isDrag;
     public bool s_isReady;
     private int m_cost;
 
     public bool m_inPool = false;
 
+    /*
     public void MouseOver()
     {
         m_cardButton.transform.localPosition = new Vector3(0, 100, 0);
@@ -39,7 +41,7 @@ public class CardSlot : UIObject
     {
         m_cardButton.transform.localPosition = (new Vector3(0, 0, 0));
         m_cardButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-    }
+    }*/
 
     public int s_num
     {
@@ -48,11 +50,6 @@ public class CardSlot : UIObject
     public Card s_card
     {
         get { return m_card; }
-    }
-
-    public int s_cost
-    {
-        get { return m_cost; }
     }
 
     public Button Button
@@ -65,38 +62,18 @@ public class CardSlot : UIObject
         get { return m_eventTrigger; }
     }
 
-    public Sprite Cost
-    {
-        get { return m_costImage.sprite; }
-    }
-
-    public Text CardText
-    { 
-        get { return m_cardText; }
-    }
-
-    public Sprite CardIllust
-    {
-        get { return m_cardIllust.sprite; }
-    }
-
-    public Sprite CardFrame
-    {
-        get { return m_cardFrame.sprite; }
-    }
-
     public void ReInit(int num, Card card, int cost,
-        Sprite costSprite, string text, Sprite cardIllust, Sprite cardFrame
+        Sprite costSprite, Sprite cardIllust, Sprite cardFrame
         )
     {
         m_num = num;
         m_card = card;
-        s_isDrag = false;
         s_isReady = false;
         m_cost = cost;
 
+        m_cardName.text = card.CardData.Name;
         m_costImage.sprite = costSprite;
-        m_cardText.text = text;
+        m_cardText.text = card.CardData.CardText;
         m_cardIllust.sprite = cardIllust;
         m_cardFrame.sprite = cardFrame;
 
@@ -105,13 +82,14 @@ public class CardSlot : UIObject
         m_cardIllust.gameObject.SetActive(true);
         m_cardFrame.gameObject.SetActive(true); 
         this.gameObject.SetActive(true);
-        MouseExit();
+        m_cardButton.transform.localPosition = (new Vector3(0, 0, 0));
+        m_cardButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
         m_eventTrigger.triggers.Clear(); 
         m_eventTrigger = m_cardButton.GetComponent<EventTrigger>();
 
         transform.localPosition = (new Vector3(0, 0, 0));
-        transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
+        transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         
         m_cardButton.onClick.RemoveAllListeners();
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FlowScheduleManager : BaseSystem, IUpdatableManager
@@ -9,43 +10,43 @@ public class FlowScheduleManager : BaseSystem, IUpdatableManager
     private MonsterManager m_monsterManager;
     private TurnManager m_turnManager;
 
-    private SkillScheduler m_cardSkillScheduler;
-    private SkillScheduler m_unitSkillScheduler;
-    private SkillScheduler m_actionScheduler;
+    private FlowScheduler m_reservationFlowScheduler;
 
+    private FlowScheduler m_skillFlowScheduler;
+    private FlowScheduler m_systemFlowScheduler;
+    private FlowScheduler m_counterFlowScheduler;
 
-    private SkillScheduler m_currentSkillScheduler;
+    private FlowScheduler m_doneFlowScheduler;
 
     [SerializeField]
     private float SKILLOPERATETIME;
     private float m_skillTimeRate;
-    private bool m_isRunning = false;
+    private bool m_isRunningForLogic = false;
+    private bool m_isRunningForUI = false;
 
-    private Queue<Flow> m_cardAbillityFlows;
-    private Queue<Flow> m_skillAbillityFlows;
-    private Queue<Flow> m_systmeAbillityFlows;
-
-    private ActionOrchestrator m_actionOrchestrator;
+    private ContextGenerator m_contextGenerator;
     private FlowRecorder m_flowRecorder;
 
     private BattleFacade m_battleFacade;
     private UIFacade m_UIFacade;
 
-    private Dictionary<ESkillType, IActionStrategy> m_strategies;
+    private Dictionary<ESkillType, IActionStrategy> m_executeStrategies;
 
     public FlowScheduleManager()
     {
-        m_strategies = new Dictionary<ESkillType, IActionStrategy>{
+        m_executeStrategies = new Dictionary<ESkillType, IActionStrategy>{
             { ESkillType.E_DAMAGE, new DamageSkillStrategy() },
-            { ESkillType.E_HEAL, new HealingSkillStrategy() },
-            { ESkillType.E_INCREASE, new IncreaseSkillStrategy() },
+            { ESkillType.E_HEAL, new HealSkillStrategy() },
+
+            { ESkillType.E_VARIATION, new VariationSkillStrategy() },
+            { ESkillType.E_STATUSEFFECT, new StatusEffectSkillStrategy()},
+
             { ESkillType.E_SHIELD, new ShieldSkillStrategy() },
-            { ESkillType.E_DEBUFF, new DebuffSkillStrategy()},
-            { ESkillType.E_CONDITIONAL_DAMAGE, new ConditionalDamageStrategy() },
             { ESkillType.E_ETC, new ETCStrategy() },
 
             { ESkillType.E_DRAW, new DrawSkillStrategy() },
             { ESkillType.E_TURNEND, new TurnEndStrategy() },
+            { ESkillType.E_ROUNDEND, new RoundEndStrategy() },
             { ESkillType.E_UNITDYING, new UnitDyingStrategy() },
         };
     }
@@ -53,19 +54,21 @@ public class FlowScheduleManager : BaseSystem, IUpdatableManager
     public override void Initialize()
     {
         m_skillTimeRate = SKILLOPERATETIME / 5;
+
+        m_reservationFlowScheduler = new FlowScheduler();
         
-        m_currentSkillScheduler = m_cardSkillScheduler;
+        m_skillFlowScheduler = new FlowScheduler();
+        m_systemFlowScheduler = new FlowScheduler();
+        m_counterFlowScheduler = new FlowScheduler();
+        
+        m_doneFlowScheduler = new FlowScheduler();
 
-        m_cardSkillScheduler = new SkillScheduler();
-        m_unitSkillScheduler = new SkillScheduler();
-        m_actionScheduler = new SkillScheduler();
-
-        m_cardAbillityFlows = new Queue<Flow>();
-        m_skillAbillityFlows = new Queue<Flow>();
-        m_systmeAbillityFlows = new Queue<Flow>();
-
-        m_actionOrchestrator = new ActionOrchestrator();
+        m_contextGenerator = new ContextGenerator();
         m_flowRecorder = new FlowRecorder();
+
+        ContextIdGenerator.Reset();
+        FlowIdGenerator.Reset();
+        ResultIdGenerator.Reset();
     }
 
     public override void InitializeReference(MasterManager masterManager)
@@ -82,114 +85,193 @@ public class FlowScheduleManager : BaseSystem, IUpdatableManager
             m_masterManager.CardUIManager, m_masterManager.TurnUIManager);
     }
 
+    public override void DataInitialize()
+    {
+        m_contextGenerator.DataInitialize(this.DataBase);
+        m_flowRecorder.Initialize(m_characterManager, m_monsterManager);
+    }
+
     public Flow SelectFlow()
     {
-        if (m_systmeAbillityFlows.Count > 0)
-            return m_systmeAbillityFlows.Dequeue();
+        // 반격보다 스킬이 더 빠르면 좋을지 스킬보다 반격이 더 빠르면 좋을지 고민 중
+        // 우선도 시스템 들어가면 변경되어야함
+        if (!m_systemFlowScheduler.SkillQueueIsEmpty())
+            return m_systemFlowScheduler.GetFlow();
+        
+        if (!m_skillFlowScheduler.SkillQueueIsEmpty())
+            return m_skillFlowScheduler.GetFlow();
 
-        if (m_skillAbillityFlows.Count > 0)
-            return m_skillAbillityFlows.Dequeue();
+        if (!m_counterFlowScheduler.SkillQueueIsEmpty())
+            return m_counterFlowScheduler.GetFlow();
+        // 여기까지가 간섭 플로우 스케쥴러
 
-        if (m_cardAbillityFlows.Count > 0)
-            return m_cardAbillityFlows.Dequeue();
-
+        if (!m_reservationFlowScheduler.SkillQueueIsEmpty())
+            return m_reservationFlowScheduler.GetFlow();
         return null;
     }
 
-    public IEnumerator ProcessFlow()
+    public IEnumerator FlowProcess()
     {
+        m_isRunningForLogic = true;
         Flow flow = SelectFlow();
-        if(flow != null)
+        List<TargetPair> TargetUnits = new List<TargetPair>();
+        if (flow != null)
         {
-            var contexts = m_actionOrchestrator.AnalyzeFlow(flow);
-            yield return null;
+            // 묘지&덱 관련 처리 때문에
+            switch (flow.Input)
+            {
+                case CardAbilityFlowInput Input:
+                    m_masterManager.ApplyUseCard(Input.CasterCard);
+                    break;
+                case SkillAbilityFlowInput Input:
+                    break;
+                case UnitDyingFlowInput Input:
+                    break;
+                case TurnEndFlowInput Input:
+                    break;
+                case RoundEndFlowInput Input:
+                    break;
+                case SystemDrawCardFlowInput Input:
+                    break;
+            }
+
+            var contexts = m_contextGenerator.AnalyzeFlow(flow);
+
+            // 플로우 기반 전처리 이벤트 번들 위치
+
+            int i = 0;
             foreach(var c in contexts)
             {
-                ResolveTargetInContext(flow, c);
-                WriteContext(flow, c);
-                Execute(flow, c, m_battleFacade, m_UIFacade);
+                int resultStartIndex = flow.Collector.ResultCount;
+
+                // 타겟 지정
+                if (i == 0)
+                {
+                    TargetResolutionForFirstContext(flow,c, TargetUnits);
+                }
+                else
+                {
+                    TargetResolution(flow, c, TargetUnits);
+                }
+                
+                ContextProcessing(flow, c);
+                i++;
+
+                if (c is BattleContext bc)
+                {
+                    flow.Collector.SetSourceSkillID(resultStartIndex, bc.SkillID);
+                }
             }
+
+            // 플로우 기반 후처리 이벤트 번들 위치
+
+            m_flowRecorder.SaveRecord(flow);
+            m_doneFlowScheduler.RegistFlow(flow);
+            yield return null;
         }
+        TargetUnits = null;
+        m_isRunningForLogic = false;
     }
 
-    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade, UIFacade uiFacade)
+    public IEnumerator PresentationProcess()
     {
-        if (m_strategies.TryGetValue(context.SkillType, out var strategy))
+        m_isRunningForUI = true;
+        Flow flow = m_doneFlowScheduler.GetFlow();
+        if (flow != null)
         {
-            return strategy.Execute(flow, context, battleFacade, uiFacade);
+
+            yield return StartCoroutine(m_UIFacade.Execute(flow));
+        }
+        m_isRunningForUI = false;
+    }
+
+    public bool ContextProcessing(Flow flow, ActionContext context)
+    {
+        IActionStrategy strategy;
+        switch(context)
+        {
+            case BattleContext battleContext:
+                if (m_executeStrategies.TryGetValue(battleContext.SkillType, out strategy))
+                {
+                    return strategy.Execute(flow, battleContext, m_battleFacade);
+                }
+                break;
+            case TurnEndActionContext turnEndActionContext:
+                m_executeStrategies[ESkillType.E_TURNEND].Execute(flow, context, m_battleFacade);
+                break;
+            case RoundEndActionContext turnEndActionContext:
+                m_executeStrategies[ESkillType.E_ROUNDEND].Execute(flow, context, m_battleFacade);
+                break;
+            case UnitDyingActionContext unitDyingActionContext:
+                m_executeStrategies[ESkillType.E_UNITDYING].Execute(flow, context, m_battleFacade);
+                break;
+            case DrawCardActionContext drawCardActionContext:
+                m_executeStrategies[ESkillType.E_DRAW].Execute(flow, context, m_battleFacade);
+                break;
         }
         return false;
     }
 
     public void Execute()
     {
-        if(!m_isRunning)
+        if(!m_isRunningForLogic)
         {
-            if (m_cardAbillityFlows.Count + m_skillAbillityFlows.Count + m_systmeAbillityFlows.Count > 0)
+            if (!m_reservationFlowScheduler.SkillQueueIsEmpty() || !m_skillFlowScheduler.SkillQueueIsEmpty() || !m_systemFlowScheduler.SkillQueueIsEmpty() || !m_counterFlowScheduler.SkillQueueIsEmpty())
             {
-                StartCoroutine(ProcessFlow());
+                StartCoroutine(FlowProcess());
             }
         }
-        m_isRunning = true;
 
-        m_isRunning = false;
-        if(m_UIFacade.EventQueueIsNotEmpty())
+        if(!m_isRunningForUI)
         {
-            m_UIFacade.Execute();
+            if(!m_doneFlowScheduler.SkillQueueIsEmpty())
+            {
+                StartCoroutine(PresentationProcess());
+            }
         }
     }
 
-    public void CalculateTargetCount(bool targetIsCharacter, out int targetCount, out int targetMaxCount, int maxTargetCount)
+    private void TargetResolution(Flow flow, ActionContext context, List<TargetPair> targetUnits)
     {
-        if (!targetIsCharacter)
+        if (context is not BattleContext ctx) return;
+        var battleContext = context as BattleContext;
+        if (!battleContext.RefreshTarget)
         {
-            targetCount = Mathf.Min(maxTargetCount, m_monsterManager.Units.Count);
-            targetMaxCount = m_monsterManager.Units.Count;
+            foreach (var targetPair in targetUnits) {
+                battleContext.TargetUnits.Add(targetPair);
+            }
+            return;
         }
-        else
-        {
-            targetCount = Mathf.Min(maxTargetCount, m_characterManager.Units.Count);
-            targetMaxCount = m_characterManager.Units.Count;
-        }
-    }
-
-    public void ResolveTargetInContext(Flow flow, ActionContext context)
-    {
-#if UNITY_EDITOR
-        Debug.Log("###########스킬 로드 시작###########");
-#endif
+        targetUnits.Clear();
         bool thisUnitIsCharacter = false;
-        int thisUnitpos = -1;
+        int thisUnitPos = -1;
+        CardAbilityFlowInput Input = (CardAbilityFlowInput)flow.Input;
+
+        /// <summary>
+        /// /- 선택한 유닛 -/
+        /// 아군 유닛 선택 1,2,3,4, 적 선택 -1,-2,-3,-4
+        /// 선택 없이 시전 0
+        /// 
+        /// /- 특이 타겟 유형 -/
+        /// E_ADJACENT,
+        /// E_CHAINBEHIND
+        /// 
+        /// </summary>
+   
+        int selectTargetPosition = Input.SelectTargetPosition;
+        thisUnitPos = Input.CasterUnit.Position;
+        thisUnitIsCharacter = Input.CasterUnit.IsCharacter;
+
         bool thisSkillIsTargetAllies;
         int targetCount = -1;
         int targetPartMaxCount = -1;
 
-        switch (flow.Input)
-        {
-            case AbilityFlowInput Input:
-                thisUnitIsCharacter = Input.CasterUnit.IsCharacter;
-                thisUnitpos = Input.CasterUnit.Position;
-                break;
-            case UnitDyingFlowInput Input:
-                thisUnitIsCharacter = Input.Victim.IsCharacter;        
-                thisUnitpos = Input.Victim.Position;
-                break;
-            case TurnEndFlowInput Input:
-                thisUnitIsCharacter = m_turnManager.CurrentTurnUnit.IsCharacter;        
-                break;
-        }
-
-#if UNITY_EDITOR
-        Debug.Log("###########스킬 로드 완료###########");
-        Debug.Log("###########타겟 지정 시작###########");
-#endif
-        
         /// 캐릭터 * 아군 대상 = 1 * 1 = 1 = 아군
         /// 캐릭터 * 상대 대상 = 1 * -1 = -1 = 상대
         /// 몬스터 * 아군 대상 = -1 * 1 = -1 = 상대
         /// 몬스터 * 상대 대상 = -1 * -1 = 1 = 아군
         int a = thisUnitIsCharacter ? 1 : -1;
-        int b = context.SkillData.TargetType != ESkillTargetType.E_ENEMY ? 1 : -1;
+        int b = battleContext.TargetType != ETargetType.E_ENEMY ? 1 : -1;
         thisSkillIsTargetAllies = a * b == 1 ? true : false;
         if (thisSkillIsTargetAllies)
         {
@@ -199,109 +281,274 @@ public class FlowScheduleManager : BaseSystem, IUpdatableManager
         {
             //Debug.Log("몬스터를 대상으로 함");
         }
-        CalculateTargetCount(thisSkillIsTargetAllies, out targetCount, out targetPartMaxCount, context.SkillData.TargetCount);
 
-        switch (context.SkillData.TargetType)
+        if (!thisSkillIsTargetAllies)
         {
-            case ESkillTargetType.E_SELF:
-                context.TargetUnits.Add(new TargetPair(thisSkillIsTargetAllies, thisUnitpos));
-                for (int i = 1; i < context.SkillData.TargetCount;)
+            targetCount = Mathf.Min(battleContext.TargetCount, m_monsterManager.Units.Count);
+            battleContext.TargetCount = m_monsterManager.Units.Count;
+        }
+        else
+        {
+            targetCount = Mathf.Min(battleContext.TargetCount, m_characterManager.Units.Count);
+            battleContext.TargetCount = m_characterManager.Units.Count;
+        }
+
+        switch (battleContext.TargetType)
+        {
+            case ETargetType.E_SELF:
+                targetUnits.Add(new TargetPair(thisSkillIsTargetAllies, thisUnitPos));
+                for (int i = 1; i < battleContext.TargetCount;)
                 {
                     TargetPair newTarget;
-                    newTarget = new TargetPair(thisSkillIsTargetAllies, UnityEngine.Random.Range(0, targetPartMaxCount));
-                    if (!context.TargetUnits.Contains(newTarget))
+                    newTarget = new TargetPair(thisSkillIsTargetAllies, UnityEngine.Random.Range(0, targetPartMaxCount) + 1);
+                    if (!targetUnits.Contains(newTarget))
                     {
-                        context.TargetUnits.Add(newTarget);
+                        targetUnits.Add(newTarget);
                         i++;
                     }
                 }
                 break;
-            case ESkillTargetType.E_ALLIES:
-            case ESkillTargetType.E_ENEMY:
+            case ETargetType.E_ALLIES:
+            case ETargetType.E_ENEMY:
                 int j = 0;
 
                 for (; j < targetCount;)
                 {
-                    int pos = UnityEngine.Random.Range(0, targetPartMaxCount);
+                    int pos = UnityEngine.Random.Range(0, targetPartMaxCount) + 1;
 
                     TargetPair newTarget;
                     newTarget = new TargetPair(thisSkillIsTargetAllies, pos);
 
-                    if (!context.TargetUnits.Contains(newTarget))
+                    if (!targetUnits.Contains(newTarget))
                     {
-                        context.TargetUnits.Add(newTarget);
+                        targetUnits.Add(newTarget);
                         j++;
                     }
                 }
                 break;
-            case ESkillTargetType.E_NONE:
+            case ETargetType.E_ADJACENT:
+                TargetPair newAdjacentTarget1;
+                newAdjacentTarget1 = new TargetPair(thisSkillIsTargetAllies, Input.SelectTargetPosition - battleContext.TargetCount);
+                if (!targetUnits.Contains(newAdjacentTarget1) && newAdjacentTarget1.position > 0)
+                {
+                    targetUnits.Add(newAdjacentTarget1);
+                }
+
+                TargetPair newAdjacentTarget2;
+                newAdjacentTarget2 = new TargetPair(thisSkillIsTargetAllies, Input.SelectTargetPosition + battleContext.TargetCount);
+                if (!targetUnits.Contains(newAdjacentTarget2) && newAdjacentTarget1.position < targetPartMaxCount)
+                {
+                    targetUnits.Add(newAdjacentTarget2);
+                }
+                break;
+            case ETargetType.E_CHAINBEHIND:
+                TargetPair newChainBehindTarget;
+                newChainBehindTarget = new TargetPair(thisSkillIsTargetAllies, Input.SelectTargetPosition + battleContext.TargetCount);
+                if (!targetUnits.Contains(newChainBehindTarget) && newChainBehindTarget.position < targetPartMaxCount)
+                {
+                    targetUnits.Add(newChainBehindTarget);
+                }
+                break;
+            case ETargetType.E_NONE:
                 Debug.Log("cardSkil TargetType is none");
                 break;
             default:
                 Debug.Log("cardSkil TargetType is warring");
                 break;
         }
+        foreach(var unit in targetUnits)
+        {
+            if(unit.isCharacter)
+            {
+                if (m_characterManager.Units.Count < unit.position || unit.position < 0)
+                    Debug.LogError("캐릭터 대상 타겟팅 오류" + unit.position);
+            }
+            else
+            {
+                if (m_monsterManager.Units.Count < unit.position || unit.position < 0)
+                    Debug.LogError("몬스터 대상 타겟팅 오류" + unit.position);
+            }
+            battleContext.TargetUnits.Add(unit);
+        }
     }
 
-    private void WriteContext(Flow flow, ActionContext context)
+    private void TargetResolutionForFirstContext(Flow flow, ActionContext context, List<TargetPair> targetUnits)
     {
-        m_isRunning = true;
-#if UNITY_EDITOR
-        Debug.Log("###########스킬 사용 시작###########");
-#endif
-        float CriticalTriggerRate = 0;
-        switch (flow.Input)
+        if (context is not BattleContext ctx) return;
+        targetUnits.Clear();
+        var battleContext = context as BattleContext;
+
+        bool thisUnitIsCharacter = false;
+        int thisUnitPos = -1;
+        CardAbilityFlowInput Input = (CardAbilityFlowInput)flow.Input;
+
+        /// <summary>
+        /// /- 선택한 유닛 -/
+        /// 아군 유닛 선택 1,2,3,4, 적 선택 -1,-2,-3,-4
+        /// 선택 없이 시전 0
+        /// </summary>
+
+        int selectTargetPosition = Input.SelectTargetPosition;
+        thisUnitPos = Input.CasterUnit.Position;
+        thisUnitIsCharacter = Input.CasterUnit.IsCharacter;
+
+        bool thisSkillIsTargetAllies;
+        int targetCount = -1;
+        int targetPartMaxCount = -1;
+
+        /// 캐릭터 * 아군 대상 = 1 * 1 = 1 = 아군
+        /// 캐릭터 * 상대 대상 = 1 * -1 = -1 = 상대
+        /// 몬스터 * 아군 대상 = -1 * 1 = -1 = 상대
+        /// 몬스터 * 상대 대상 = -1 * -1 = 1 = 아군
+        int a = thisUnitIsCharacter ? 1 : -1;
+        int b = battleContext.TargetType != ETargetType.E_ENEMY ? 1 : -1;
+        thisSkillIsTargetAllies = a * b == 1 ? true : false;
+        if (thisSkillIsTargetAllies)
         {
-            case AbilityFlowInput Input:
-                CriticalTriggerRate = Input.CasterUnit.CriticalTriggerRate.Now;
-                break;
-            case UnitDyingFlowInput Input:
-                break;
-            case TurnEndFlowInput Input:
-                break;
+            //Debug.Log("캐릭터를 대상으로 함");
+        }
+        else
+        {
+            //Debug.Log("몬스터를 대상으로 함");
         }
 
-        context.SkillType = context.SkillData.SkillType;
-        context.SkillTrigger = context.SkillData.Trigger;
-        context.TriggerConditionValue = context.SkillData.TriggerConditionValue;
-        context.SkillSource = context.SkillData.SkillSource;
-        context.StatusType = context.SkillData.StatusType;
-        context.IsCritical = (UnityEngine.Random.Range(0, 101) < (CriticalTriggerRate * 100));
-        context.Value = context.SkillData.EffectValue;
-        context.TargetSource = context.SkillData.TargetSource;
+        if (!thisSkillIsTargetAllies)
+        {
+            targetCount = Mathf.Min(battleContext.TargetCount, m_monsterManager.Units.Count);
+            battleContext.TargetCount = m_monsterManager.Units.Count;
+        }
+        else
+        {
+            targetCount = Mathf.Min(battleContext.TargetCount, m_characterManager.Units.Count);
+            battleContext.TargetCount = m_characterManager.Units.Count;
+        }
+
+        switch (battleContext.TargetType)
+        {
+            case ETargetType.E_SELF:
+                targetUnits.Add(new TargetPair(thisSkillIsTargetAllies, thisUnitPos));
+                for (int i = 1; i < battleContext.TargetCount;)
+                {
+                    TargetPair newTarget;
+                    newTarget = new TargetPair(thisSkillIsTargetAllies, UnityEngine.Random.Range(0, targetPartMaxCount) + 1);
+                    if (!targetUnits.Contains(newTarget))
+                    {
+                        targetUnits.Add(newTarget);
+                        i++;
+                    }
+                }
+                break;
+            case ETargetType.E_ALLIES:
+            case ETargetType.E_ENEMY:
+                TargetPair selectTarget;
+                selectTarget = new TargetPair(thisSkillIsTargetAllies, Mathf.Abs(selectTargetPosition));
+
+                if (!targetUnits.Contains(selectTarget))
+                {
+                    targetUnits.Add(selectTarget);
+                }
+
+                int j = 1;
+
+                for (; j < targetCount;)
+                {
+                    int pos = UnityEngine.Random.Range(0, targetPartMaxCount) + 1;
+
+                    TargetPair newTarget;
+                    newTarget = new TargetPair(thisSkillIsTargetAllies, pos);
+
+                    if (!targetUnits.Contains(newTarget))
+                    {
+                        targetUnits.Add(newTarget);
+                        j++;
+                    }
+                }
+                break;
+            case ETargetType.E_NONE:
+                Debug.Log("cardSkil TargetType is none");
+                break;
+            default:
+                Debug.Log("cardSkil TargetType is warring");
+                break;
+        }
+        foreach (var unit in targetUnits)
+        {
+            if (unit.isCharacter)
+            {
+                if (m_characterManager.Units.Count < unit.position || unit.position < 0)
+                    Debug.LogError("캐릭터 대상 타겟팅 오류" + unit.position);
+            }
+            else
+            {
+                if (m_monsterManager.Units.Count < unit.position || unit.position < 0)
+                    Debug.LogError("몬스터 대상 타겟팅 오류" + unit.position);
+            }
+            battleContext.TargetUnits.Add(unit);
+        }
     }
+
 
     /*=============================================================================*/
     public override void UnitDying(Unit unit)
     {
-        m_unitSkillScheduler.UnitDying(unit);
-        m_cardSkillScheduler.UnitDying(unit);
+        m_reservationFlowScheduler.UnitDying(unit);
+        m_skillFlowScheduler.UnitDying(unit);
+        m_systemFlowScheduler.UnitDying(unit);
+        m_counterFlowScheduler.UnitDying(unit);
     }
 
-    public void UnitDying(TargetPair targetPair)
+    public void RegistCharacterSkillAbilityFlow(Card card, int selectTargetPosition)
     {
-        ActionContext s = new ActionContext();
-        s.TargetUnits = new List<TargetPair>{ targetPair };
-        s.SkillType = ESkillType.E_UNITDYING;
+        Flow f = new Flow(new SkillAbilityFlowInput(card.Unit, card, selectTargetPosition));
 
-
-    }
-
-    public void RegistAbilityFlow(Unit unit, CardTableData card, bool casterIsCard)
-    {
-        foreach (var id in card.SkillID)
+        if (card.CardData.ID <= 999)
         {
-            SkillTableData cardSkill = DontDestroyOnLoadManager.Instance.SkillTable(id);
+            m_skillFlowScheduler.RegistFlow(f);
         }
     }
 
-    public void RegistUnitDyingFlow(Unit victim)
+    public void RegistCardAbilityFlow(Card card, int selectTargetPosition)
+    {
+        if (m_turnManager.IsTurnInputLocked) return;
+
+        Flow f = new Flow(new CardAbilityFlowInput(card.Unit, card, selectTargetPosition));
+
+        if(card.CardData.ID > 999)
+        {
+            m_reservationFlowScheduler.RegistFlow(f);
+        }
+    }
+
+    public void RegistUnitDyingInFlow(Unit victim)
     {
         Flow f = new Flow(new UnitDyingFlowInput(victim));
+        m_systemFlowScheduler.RegistFlow(f);
     }
 
     public void RegistSetTurnEventFlow()
     {
         Flow f = new Flow(new TurnEndFlowInput());
+        m_reservationFlowScheduler.RegistFlow(f);
+    }
+
+    public void RegistSetRoundEventFlow()
+    {
+        Flow f = new Flow(new RoundEndFlowInput());
+        m_reservationFlowScheduler.RegistFlow(f);
+    }
+
+    public void RegistSystemEventFlow()
+    {
+        //시스템, 룰 마스터, 오파츠에 의한 간섭
+    }
+
+    public override void SetTurn()
+    {
+        m_flowRecorder.SetTurn();
+    }
+
+    public override void SetRound()
+    {
+        m_flowRecorder.SetRound();
     }
 }

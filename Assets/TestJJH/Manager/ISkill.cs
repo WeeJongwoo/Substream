@@ -2,27 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct ActionContext
-{
-    public bool IsDone;
-
-    public ESkillType SkillType;
-    public ESkillTrigger SkillTrigger;
-    public int TriggerConditionValue;
-
-    public ESkillSource SkillSource;
-    public ESkillStatusType StatusType;
-
-    public bool IsCritical;
-    public float CriticalValueRate;
-    public float Value;
-    public ESkillSource TargetSource;
-
-    public List<TargetPair> TargetUnits;
-
-    public SkillTableData SkillData;
-}
-
 public struct TargetPair
 {
     public bool isCharacter;
@@ -37,7 +16,6 @@ public struct TargetPair
 
 public class Skill
 {
-    public ActionContext Context;
     public Unit CasterUnit { get; private set; }
     //public int UnitSpeed = 0;
     //public bool IsCharacter = true;
@@ -76,18 +54,6 @@ public class Skill
         CasterUnit = caster;
         this.SkillData = SkillData;
         this.CasterCard = CasterCard;
-        
-        Context = new ActionContext();
-        Context.SkillData = SkillData;
-        Context.IsCritical = false;
-        Context.Value = 0;
-        Context.TargetUnits = new List<TargetPair>();
-        Context.StatusType = ESkillStatusType.E_NONE;
-        Context.SkillType = ESkillType.E_DEFAULT;
-        Context.SkillSource = ESkillSource.E_NONE;
-        Context.StatusType = SkillData.StatusType;
-        Context.SkillType = SkillData.SkillType;
-        Context.SkillSource = SkillData.SkillSource;
     }
 
     public void Initialize() { }

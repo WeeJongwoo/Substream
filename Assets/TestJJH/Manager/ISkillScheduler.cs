@@ -5,55 +5,75 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
-public class SkillScheduler
+public class FlowScheduler
 {
-    private LinkedList<List<ActionContext>> m_skillList;
-    public void RegistSkill(List<ActionContext> skills)
+    private LinkedList<Flow> m_flow;
+    public void RegistFlow(Flow flow)
     {
-        m_skillList.AddLast(skills);
+        m_flow.AddLast(flow);
     }
 
-    public void RegistSkill(ActionContext skill)
+    public Flow GetFlow()
     {
-        List<ActionContext> SkillList = new List<ActionContext>
-        {
-            skill
-        };
-        m_skillList.AddLast(SkillList);
+        Flow Flow = m_flow.First.Value;
+        m_flow.RemoveFirst();
+        return Flow;
     }
 
-    public List<ActionContext> GetSkill()
+    public Flow GetFirstFlow()
     {
-        List<ActionContext> skills = m_skillList.First.Value;
-        m_skillList.RemoveFirst();
-        return skills;
+        return m_flow.First.Value;
     }
 
     public bool SkillQueueIsEmpty()
     {
-        if (m_skillList.Count == 0) return true;
+        if (m_flow.Count == 0) return true;
         return false;
     }
 
-    public SkillScheduler()
+    public FlowScheduler()
     {
-        m_skillList = new LinkedList<List<ActionContext>>();
+        m_flow = new LinkedList<Flow>();
     }
 
     public void UnitDying(Unit unit)
     {
-        var node = m_skillList.First;
+        var node = m_flow.First;
 
         while (node != null)
         {
             var next = node.Next;
 
-            if (node.Value.First().CasterUnit.Equals(unit))
+            switch(node.Value.Input)
             {
-                m_skillList.Remove(node);
-            }
+                case CardAbilityFlowInput Input:
 
+                    if (Input.CasterUnit.Equals(unit))
+                    {
+                        m_flow.Remove(node);
+                    }
+
+                    break;
+                case UnitDyingFlowInput Input:
+
+                    if (Input.Victim.Equals(unit))
+                    {
+                        m_flow.Remove(node);
+                    }
+
+                    break;
+                case TurnEndFlowInput Input:
+                    break;
+
+                case SystemDrawCardFlowInput Input:
+                    if (Input.CasterUnit.Equals(unit))
+                    {
+                        m_flow.Remove(node);
+                    }
+                    break;
+            }
             node = next;
         }
     }

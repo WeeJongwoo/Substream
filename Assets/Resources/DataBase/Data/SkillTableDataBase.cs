@@ -9,19 +9,34 @@ using UnityEngine;
 public class SkillTableData
 {
     public int ID;
-    public int CardID;
     public ESkillType SkillType;
-    public ESkillSource SkillSource;
-    public float EffectValue;
-    public float UpgradeEffectValue;
-    public int HitCount;
-    public ESkillStatusType StatusType;
+    public EPresentationType PresentationType;
+
     public ESkillTrigger Trigger;
+    public ETargetType TriggerTargetType;
     public int TriggerConditionValue;
-    public ESkillTargetType TargetType;
+
+    public EStatSource SkillSource;
+    public ETargetType SkillSourceTargetType;
+    public float EffectValue;
+    public float UpgradeValue;
+    public bool IsFixed;
+    public int HitCount;
+
+    public EScaleType ScaleType;
+    public ETargetType ScaleTypeTargetType;
+    public float ScaleFactor;
+    public int ScaleLimit;
+
+    public EStatusEffectType StatusType;
+    public int StatusCount;
+    public int RoundDuration;
+    public int StatusDuration;
+
+    public bool RefreshTarget;
+    public ETargetType TargetType;
     public int TargetCount;
-    public ESkillSource TargetSource;
-    public string Sound;
+    public EStatSource TargetStatSource;
 }
 
 [System.Serializable]

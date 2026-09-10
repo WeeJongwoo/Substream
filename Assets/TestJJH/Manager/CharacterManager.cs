@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterManager : UnitManagerSystme
+public class CharacterManager : UnitManagingSystem
 {
     public override void Initialize()
     {
-        m_units = new List<Unit>();
+        m_isSystemAboutCharacter = true;
+        m_units = new Dictionary<int, Unit>();
         m_partyCount = 4;
     }
 
     public override void InitializeReference(MasterManager masterManager)
     {
-        base.InitializeReference(masterManager);
+        m_masterManager = masterManager;
+        m_turnManager = masterManager.TurnManager;
     }
 
     /// <summary>
@@ -22,32 +24,33 @@ public class CharacterManager : UnitManagerSystme
     /// 4. 파티에서 지정한 위치 순서에 맞게 정렬하여 add
     /// </summary>
     public override void DataInitialize()
-    {   
-        for (int i = 0; i < m_partyCount; i++)
+    {
+        // 파티 정보
+        int[] characterID = { 1, 5 };
+        int i = 1;
+        foreach (var a in characterID)
         {
-            UnitTableData PU = DataBase.UnitTable(i + 1);
+            UnitTableData PU = DataBase.UnitTable(a);
             UnitTableData newUnit = new UnitTableData(PU);
 
-            newUnit.Init(this, true, i, PU.HP, PU.ATK, PU.DEF, PU.Speed, PU.CriticalRate, PU.CriticalDamage);
-            
-            m_units.Add(newUnit);
+            newUnit.Init(this, true, i, PU.HP, PU.ATK, PU.DEF, PU.Speed, PU.CriticalRate, PU.CriticalDamage, PU.Penetration, PU.AetherRecoverPoint);
+
+            m_units.Add(i, newUnit);
+            i++;
         }
-        for (int i = m_partyCount; i < 4; i++)
-        {
-            this.transform.GetChild(i).gameObject.SetActive(false);
-        }
+        m_partyCount = characterID.Length;
     }
 
     public override void UseCard(Card card)
     {
-        base.UseCard(card);
+        
     }
 
     public override void UnitDying(Unit unit)
     {
         if(unit.IsCharacter)
         {
-            m_units.Remove(unit);
+            m_units.Remove(unit.Position);
         }
     }
 }

@@ -4,29 +4,36 @@ using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class MonsterManager : UnitManagerSystme
+public class MonsterManager : UnitManagingSystem
 {
     public override void Initialize()
     {
-        m_units = new List<Unit>();
+        m_isSystemAboutCharacter = false;
+        m_units = new Dictionary<int, Unit>();
     }
 
     public override void InitializeReference(MasterManager masterManager)
     {
-        base.InitializeReference(masterManager);
+        m_masterManager = masterManager;
+        m_turnManager = masterManager.TurnManager;
     }
 
     public override void DataInitialize()
     {
-        for (int i = 0; i < 1; i++)
+        // 파티 정보
+        int[] monsterID = { 1001 };
+        int i = 1;
+        foreach (var a in monsterID)
         {
-            UnitTableData PU = DataBase.UnitTable(i + 1);
-            UnitTableData newUnit = new UnitTableData(PU);
+            UnitTableData MU = DataBase.UnitTable(a);
+            UnitTableData newUnit = new UnitTableData(MU);
 
-            newUnit.Init(this, false, i, PU.HP, PU.ATK, PU.DEF, PU.Speed, PU.CriticalRate, PU.CriticalDamage);
+            newUnit.Init(this, false, i, MU.HP, MU.ATK, MU.DEF, MU.Speed, MU.CriticalRate, MU.CriticalDamage, MU.Penetration, MU.AetherRecoverPoint);
 
-            m_units.Add(newUnit);
+            m_units.Add(i, newUnit);
+            i++;
         }
+        m_partyCount = monsterID.Length;
     }
 
     public override void UseCard(Card card)
@@ -38,7 +45,7 @@ public class MonsterManager : UnitManagerSystme
     {
         if (!unit.IsCharacter)
         {
-            m_units.Remove(unit);
+            m_units.Remove(unit.Position);
         }
     }
 }

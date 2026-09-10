@@ -53,7 +53,8 @@ public class ResourceManager : MonoBehaviour
         "Card_Cost",
         "Card_Frame",
         "Unit_Portrait",
-        "Card_Image"
+        "Card_Image",
+        "Status_Effect_Image"
     };
 
     private Dictionary<string, Sprite> Battle_BGI_Dic = new Dictionary<string, Sprite>();
@@ -61,6 +62,7 @@ public class ResourceManager : MonoBehaviour
     private Dictionary<string, Sprite> Card_Image_Dic = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> Card_Frame_Dic = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> Unit_Portrait_Dic = new Dictionary<string, Sprite>();
+    private Dictionary<string, Sprite> Status_Effect_Image_Dic = new Dictionary<string, Sprite>();
 
     public Sprite Battle_BGI(int id)
     {
@@ -82,6 +84,11 @@ public class ResourceManager : MonoBehaviour
     {
         return Unit_Portrait_Dic[KeyConvert(id)];
     }
+    public Sprite Status_Effect_Image(int id)
+    {
+        return Status_Effect_Image_Dic[KeyConvert(id)];
+    }
+
 
     public void Awake()
     {

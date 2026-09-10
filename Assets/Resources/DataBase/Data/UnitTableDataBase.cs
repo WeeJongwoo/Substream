@@ -16,7 +16,8 @@ public class UnitTableData : Unit
     public int Speed;
     public float CriticalRate;
     public float CriticalDamage;
-    public int AetherRecorverPoint;
+    public int AetherRecoverPoint;
+    public float Penetration;
     public string CharacterAnimationPrefab;
 
     public override int IngameUnitID()
@@ -37,7 +38,7 @@ public class UnitTableData : Unit
         this.Speed = Prototype.Speed;
         this.CriticalRate = Prototype.CriticalRate;
         this.CriticalDamage = Prototype.CriticalDamage;
-        this.AetherRecorverPoint = Prototype.AetherRecorverPoint;
+        this.AetherRecoverPoint = Prototype.AetherRecoverPoint;
         this.CharacterAnimationPrefab = Prototype.CharacterAnimationPrefab;
     }
 }
