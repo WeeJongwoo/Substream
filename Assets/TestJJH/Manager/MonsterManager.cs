@@ -1,44 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class MonsterManager : UnitManagerSystme
+public class MonsterManager : BaseManager
 {
-    public override void Initialize()
+    private LinkedList<Unit> m_monster;
+
+    public LinkedList<Unit> Monster
     {
-        m_units = new List<Unit>();
+        get { return m_monster; }
+    }
+    public override void Initialize(MasterManager masterManager, TurnManager turnManager)
+    {
+        m_masterManager = masterManager;
+
+        m_monster = new LinkedList<Unit>();
     }
 
-    public override void InitializeReference(MasterManager masterManager)
-    {
-        base.InitializeReference(masterManager);
-    }
-
-    public override void DataInitialize()
+    public override void DataInitialize(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager)
     {
         for (int i = 0; i < 1; i++)
         {
-            UnitTableData PU = DataBase.UnitTable(i + 1);
-            UnitTableData newUnit = new UnitTableData(PU);
+            MonsterData monster = new MonsterData();
+            monster.UserID = 0;
+            monster.PrototypeUnitID = i;
+            monster.InstanceID = 0;
+            monster.Speed = 9;
 
-            newUnit.Init(this, false, i, PU.HP, PU.ATK, PU.DEF, PU.Speed, PU.CriticalRate, PU.CriticalDamage);
-
-            m_units.Add(newUnit);
+            
+            m_monster.AddLast(monster);
         }
     }
 
-    public override void UseCard(Card card)
+    public override void SetTurn(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager, CardManager cardManager)
     {
-        base.UseCard(card);
+       
     }
 
-    public override void UnitDying(Unit unit)
+    public void SetHealthPoint(int position, float damage)
     {
-        if (!unit.IsCharacter)
-        {
-            m_units.Remove(unit);
-        }
+
     }
 }

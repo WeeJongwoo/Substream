@@ -15,7 +15,7 @@ public class CardTableData
     public int Cost;
     public string CardText;
     public string Texture;
-    public List<int> SkillID = new List<int>();
+    public int SkillID;
 }
 
 [System.Serializable]

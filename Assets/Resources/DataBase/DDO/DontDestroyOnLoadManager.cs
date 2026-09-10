@@ -43,44 +43,48 @@ public class DontDestroyOnLoadManager : MonoBehaviour
     [SerializeField]
     private CardTableDataBase m_cardTable;
     [SerializeField]
-    private LocalUserDataBase m_localUser;
+    private CardSkillTableDataBase m_cardSkillTable;
     [SerializeField]
-    private SkillTableDataBase m_skillTable;
+    private CharacterTableDataBase m_CharacterTable;
+    [SerializeField]
+    private LocalUserDataBase m_localUser;
     [SerializeField]
     private StatusEffectDataBase m_statusEffect;
     [SerializeField]
-    private UseCardTableDataBase m_useCardTable;
-    [SerializeField]
-    private UnitTableDataBase m_unitTable;
+    private UseCardDataBase m_useCard;
 
 
     public CardTableDataBase CardTableDataBase { get => m_cardTable; }
-    public UnitTableDataBase UnitTableDataBase { get => m_unitTable; }
+    public CardSkillTableDataBase CardSkillTableDataBase { get => m_cardSkillTable; }
+    public CharacterTableDataBase CharacterTableDataBase { get => m_CharacterTable; }
     public LocalUserDataBase LocalUserDataBase { get => m_localUser; }
-    public SkillTableDataBase SkillTableDataBase { get => m_skillTable; }
     public StatusEffectDataBase StatusEffectDataBase { get => m_statusEffect; }
-    public UseCardTableDataBase UseCardDataBase { get => m_useCardTable; }
+    public UseCardDataBase UseCardDataBase { get => m_useCard; }
 
-    public SkillTableData SkillTable(int ID)
-    {
-        return m_skillTable.SkillTable[ID];
-    }
-    public UnitTableData UnitTable(int ID)
-    {
-        return m_unitTable.UnitTable[ID];
-    }
     public CardTableData CardTable(int ID)
     {
         return m_cardTable.CardTable[ID];
+    }
+    public CardSkillTableData CardSkillTable(int ID)
+    {
+        return m_cardSkillTable.CardSkillTable[ID];
     }
     public LocalUserData LocalUser(int ID)
     {
         return m_localUser.LocalUser[ID];
     }
-    public UseCardTableData UseCard(int PrototypeUnitID, int CardID)
+    public CharacterTableData PrototypeCharacter(int ID)
+    {
+        return m_CharacterTable.CharacterTable[ID];
+    }
+    public CharacterTableData Character(int ID)
+    {
+        return m_CharacterTable.CharacterTable[ID];
+    }
+    public UseCardData UseCard(int PrototypeUnitID, int CardID)
     {
         var key = (PrototypeUnitID, CardID);
-        return m_useCardTable.UseCardTable[key];
+        return m_useCard.UseCard[key];
     }
 
     private void Awake()
@@ -103,19 +107,19 @@ public class DontDestroyOnLoadManager : MonoBehaviour
         
         m_DataBase = new Dictionary<string, DataScriptableObjects>();
 
+        m_cardSkillTable = new CardSkillTableDataBase();
         m_cardTable = new CardTableDataBase();
+        m_CharacterTable = new CharacterTableDataBase();
         m_localUser = new LocalUserDataBase();
-        m_skillTable = new SkillTableDataBase();
         m_statusEffect = new StatusEffectDataBase();
-        m_unitTable = new UnitTableDataBase();
-        m_useCardTable = new UseCardTableDataBase();
+        m_useCard = new UseCardDataBase();
 
+        m_DataBase.Add("CardSkillTable", m_cardSkillTable);
         m_DataBase.Add("CardTable", m_cardTable);
+        m_DataBase.Add("CharacterTable", m_CharacterTable);
         m_DataBase.Add("LocalUser", m_localUser);
-        m_DataBase.Add("SkillTable", m_skillTable);
         m_DataBase.Add("StatusEffect", m_statusEffect);
-        m_DataBase.Add("UnitTable", m_unitTable);
-        m_DataBase.Add("UseCardTable", m_useCardTable);
+        m_DataBase.Add("UseCard", m_useCard);
 
         foreach (var DB in m_DataBase)
         {

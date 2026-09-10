@@ -1,0 +1,3 @@
+ID,StatusName,DurationTurn,EffectPerAction,DurationTurn,TickTrigger
+1,Bleed,3,Temp,3,E_ON_ACTION
+2,Shield,1,Temp,1,E_ON_ACTION

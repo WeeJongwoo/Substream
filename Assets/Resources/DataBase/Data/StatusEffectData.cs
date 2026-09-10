@@ -12,7 +12,7 @@ public class StatusEffectData
     public string StatusName;
     public int DurationTurn;
     public string EffectPerAction;
-    public ESkillTrigger TickTrigger;
+    public ETickTrigger TickTrigger;
 }
 
 [System.Serializable]
