@@ -1,5 +1,10 @@
-ID,Name,HP,ATK,DEF,Speed,CriticalRate,CriticalDamage,AetherRecoverPoint,AnimationPrefab
-1,Character1,10000,2000,1000,11,0.3,0.3,1,Character1
-2,Character2,10000,2000,1000,12,0.3,0.3,2,Character2
-3,Character3,10000,2000,1000,13,0.3,0.3,3,Character3
-4,Character4,10000,2000,1000,14,0.3,0.3,4,Character4
+ID,Name,HP,ATK,DEF,Speed,CriticalRate,CriticalDamage,AetherRecoverPoint,Penetration,AnimationPrefab,StatScore
+0,기준,1200,600,600,11,0.3,0.3,3,0,Character0,4199.5
+1,아이비,1300,630,530,12,0.4,0.3,2,0,Character1,4264
+2,루이,1250,375,475,15,0.25,0.3,4,0,Character2,4192.5
+3,지아,1900,550,725,9,0.25,0.3,2,0,Character3,4215.5
+4,하이디,1300,550,650,13,0.3,0.3,2,0,Character4,4158.5
+5,이브,1550,675,675,7,0,0.25,6,0,Character5,4206.5
+6,카일,1600,650,600,16,-1,-1,0,0.3,Character6,4122
+,,,,,,,,,,,
+1001,Monster1,2500,500,500,8,0.3,0.2,0,0,Monster1,3686

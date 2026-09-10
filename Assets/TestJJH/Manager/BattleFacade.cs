@@ -46,10 +46,98 @@ public class BattleFacade
         }
     }
 
-    // 전투 관련
-    public void ApplyDamage(Flow flow, BattleContext context)
+    private bool CheckTrigger(Flow flow, BattleContext context)
     {
-        // 시전 기록
+        switch (context.Trigger)
+        {
+            case ESkillTrigger.E_DEFAULT:
+            case ESkillTrigger.E_CARD_USE:
+            case ESkillTrigger.E_WITH_FRONT:
+                return true;
+            case ESkillTrigger.E_HAS_SHOCK:
+                switch (context.TriggerTargetType)
+                {
+                    case ETargetType.E_NONE:
+                        break;
+                    case ETargetType.E_ALLIES:
+                        break;
+                    case ETargetType.E_ENEMY:
+                        break;
+                    case ETargetType.E_ADJACENT:
+                    case ETargetType.E_CHAINBEHIND:
+                        break;
+                    case ETargetType.E_SELECT:
+                        int SelectPos = (flow.Input as CardAbilityFlowInput).SelectTargetPosition;
+                        if(SelectPos > 0)
+                        {
+                            if(m_characterManager.Unit(SelectPos).GetNumericStatusEffect(EStatusEffectType.E_SHOCK) > context.TriggerConditionValue) 
+                                return true;
+                        }
+                        else
+                        {
+                            if (m_monsterManager.Unit(SelectPos * -1).GetNumericStatusEffect(EStatusEffectType.E_SHOCK) > context.TriggerConditionValue)
+                                return true;
+                        }
+                        break;
+                    case ETargetType.E_SELF:
+                        int SelfPos = (flow.Input as CardAbilityFlowInput).CasterUnit.Position;
+                        if (SelfPos > 0)
+                        {
+                            if (m_characterManager.Unit(SelfPos).GetNumericStatusEffect(EStatusEffectType.E_SHOCK) > context.TriggerConditionValue)
+                                return true;
+                        }
+                        else
+                        {
+                            if (m_monsterManager.Unit(SelfPos * -1).GetNumericStatusEffect(EStatusEffectType.E_SHOCK) > context.TriggerConditionValue)
+                                return true;
+                        }
+                        break;
+                }
+                break;
+            case ESkillTrigger.E_HAS_OVERROAD:
+                switch (context.TriggerTargetType)
+                {
+                    case ETargetType.E_NONE:
+                    case ETargetType.E_ALLIES:
+                    case ETargetType.E_ENEMY:
+                        break;
+                    case ETargetType.E_ADJACENT:
+                    case ETargetType.E_CHAINBEHIND:
+                        break;
+                    case ETargetType.E_SELECT:
+                        int SelectPos = (flow.Input as CardAbilityFlowInput).SelectTargetPosition;
+                        if (SelectPos > 0)
+                        {
+                            if (m_characterManager.Unit(SelectPos).GetNumericStatusEffect(EStatusEffectType.E_OVERLOAD) > context.TriggerConditionValue)
+                                return true;
+                        }
+                        else
+                        {
+                            if (m_monsterManager.Unit(SelectPos * -1).GetNumericStatusEffect(EStatusEffectType.E_OVERLOAD) > context.TriggerConditionValue)
+                                return true;
+                        }
+                        break;
+                    case ETargetType.E_SELF:
+                        int SelfPos = (flow.Input as CardAbilityFlowInput).CasterUnit.Position;
+                        if (SelfPos > 0)
+                        {
+                            if (m_characterManager.Unit(SelfPos).GetNumericStatusEffect(EStatusEffectType.E_OVERLOAD) > context.TriggerConditionValue)
+                                return true;
+                        }
+                        else
+                        {
+                            if (m_monsterManager.Unit(SelfPos * -1).GetNumericStatusEffect(EStatusEffectType.E_OVERLOAD) > context.TriggerConditionValue)
+                                return true;
+                        }
+                        break;
+                }
+                break;
+        }
+        return false;
+    }
+
+    private void RecordPresentation(Flow flow, BattleContext context, Unit CasterUnit)
+    {
         switch (context.PresentationType)
         {
             case EPresentationType.E_DEFAULT:
@@ -57,21 +145,27 @@ public class BattleFacade
             case EPresentationType.E_MAGICCAST:
                 flow.Record(new CastResult()
                 {
-                    Caster = new TargetPair() {
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
+                    Caster = new TargetPair()
+                    {
+                        isCharacter = CasterUnit.IsCharacter,
+                        position = CasterUnit.Position
+                    },
                     IsCritical = context.IsCritical
                 });
                 break;
             case EPresentationType.E_PHSICALATTACK:
                 flow.Record(new AttackResult()
                 {
-                    Attacker = new TargetPair() { 
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    Target = new TargetPair() { 
+                    Attacker = new TargetPair()
+                    {
+                        isCharacter = CasterUnit.IsCharacter,
+                        position = CasterUnit.Position
+                    },
+                    Target = new TargetPair()
+                    {
                         isCharacter = context.TargetUnits.Count > 0 ? context.TargetUnits[0].isCharacter : true,
-                        position = context.TargetUnits.Count > 0 ? context.TargetUnits[0].position : 0 },
+                        position = context.TargetUnits.Count > 0 ? context.TargetUnits[0].position : 0
+                    },
                     IsCritical = context.IsCritical
                 });
                 break;
@@ -79,6 +173,17 @@ public class BattleFacade
                 break;
             case EPresentationType.E_PASSIVETRIGGER:
                 break;
+        }
+    }
+
+    // 전투 관련
+    public void ApplyDamage(Flow flow, BattleContext context)
+    {
+        RecordPresentation(flow, context,((CardAbilityFlowInput)(flow.Input)).CasterUnit);
+
+        if (!CheckTrigger(flow, context))
+        {
+            return;
         }
 
         // 실제 처리
@@ -88,17 +193,19 @@ public class BattleFacade
 
             if (isCharacter)
             {
+                m_characterManager.CheckTargetAlive(target.position);
                 m_characterManager.DamageToUnit(flow, context, target.position);
             }
             else
             {
+                m_monsterManager.CheckTargetAlive(target.position);
                 m_monsterManager.DamageToUnit(flow, context, target.position);
             }
         }
 
         
         // 종료 번들 실행
-        Unit Caster = ((AbilityFlowInput)flow.Input).CasterUnit;
+        Unit Caster = ((CardAbilityFlowInput)flow.Input).CasterUnit;
         /*
         if (Caster.IsCharacter)
         {
@@ -110,74 +217,33 @@ public class BattleFacade
         }*/
     }
 
-    public void ConditionalDamage(Flow flow, BattleContext context)
+    public void ApplyBounce(Flow flow, BattleContext context)
     {
-        // 시전 기록
-        switch (context.PresentationType)
+        RecordPresentation(flow, context, ((CardAbilityFlowInput)(flow.Input)).CasterUnit);
+
+        if (!CheckTrigger(flow, context))
         {
-            case EPresentationType.E_DEFAULT:
-                break;
-            case EPresentationType.E_MAGICCAST:
-                flow.Record(new CastResult()
-                {
-                    Caster = new TargetPair() { 
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_PHSICALATTACK:
-                flow.Record(new AttackResult()
-                {
-                    Attacker = new TargetPair() { 
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    Target = new TargetPair() { 
-                        isCharacter = context.TargetUnits.Count > 0 ? context.TargetUnits[0].isCharacter : true,
-                        position = context.TargetUnits.Count > 0 ? context.TargetUnits[0].position : 0 },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_INSTANT:
-                break;
-            case EPresentationType.E_PASSIVETRIGGER:
-                break;
+            return;
         }
 
         // 실제 처리
-        switch (context.SkillTrigger)
+        foreach (var target in context.TargetUnits)
         {
-            case ESkillTrigger.E_DEFAULT:
-                break;
-            case ESkillTrigger.E_CARD_USE:
-                break;
-            case ESkillTrigger.E_ON_TARGET_HAS_SHOCK:
-                foreach (var target in context.TargetUnits)
-                {
-                    bool isCharacter = target.isCharacter;
+            bool isCharacter = target.isCharacter;
 
-                    if (isCharacter)
-                    {
-                        m_characterManager.TargetHasShockConditionalDamageToUnit(
-                            flow, context, target.position
-                            );
-                    }
-                    else
-                    {
-                        m_monsterManager.TargetHasShockConditionalDamageToUnit(
-                            flow, context, target.position
-                            );
-                    }
-                }
-                break;
-            case ESkillTrigger.E_WITH_FRONT:
-                break;
+            if (isCharacter)
+            {
+                m_characterManager.CheckTargetAlive(target.position);
+                m_characterManager.BounceToUnit(flow, context, target.position);
+            }
+            else
+            {
+                m_monsterManager.CheckTargetAlive(target.position);
+                m_monsterManager.BounceToUnit(flow, context, target.position);
+            }
         }
 
         /*
-        // 종료 번들 실행
-        Unit Caster = ((AbilityFlowInput)flow.Input).CasterUnit;
-
         if (Caster.IsCharacter)
         {
             m_characterManager.DamageEventBundle(flow, context, Caster.Position);
@@ -190,36 +256,11 @@ public class BattleFacade
 
     public void ApplyHeal(Flow flow, BattleContext context)
     {
-        // 시전 기록
-        switch (context.PresentationType)
+        RecordPresentation(flow, context, ((CardAbilityFlowInput)(flow.Input)).CasterUnit);
+
+        if (!CheckTrigger(flow, context))
         {
-            case EPresentationType.E_DEFAULT:
-                break;
-            case EPresentationType.E_MAGICCAST:
-                flow.Record(new CastResult()
-                {
-                    Caster = new TargetPair() { 
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_PHSICALATTACK:
-                flow.Record(new AttackResult()
-                {
-                    Attacker = new TargetPair() {
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    Target = new TargetPair() { 
-                        isCharacter = context.TargetUnits.Count > 0 ? context.TargetUnits[0].isCharacter : true,
-                        position = context.TargetUnits.Count > 0 ? context.TargetUnits[0].position : 0 },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_INSTANT:
-                break;
-            case EPresentationType.E_PASSIVETRIGGER:
-                break;
+            return;
         }
 
         // 실제 처리
@@ -229,10 +270,39 @@ public class BattleFacade
 
             if (isCharacter)
             {
+                m_characterManager.CheckTargetAlive(target.position);
+                m_characterManager.DamageToUnit(flow, context, target.position);
+            }
+            else
+            {
+                m_monsterManager.CheckTargetAlive(target.position);
+                m_monsterManager.DamageToUnit(flow, context, target.position);
+            }
+        }
+
+        /*
+        if (Caster.IsCharacter)
+        {
+            m_characterManager.DamageEventBundle(flow, context, Caster.Position);
+        }
+        else
+        {
+            m_monsterManager.DamageEventBundle(flow, context, Caster.Position);
+        }*/
+
+        // 실제 처리
+        foreach (var target in context.TargetUnits)
+        {
+            bool isCharacter = target.isCharacter;
+
+            if (isCharacter)
+            {
+                m_characterManager.CheckTargetAlive(target.position);
                 m_characterManager.HealToUnit(flow, context, target.position);
             }
             else
             {
+                m_monsterManager.CheckTargetAlive(target.position);
                 m_monsterManager.HealToUnit(flow, context, target.position);
             }
         }
@@ -253,36 +323,11 @@ public class BattleFacade
 
     public void ApplyShield(Flow flow, BattleContext context )
     {
-        // 시전 기록
-        switch (context.PresentationType)
+        RecordPresentation(flow, context, ((CardAbilityFlowInput)(flow.Input)).CasterUnit);
+
+        if (!CheckTrigger(flow, context))
         {
-            case EPresentationType.E_DEFAULT:
-                break;
-            case EPresentationType.E_MAGICCAST:
-                flow.Record(new CastResult()
-                {
-                    Caster = new TargetPair() {
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_PHSICALATTACK:
-                flow.Record(new AttackResult()
-                {
-                    Attacker = new TargetPair() {
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    Target = new TargetPair() {
-                        isCharacter = context.TargetUnits.Count > 0 ? context.TargetUnits[0].isCharacter : true,
-                        position = context.TargetUnits.Count > 0 ? context.TargetUnits[0].position : 0 },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_INSTANT:
-                break;
-            case EPresentationType.E_PASSIVETRIGGER:
-                break;
+            return;
         }
 
         // 실제 처리
@@ -292,18 +337,18 @@ public class BattleFacade
 
             if (isCharacter)
             {
+                m_characterManager.CheckTargetAlive(target.position);
                 m_characterManager.ShieldToUnit(flow, context, target.position);
             }
             else
             {
+                m_monsterManager.CheckTargetAlive(target.position);
                 m_monsterManager.ShieldToUnit(flow, context, target.position);
             }
         }
 
         /*
         // 종료 번들 실행
-        Unit Caster = ((AbilityFlowInput)flow.Input).CasterUnit;
-
         if (Caster.IsCharacter)
         {
             m_characterManager.DamageEventBundle(flow, context, Caster.Position);
@@ -314,101 +359,60 @@ public class BattleFacade
         }*/
     }
 
+    
     // 수치 변화
-    public void ChangeVariation(Flow flow, BattleContext context, Unit CasterUnit)
+    public void ApplyChangeVariation(Flow flow, BattleContext context, Unit CasterUnit)
     {
-        // 시전 기록
-        switch (context.PresentationType)
+        RecordPresentation(flow, context, CasterUnit);  
+
+        if (!CheckTrigger(flow, context))
         {
-            case EPresentationType.E_DEFAULT:
-                break;
-            case EPresentationType.E_MAGICCAST:
-                flow.Record(new CastResult()
-                {
-                    Caster = new TargetPair() { 
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_PHSICALATTACK:
-                flow.Record(new AttackResult()
-                {
-                    Attacker = new TargetPair() {
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    Target = new TargetPair() {
-                        isCharacter = context.TargetUnits.Count > 0 ? context.TargetUnits[0].isCharacter : true,
-                        position = context.TargetUnits.Count > 0 ? context.TargetUnits[0].position : 0 },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_INSTANT:
-                break;
-            case EPresentationType.E_PASSIVETRIGGER:
-                break;
+            return;
         }
 
-        // 실제 처리
-        foreach (var target in context.TargetUnits)
+        switch (context.TargetStatSource)
         {
-            bool isCharacter = target.isCharacter;
-
-            if (context.TargetSource == EStatType.E_AETHER)
-            {
+            // 타겟 없어도 작동해야됨 
+            case EStatSource.E_MAXAETHER:
+                m_turnManager.ExpendMaxAetherCount((int)context.EffectValue);
+                flow.Record(new ChangeAetherResult());
+                return;
+            case EStatSource.E_AETHER:
                 int CoverAether = 0;
-                if (context.EffectValue == -1)
-                    CoverAether = 
+                if (context.EffectValue >= 99)
+                    CoverAether =
                         m_turnManager.CurrentTurnMaxEtherCount - m_turnManager.CurrentAetherCount;
                 else CoverAether = (int)context.EffectValue;
                 m_turnManager.UseAether(-CoverAether);
                 flow.Record(new ChangeAetherResult());
-                continue;
-            }
+                return;
+        }
+
+        foreach (var target in context.TargetUnits)
+        {
+            bool isCharacter = target.isCharacter;
+
             if (isCharacter)
             {
-                m_characterManager.VaritationStatToUnit(flow, context, target.position);
+                m_characterManager.CheckTargetAlive(target.position);
+                m_characterManager.NumericStatusEffecttToUnit(flow, context, target.position);
             }
             else
             {
-                m_monsterManager.VaritationStatToUnit(flow, context, target.position);
+                m_monsterManager.CheckTargetAlive(target.position);
+                m_monsterManager.NumericStatusEffecttToUnit(flow, context, target.position);
             }
         }
     }
 
-    // 상태 관련
-    public void AddStatusEffect(Flow flow, BattleContext context , Unit CasterUnit)
+    // 단일 상태이상 관련만
+    public void ApplyStatusEffect(Flow flow, BattleContext context , Unit CasterUnit)
     {
-        // 시전 기록
-        switch (context.PresentationType)
+        RecordPresentation(flow, context, CasterUnit);
+
+        if (!CheckTrigger(flow, context))
         {
-            case EPresentationType.E_DEFAULT:
-                break;
-            case EPresentationType.E_MAGICCAST:
-                flow.Record(new CastResult()
-                {
-                    Caster = new TargetPair() {
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_PHSICALATTACK:
-                flow.Record(new AttackResult()
-                {
-                    Attacker = new TargetPair() {
-                        isCharacter = ((AbilityFlowInput)(flow.Input)).CasterUnit.IsCharacter,
-                        position = ((AbilityFlowInput)(flow.Input)).CasterUnit.Position },
-                    Target = new TargetPair() {
-                        isCharacter = context.TargetUnits.Count > 0 ? context.TargetUnits[0].isCharacter : true,
-                        position = context.TargetUnits.Count > 0 ? context.TargetUnits[0].position : 0 },
-                    IsCritical = context.IsCritical
-                });
-                break;
-            case EPresentationType.E_INSTANT:
-                break;
-            case EPresentationType.E_PASSIVETRIGGER:
-                break;
+            return;
         }
 
         // 실제 처리
@@ -418,46 +422,44 @@ public class BattleFacade
 
             if (isCharacter)
             {
+                m_characterManager.CheckTargetAlive(target.position);
                 m_characterManager.AddStatusEffectToUnit(flow, context, target.position);
             }
             else
             {
+                m_monsterManager.CheckTargetAlive(target.position);
                 m_monsterManager.AddStatusEffectToUnit(flow, context, target.position);
             }
         }
-
-        /*
-        // 종료 번들 실행
-        Unit Caster = ((AbilityFlowInput)flow.Input).CasterUnit;
-
-        if (Caster.IsCharacter)
-        {
-            m_characterManager.DamageEventBundle(flow, context, Caster.Position);
-        }
-        else
-        {
-            m_monsterManager.DamageEventBundle(flow, context, Caster.Position);
-        }*/
     }
 
     // 카드 관련
-    public void DrawCard(Flow flow, DrawCardActionContext context)
-    { 
-        m_cardManager.DrawCard(flow, context.Amount);
+    public void DrawCard(Flow flow, CardAbilityFlowInput input, BattleContext context)
+    {
+        RecordPresentation(flow, context, input.CasterUnit);
 
+        if (!CheckTrigger(flow, context))
+        {
+            return;
+        }
+
+        m_cardManager.DrawCard(input.CasterUnit, (int)context.EffectValue);
+        m_cardManager.DrawNewHandCard();
+        m_cardManager.AddTemtQueueCardsToHand();
         flow.Record(new CardDrawResult()
         {
-            Amount = context.Amount
+            Amount = (int)context.EffectValue
         });
     }
 
-    public void DrawCard(Flow flow, BattleContext context)
+    public void DrawCard(Flow flow, SystemDrawCardFlowInput input, DrawCardActionContext context)
     {
-        m_cardManager.DrawCard(flow, ((int)context.EffectValue));
-
+        m_cardManager.DrawCard(input.CasterUnit, ((int)context.Amount));
+        m_cardManager.DrawNewHandCard();
+        m_cardManager.AddTemtQueueCardsToHand();
         flow.Record(new CardDrawResult()
         {
-            Amount = ((int)context.EffectValue)
+            Amount = ((int)context.Amount)
         });
     }
 
@@ -478,17 +480,27 @@ public class BattleFacade
         { });
     }
 
+    public void RoundEnd(Flow flow, RoundEndActionContext context)
+    {
+        m_masterManager.ApplySetRound();
+
+        flow.Record(new RoundEndResult()
+        { });
+    }
+
     public void UnitDying(Flow flow, UnitDyingActionContext context)
     {
         TargetPair victim = context.Victim;
 
         if (victim.isCharacter)
         {
-            var unit = m_characterManager.Unit(victim.position);
+            m_characterManager.Unit(victim.position).UnitDead(flow);
+            m_masterManager.UnitDying(m_characterManager.Unit(victim.position));
         }
         else
         {
-            var unit = m_monsterManager.Unit(victim.position);
+            m_monsterManager.Unit(victim.position).UnitDead(flow);
+            m_masterManager.UnitDying(m_monsterManager.Unit(victim.position));
         }
 
         flow.Record(new UnitDyingResult()
@@ -499,6 +511,9 @@ public class BattleFacade
 
     public void ETC(Flow flow, BattleContext context)
     {
-
+        if (!CheckTrigger(flow, context))
+        {
+            return;
+        }
     }
 }

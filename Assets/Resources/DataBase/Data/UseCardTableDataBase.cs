@@ -8,6 +8,7 @@ public class UseCardTableData
 {
     public int UnitID;
     public int CardID;
+    public bool BeginningCard;
 }
 
 [System.Serializable]

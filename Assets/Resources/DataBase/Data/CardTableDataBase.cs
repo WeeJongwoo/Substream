@@ -13,9 +13,11 @@ public class CardTableData
     public ECardType CardType;
     public ECardRarity CardRarity;
     public int Cost;
+    public ETargetType TargetType;
     public string CardText;
     public string Texture;
     public List<int> SkillID = new List<int>();
+    public string Sound;
 }
 
 [System.Serializable]

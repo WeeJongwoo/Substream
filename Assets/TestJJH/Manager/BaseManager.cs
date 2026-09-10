@@ -26,6 +26,11 @@ public abstract class BaseManager : AccessableDataBase
     {
     }
 
+    public virtual void SetRound()
+    {
+
+    }
+
     public virtual void UseCard(Card card)
     {
     }

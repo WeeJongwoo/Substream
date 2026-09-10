@@ -13,7 +13,7 @@ public class StatusEffectPanel : MonoBehaviour
     [SerializeField]
     private int m_maxStatusEffectUICount;
 
-    private Dictionary<ESkillStatusType, StatusEffectUI> m_statusEffectUIDic = new Dictionary<ESkillStatusType, StatusEffectUI>();
+    private Dictionary<EStatusEffectType, StatusEffectUI> m_statusEffectUIDic = new Dictionary<EStatusEffectType, StatusEffectUI>();
 
     public Transform PoolTransform
     {
@@ -35,7 +35,7 @@ public class StatusEffectPanel : MonoBehaviour
         return m_statusEffectUIPool.GetObject();
     }
 
-    public void ChangeStatusEffect(Sprite uiSprite, ESkillStatusType statusType, int duration, int stack, bool isNew)
+    public void ChangeStatusEffect(Sprite uiSprite, EStatusEffectType statusType, int duration, int stack, bool isNew)
     {
         Debug.Log("UI / " + statusType.ToString() + " : " + isNew.ToString());
         if(isNew)

@@ -6,156 +6,63 @@ using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UIElements;
 
 
 [System.Serializable]
 public class StatusEffect
 {
-    public ESkillStatusType Effect;
-    public int Duration;
-    public float Value;
+    public EStatusEffectType Effect;
+    public int TurnDuration;
+    public int RoundDuration;
+    public float Stack;
 
-    public StatusEffect(ESkillStatusType effect, int duration, float value)
+    public StatusEffect(EStatusEffectType effect, int roundDuration, int turnDuration, float value)
     {
         Effect = effect;
-        Duration = duration;
-        Value = value;
+        TurnDuration = turnDuration;
+        RoundDuration = roundDuration;
+        Stack = value;
     }
 }
-
-public class StatusEffectManager
-{
-    public Dictionary<ESkillStatusType, List<StatusEffect>> m_statusEffect = new Dictionary<ESkillStatusType, List<StatusEffect>>();
-
-    public StatusEffectManager()
-    {
-        m_statusEffect.Add(ESkillStatusType.E_BLEED, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.E_SHOCK, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.E_OVERLOAD, new List<StatusEffect>());
-
-        m_statusEffect.Add(ESkillStatusType.M_ATK, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.M_DEF, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.M_SPEED, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.M_CRITICALTRIGGERRATE, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.M_CRITICALVALUERATE, new List<StatusEffect>());
-
-        m_statusEffect.Add(ESkillStatusType.P_ATK, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.P_DEF, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.P_SPEED, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.P_CRITICALTRIGGERRATE, new List<StatusEffect>());
-        m_statusEffect.Add(ESkillStatusType.P_CRITICALVALUERATE, new List<StatusEffect>());
-    }
-
-    public void AddStatusEffect(StatusEffect statusEffect, Flow flow, bool isCharacter, int position)
-    {
-        var Record = new ChangeStackResult()
-        {
-            Target = new TargetPair() { isCharacter = isCharacter, position = position },
-            StatusType = statusEffect.Effect,
-            Duration = statusEffect.Duration,
-            Stack = ((int)statusEffect.Value),
-            IsNew = false
-        };
-        if (m_statusEffect[statusEffect.Effect].Count == 0)
-        {
-            Record.IsNew = true;
-        }
-        m_statusEffect[statusEffect.Effect].Add(statusEffect);
-        flow.Record(Record);
-    }
-
-    public int HasShock()
-    {
-        if (m_statusEffect[ESkillStatusType.E_SHOCK].Count != 0)
-        {
-            return m_statusEffect[ESkillStatusType.E_SHOCK].Sum(r => 1);
-        }
-        return 0;
-    }
-
-    public int HasOverload()
-    {
-        if (m_statusEffect[ESkillStatusType.E_OVERLOAD].Count != 0)
-        {
-            return m_statusEffect[ESkillStatusType.E_OVERLOAD].Sum(r => 1);
-        }
-        return 0;
-    }
-
-    public int HasBleed()
-    {
-        if (m_statusEffect[ESkillStatusType.E_BLEED].Count != 0)
-        {
-            return m_statusEffect[ESkillStatusType.E_BLEED].Sum(r => 1);
-        }
-        return 0;
-    }
-
-    public void SetTurn(Flow flow, bool isCharacter, int position)
-    {
-        // 전체 상태이상 순회
-        foreach(var l in m_statusEffect)
-        {
-            if (l.Value.Count == 0)
-            {
-                continue;
-            }
-            // 전체 지속시간 감소
-            // 지속시간 0인 상태이상 삭제
-
-            for (int i = 0; i < l.Value.Count; i++)
-            {
-                l.Value[i].Duration--;
-            }
-
-            l.Value.RemoveAll(se => se.Duration == 0);
-
-            for (int i = 0; i < l.Value.Count; i++)
-            {
-                if (l.Value[i].Duration < 0)
-                    l.Value[i].Duration = -1;
-            }
-
-            var Record = new ChangeStackResult()
-            {
-                Target = new TargetPair() { isCharacter = isCharacter, position = position },
-                StatusType = l.Key,
-                Duration = l.Value.Sum(r => r.Duration),
-                Stack = ((int)l.Value.Sum(r => r.Value)),
-                IsNew = false
-            };
-            flow.Record(Record);
-        }
-    }
-}
-
-public struct IStatModifier
-{
-    public int Duration;
-    public float Amount;
-}
-
 
 [System.Serializable]
 public class Stat
 {
     [SerializeField]
     public readonly float Base = 0;
-    [SerializeField]
-    public float Now = 0;
+    
+    public float Now
+    {
+        get
+        {
+            if (Now > 0)
+            {
+                return Base + modifiers;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        set
+        {
+            Now = value;
+        }
+    }
+
     public float Max
     {
         get
         {
-            float value = Base;
-
-            foreach (var mod in modifiers)
-                value += mod.Amount;
+            float value = Base + modifiers;
 
             return value;
         }
     }
-    private LinkedList<IStatModifier> modifiers = new LinkedList<IStatModifier>();
+
+    private float modifiers = 0;
 
     public Stat(float Base)
     {
@@ -163,38 +70,16 @@ public class Stat
         this.Now = Base;
     }
 
-    public void AddModifie(int duration, float amount)
+    public void AddModifie(float amount)
     {
-        IStatModifier newModifie;
-        newModifie.Duration = duration;
-        newModifie.Amount = amount;
-        modifiers.AddLast(newModifie);
+        modifiers += amount;
         Now += amount;
     }
 
-    public void SetModifie(IStatModifier modifier)
+    public void SetModifie(float amount)
     {
-        Now -= modifier.Amount;
-    }
-
-    public void SetTurn()
-    {
-        var toRemove = new List<IStatModifier>();
-        foreach (var modifierIt in modifiers)
-        {
-            var modifierDuration = modifierIt.Duration;
-            modifierDuration--;
-            if (modifierIt.Duration <= 0)
-            {
-                SetModifie(modifierIt);
-                toRemove.Add(modifierIt);
-            }
-        }
-
-        foreach (var node in toRemove)
-        {
-            modifiers.Remove(node);
-        }
+        modifiers -= amount;
+        Now -= amount;
     }
 }
 
@@ -203,131 +88,535 @@ public abstract class Unit
 {
     private UnitManagingSystem m_system;
     private bool m_isCharacter = true;
+    private int m_position;
+
     public GameObject thisObject;
     public bool isDead = false;
-    private int m_position;
+    
     public int Position
     {
         get { return m_position; }
     }
-    public abstract int IngameUnitID();
 
     public bool IsCharacter
     {
         get { return m_isCharacter; }
     }
 
-    public Stat HealthPoint => m_stats[EStatType.E_HP];
-    public Stat AttackPoint => m_stats[EStatType.E_ATK];
-    public Stat DefendPoint => m_stats[EStatType.E_DEF];
-    public Stat SpeedPoint => m_stats[EStatType.E_SPEED];
-    public Stat CriticalTriggerRate => m_stats[EStatType.E_CRITICALTRIGGERRATE];
-    public Stat CriticalValueRate => m_stats[EStatType.E_CRITICALVALUERATE];
-    public Stat ShieldPoint => m_stats[EStatType.E_SHIELD];
+    public abstract int IngameUnitID();
+
+
+    // 전투 관련 스탯
+    [SerializeField]
+    private Dictionary<EStatSource, Stat> m_stats = new Dictionary<EStatSource, Stat>();
+
+    public Stat GetStat(EStatSource source)
+    {
+        return m_stats[source];
+    }
+
+    public Stat HealthValue => m_stats[EStatSource.E_HP];
+    public Stat AttackValue => m_stats[EStatSource.E_ATK];
+    public Stat DefendValue => m_stats[EStatSource.E_DEF];
+    public Stat SpeedValue => m_stats[EStatSource.E_SPEED];
+    public Stat CriticalRate => m_stats[EStatSource.E_CRITICALRATE];
+    public Stat CriticalDamageValue => m_stats[EStatSource.E_CRITICALDAMAGE];
+    public Stat ShieldValue => m_stats[EStatSource.E_SHIELD];
+    public Stat PenetrationRate => m_stats[EStatSource.E_PENETRATION];
+    public Stat AetherRecoverValue => m_stats[EStatSource.E_AETHERRECOVER];
 
     [SerializeField]
     public Stat DebugHP;
     [SerializeField]
     private UnitSlot m_ui;
 
-    // 전투 관련 기본 스탯
+
+
+    // 수치 상태 이상 관련 스탯
     [SerializeField]
-    private Dictionary<EStatType, Stat> m_stats = new Dictionary<EStatType, Stat>();
+    private Dictionary<EStatusEffectType, List<StatusEffect>> m_numericStatusEffect = new Dictionary<EStatusEffectType, List<StatusEffect>>();
 
-    // 상태이상 관련 (출혈, 감전 등)
-    private StatusEffectManager m_statusEffect = new StatusEffectManager();
-    public int HasShock()
+    public float GetNumericStatusEffect(EStatusEffectType source)
     {
-        return m_statusEffect.HasShock();
+        return ((int)m_specialStatusEffect[source].Sum(r => r.Stack));
     }
 
-    public int HasOverload()
+    public void AddNumericStatusEffect(Flow flow, EStatusEffectType effect, int roundDuration, int turnDuration, float value)
     {
-        return m_statusEffect.HasOverload();
-    }
-    public int HasBleed()
-    {
-        return m_statusEffect.HasBleed();
+        StatusEffect NewStatusEffect = new StatusEffect(effect, roundDuration, turnDuration, value);
+
+        m_specialStatusEffect[effect].Add(NewStatusEffect);
+
+        var Record = new ChangeStackResult()
+        {
+            Target = new TargetPair() { isCharacter = this.IsCharacter, position = Position },
+            StatusType = NewStatusEffect.Effect,
+            TurnDuration = NewStatusEffect.TurnDuration,
+            Stack = ((int)NewStatusEffect.Stack),
+            IsNew = false
+        };
+
+        if (m_specialStatusEffect[effect].Count == 1)
+        {
+            Record.IsNew = true;
+        }
+
+        flow.Record(Record);
     }
 
-    public void Init(UnitManagingSystem system, bool isCharacter, int pos, float hp, float atk, float def, float speed, float CriticalTriggerRate, float CriticalValueRate)
+
+
+    // 특수 상태 이상 관련 스탯
+    [SerializeField]
+    private Dictionary<EStatusEffectType, List<StatusEffect>> m_specialStatusEffect = new Dictionary<EStatusEffectType, List<StatusEffect>>();
+
+    public int GetSpecialStatusEffect(EStatusEffectType source)
+    {
+        return ((int)m_specialStatusEffect[source].Sum(r => r.Stack));
+    }
+
+    public void AddSpecialStatusEffect(Flow flow, EStatusEffectType effect, int roundDuration, int turnDuration, float value)
+    {
+        StatusEffect NewStatusEffect = new StatusEffect(effect, roundDuration, turnDuration, value);
+
+        m_specialStatusEffect[effect].Add(NewStatusEffect);
+
+        var Record = new ChangeStackResult()
+        {
+            Target = new TargetPair() { isCharacter = this.IsCharacter, position = Position },
+            StatusType = NewStatusEffect.Effect,
+            TurnDuration = NewStatusEffect.TurnDuration,
+            Stack = ((int)NewStatusEffect.Stack),
+            IsNew = false
+        };
+
+        if (m_specialStatusEffect[effect].Count == 1)
+        {
+            Record.IsNew = true;
+        }
+
+        flow.Record(Record);
+    }
+
+
+    public void Init(UnitManagingSystem system, bool isCharacter, int pos, float hp, float atk, float def, float speed, float CriticalTriggerRate, float CriticalValueRate, float Penetration, int AetherRecoverPoint)
     {
         m_system = system;
         m_isCharacter = isCharacter;
         m_position = pos;
 
-        m_stats.Add(EStatType.E_HP, new Stat(hp));
-        m_stats.Add(EStatType.E_ATK, new Stat(atk));
-        m_stats.Add(EStatType.E_DEF, new Stat(def));
-        m_stats.Add(EStatType.E_SPEED, new Stat(speed));
-        m_stats.Add(EStatType.E_CRITICALTRIGGERRATE, new Stat(CriticalTriggerRate));
-        m_stats.Add(EStatType.E_CRITICALVALUERATE, new Stat(CriticalValueRate));
-        m_stats.Add(EStatType.E_SHIELD, new Stat(0));
+        m_stats.Add(EStatSource.E_HP, new Stat(hp));
+        m_stats.Add(EStatSource.E_ATK, new Stat(atk));
+        m_stats.Add(EStatSource.E_DEF, new Stat(def));
+        m_stats.Add(EStatSource.E_SPEED, new Stat(speed));
+        m_stats.Add(EStatSource.E_CRITICALRATE, new Stat(CriticalTriggerRate));
+        m_stats.Add(EStatSource.E_CRITICALDAMAGE, new Stat(CriticalValueRate));
+        m_stats.Add(EStatSource.E_SHIELD, new Stat(0));
+        m_stats.Add(EStatSource.E_PENETRATION, new Stat(Penetration));
+        m_stats.Add(EStatSource.E_AETHERRECOVER, new Stat(AetherRecoverPoint));
 
-        DebugHP = m_stats[EStatType.E_HP];
+        DebugHP = m_stats[EStatSource.E_HP];
+
+        m_numericStatusEffect.Add(EStatusEffectType.M_ATK, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.M_DEF, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.M_SPEED, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.M_CRITICALRATE, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.M_CRITICALDAMAGE, new List<StatusEffect>());
+
+        m_numericStatusEffect.Add(EStatusEffectType.P_ATK, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.P_DEF, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.P_SPEED, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.P_CRITICALRATE, new List<StatusEffect>());
+        m_numericStatusEffect.Add(EStatusEffectType.P_CRITICALDAMAGE, new List<StatusEffect>());
+
+
+        m_specialStatusEffect.Add(EStatusEffectType.E_BLEED, new List<StatusEffect>());
+        m_specialStatusEffect.Add(EStatusEffectType.E_SHOCK, new List<StatusEffect>());
+        m_specialStatusEffect.Add(EStatusEffectType.E_OVERLOAD, new List<StatusEffect>());
     }
+
 
     public void SetTurn(Flow flow)
     {
-        // 상태이상 자체 효과
-        m_system.StatusEffectExecuteStrategy[ESkillStatusType.E_BLEED].Execute(this);
-        m_system.StatusEffectExecuteStrategy[ESkillStatusType.E_SHOCK].Execute(this);
-        m_system.StatusEffectExecuteStrategy[ESkillStatusType.E_OVERLOAD].Execute(this);
-
-        m_statusEffect.SetTurn(flow, this.IsCharacter, this.Position);
-
-        foreach (var s in m_stats)
+        // 전체 특수 상태 이상 순회
+        foreach (var SE in m_specialStatusEffect)
         {
-            s.Value.SetTurn();
+            if (SE.Value.Count == 0)
+            {
+                continue;
+            }
+            
+            // 상태이상 자체 효과
+            m_system.StatusEffectExecuteStrategy[SE.Key].Execute(flow, this);
+
+            // 지속시간 감소
+            for (int i = 0; i < SE.Value.Count; i++)
+            {
+                if (SE.Value[i].TurnDuration > 0)
+                    SE.Value[i].TurnDuration--;
+            }
+
+            var Record = new ChangeStackResult()
+            {
+                Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+                StatusType = SE.Key,
+                RoundDuration = SE.Value.Max(r => r.RoundDuration),
+                TurnDuration = SE.Value.Max(r => r.TurnDuration),
+                Stack = ((int)SE.Value.Sum(r => r.Stack)),
+                IsNew = false
+            };
+            flow.Record(Record);
+
+            // 지속시간 0인 상태이상 삭제
+            SE.Value.RemoveAll(se => se.TurnDuration == 0 && se.RoundDuration == 0);
+        }
+
+        foreach (var NE in m_numericStatusEffect)
+        {
+            if (NE.Value.Count == 0)
+            {
+                continue;
+            }
+
+            // 지속시간 감소
+            for (int i = 0; i < NE.Value.Count; i++)
+            {
+                if (NE.Value[i].TurnDuration > 0)
+                    NE.Value[i].TurnDuration--;
+
+                if (NE.Value[i].TurnDuration == 0)
+                    m_stats[StatusEffectToStat(NE.Key, NE.Value[i].Stack)].SetModifie(NE.Value[i].Stack);   
+            }
+
+            var Record = new ChangeStackResult()
+            {
+                Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+                StatusType = NE.Key,
+                RoundDuration = NE.Value.Max(r => r.RoundDuration),
+                TurnDuration = NE.Value.Max(r => r.TurnDuration),
+                Stack = ((int)NE.Value.Sum(r => r.Stack)),
+                IsNew = false
+            };
+            flow.Record(Record);
+            
+            // 지속시간 0인 상태이상 삭제
+            NE.Value.RemoveAll(se => se.TurnDuration == 0 && se.RoundDuration == 0);
+
         }
     }
 
-    public void AddStatusEffect(Flow flow, ESkillStatusType effect, int duration, float value)
+    public void SetRound(Flow flow)
     {
-        m_statusEffect.AddStatusEffect( new StatusEffect(effect, duration, value), flow, this.IsCharacter, this.Position);
+        // 전체 특수 상태 이상 순회
+        foreach (var SE in m_specialStatusEffect)
+        {
+            if (SE.Value.Count == 0)
+            {
+                continue;
+            }
+
+            // 지속시간 감소
+            for (int i = 0; i < SE.Value.Count; i++)
+            {
+                if (SE.Value[i].RoundDuration > 0)
+                    SE.Value[i].RoundDuration--;
+            }
+
+            var Record = new ChangeStackResult()
+            {
+                Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+                StatusType = SE.Key,
+                RoundDuration = SE.Value.Max(r => r.RoundDuration),
+                TurnDuration = SE.Value.Max(r => r.TurnDuration),
+                Stack = ((int)SE.Value.Sum(r => r.Stack)),
+                IsNew = false
+            };
+            flow.Record(Record);
+
+            // 지속시간 0인 상태이상 삭제
+            SE.Value.RemoveAll(se => se.TurnDuration == 0 && se.RoundDuration == 0);
+        }
+
+        foreach (var NE in m_numericStatusEffect)
+        {
+            if (NE.Value.Count == 0)
+            {
+                continue;
+            }
+
+            // 지속시간 감소
+            for (int i = 0; i < NE.Value.Count; i++)
+            {
+                if (NE.Value[i].RoundDuration > 0)
+                    NE.Value[i].RoundDuration--;
+
+                if (NE.Value[i].RoundDuration == 0)
+                    m_stats[StatusEffectToStat(NE.Key, NE.Value[i].Stack)].SetModifie(NE.Value[i].Stack);
+            }
+
+            var Record = new ChangeStackResult()
+            {
+                Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+                StatusType = NE.Key,
+                RoundDuration = NE.Value.Max(r => r.RoundDuration),
+                TurnDuration = NE.Value.Max(r => r.TurnDuration),
+                Stack = ((int)NE.Value.Sum(r => r.Stack)),
+                IsNew = false
+            };
+            flow.Record(Record);
+
+            // 지속시간 0인 상태이상 삭제
+            NE.Value.RemoveAll(se => se.TurnDuration == 0 && se.RoundDuration == 0);
+        }
     }
 
-    public void VaritationStat(Flow flow, EStatType statType, int duration, float value)
+    private EStatusEffectType StatToStatusEffect(EStatSource statSource, float value) 
     {
-        Debug.Log(statType + " : add" + value);
-        m_stats[statType].AddModifie(duration, value);
-
-        ESkillStatusType statusType = ESkillStatusType.E_NONE;
-        switch(statType)
+        EStatusEffectType StatusType = EStatusEffectType.E_NONE;
+        switch (statSource)
         {
-            case EStatType.E_NONE:
-            case EStatType.E_HP:
-            case EStatType.E_SHIELD:
-            case EStatType.E_AETHER:
-            case EStatType.E_DECK:
-                statusType = ESkillStatusType.E_NONE;
+            case EStatSource.E_NONE:
+            case EStatSource.E_HP:
+            case EStatSource.E_SHIELD:
+            case EStatSource.E_AETHER:
+            case EStatSource.E_DECK:
+            case EStatSource.E_MAXAETHER:
+            case EStatSource.E_DAMAGED_INFLICTED:
+            case EStatSource.E_DEFAULTDEF:
+            case EStatSource.E_DEFAULTATK:
+            case EStatSource.E_LOSTHP:
+            case EStatSource.E_DEFAULTHP:
+            case EStatSource.E_FIXED:
+                StatusType = EStatusEffectType.E_NONE;
                 break;
-            case EStatType.E_ATK:
-                if(value > 0) statusType = ESkillStatusType.P_ATK;
-                else statusType = ESkillStatusType.M_ATK;
+            case EStatSource.E_ATK:
+                if (value > 0) StatusType = EStatusEffectType.P_ATK;
+                else StatusType = EStatusEffectType.M_ATK;
                 break;
-            case EStatType.E_DEF:
-                if (value > 0) statusType = ESkillStatusType.P_DEF;
-                else statusType = ESkillStatusType.M_DEF;
+            case EStatSource.E_DEF:
+                if (value > 0) StatusType = EStatusEffectType.P_DEF;
+                else StatusType = EStatusEffectType.M_DEF;
                 break;
-            case EStatType.E_SPEED:
-                if (value > 0) statusType = ESkillStatusType.P_SPEED;
-                else statusType = ESkillStatusType.M_SPEED;
+            case EStatSource.E_SPEED:
+                if (value > 0) StatusType = EStatusEffectType.P_SPEED;
+                else StatusType = EStatusEffectType.M_SPEED;
                 break;
-            case EStatType.E_CRITICALTRIGGERRATE:
-                if (value > 0) statusType = ESkillStatusType.P_CRITICALTRIGGERRATE;
-                else statusType = ESkillStatusType.M_CRITICALTRIGGERRATE;
+            case EStatSource.E_CRITICALRATE:
+                if (value > 0) StatusType = EStatusEffectType.P_CRITICALRATE;
+                else StatusType = EStatusEffectType.M_CRITICALRATE;
                 break;
-            case EStatType.E_CRITICALVALUERATE:
-                if (value > 0) statusType = ESkillStatusType.P_CRITICALVALUERATE;
-                else statusType = ESkillStatusType.M_CRITICALVALUERATE;
+            case EStatSource.E_CRITICALDAMAGE:
+                if (value > 0) StatusType = EStatusEffectType.P_CRITICALDAMAGE;
+                else StatusType = EStatusEffectType.M_CRITICALDAMAGE;
+                break;
+            case EStatSource.E_MAXHP:
+                if (value > 0) StatusType = EStatusEffectType.P_MAXHP;
+                else StatusType = EStatusEffectType.M_MAXHP;
+                break;
+            case EStatSource.E_AETHERRECOVER:
+                if (value > 0) StatusType = EStatusEffectType.P_AETHERRECOVER;
+                else StatusType = EStatusEffectType.M_AETHERRECOVER;
+                break;
+            case EStatSource.E_PENETRATION:
+                if (value > 0) StatusType = EStatusEffectType.P_PENETRATION;
+                else StatusType = EStatusEffectType.M_PENETRATION;
                 break;
         }
-        AddStatusEffect(flow, statusType, duration, value);
+        return StatusType;
     }
 
-    public void UnitDead()
+    private EStatSource StatusEffectToStat(EStatusEffectType statusSource, float value)
     {
-        //m_system.RemoveUnit(this);
+        EStatSource StatType = EStatSource.E_NONE;
+        switch (statusSource)
+        {
+            case EStatusEffectType.E_NONE:
+            case EStatusEffectType.E_BUFF:
+            case EStatusEffectType.E_DEBUFF:
+            case EStatusEffectType.E_NUM:
+                break;
+
+            case EStatusEffectType.E_BLEED:
+            case EStatusEffectType.E_SHOCK:
+            case EStatusEffectType.E_OVERLOAD:
+                break;
+
+            case EStatusEffectType.M_MAXHP:
+            case EStatusEffectType.P_MAXHP:
+                StatType = EStatSource.E_HP;
+                break;
+            case EStatusEffectType.M_ATK:
+            case EStatusEffectType.P_ATK:
+                StatType = EStatSource.E_ATK;
+                break;
+            case EStatusEffectType.M_DEF:
+            case EStatusEffectType.P_DEF:
+                StatType = EStatSource.E_DEF;
+                break;
+            case EStatusEffectType.M_SPEED:
+            case EStatusEffectType.P_SPEED:
+                StatType = EStatSource.E_SPEED;
+                break;
+            case EStatusEffectType.M_CRITICALRATE:
+            case EStatusEffectType.P_CRITICALRATE:
+                StatType = EStatSource.E_CRITICALRATE;
+                break;
+            case EStatusEffectType.M_CRITICALDAMAGE:
+            case EStatusEffectType.P_CRITICALDAMAGE:
+                StatType = EStatSource.E_CRITICALDAMAGE;
+                break;
+            case EStatusEffectType.M_AETHERRECOVER:
+            case EStatusEffectType.P_AETHERRECOVER:
+                StatType = EStatSource.E_AETHERRECOVER;
+                break;
+            case EStatusEffectType.M_PENETRATION:
+            case EStatusEffectType.P_PENETRATION:
+                StatType = EStatSource.E_PENETRATION;
+                break;
+        }
+        return StatType;
+    }
+
+    public void AddVaritationStat(Flow flow, EStatSource targetStatSource, int roundDuration, int turnDuration, float value)
+    {
+        Debug.Log(targetStatSource + " : add" + value);
+        
+        m_stats[targetStatSource].AddModifie(value);
+
+        EStatusEffectType StatusType = StatToStatusEffect(targetStatSource, value);
+        StatusEffect StatusEffect = new StatusEffect(StatusType, turnDuration, roundDuration, value);
+
+        m_numericStatusEffect[StatusType].Add(StatusEffect);
+
+        var Record = new ChangeStackResult()
+        {
+            Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+            StatusType = StatusType,
+            RoundDuration = m_numericStatusEffect[StatusType].Max(r => r.RoundDuration),
+            TurnDuration = m_numericStatusEffect[StatusType].Max(r => r.TurnDuration),
+            Stack = ((int)m_numericStatusEffect[StatusType].Sum(r => r.Stack)),
+            IsNew = m_numericStatusEffect[StatusType].Count == 1
+        };
+        flow.Record(Record);
+    }
+
+    public void AddStatusEffect(Flow flow, EStatusEffectType statusEffectType, int roundDuration, int turnDuration, float value)
+    {
+        Debug.Log(statusEffectType + " : add" + value);
+
+        StatusEffect StatusEffect = new StatusEffect(statusEffectType, turnDuration, roundDuration, value);
+
+        m_specialStatusEffect[statusEffectType].Add(StatusEffect);
+
+        var Record = new ChangeStackResult()
+        {
+            Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+            StatusType = statusEffectType,
+            RoundDuration = m_specialStatusEffect[statusEffectType].Max(r => r.RoundDuration),
+            TurnDuration = m_specialStatusEffect[statusEffectType].Max(r => r.TurnDuration),
+            Stack = ((int)m_specialStatusEffect[statusEffectType].Sum(r => r.Stack)),
+            IsNew = m_specialStatusEffect[statusEffectType].Count == 1
+        };
+        flow.Record(Record);
+    }
+
+    public void UnitDead(Flow flow)
+    {
+        foreach (var NE in m_numericStatusEffect)
+        {
+            if (NE.Value.Count == 0)
+            {
+                continue;
+            }
+
+            // 지속시간 감소
+            for (int i = 0; i < NE.Value.Count; i++)
+            {
+                m_stats[StatusEffectToStat(NE.Key, NE.Value[i].Stack)].SetModifie(NE.Value[i].Stack);
+            }
+
+            // 지속시간 0인 상태이상 삭제
+            NE.Value.RemoveAll(se => se.RoundDuration == 0);
+
+            var Record = new ChangeStackResult()
+            {
+                Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+                StatusType = NE.Key,
+                RoundDuration = 0,
+                TurnDuration = 0,
+                Stack = 0,
+                IsNew = false
+            };
+            flow.Record(Record);
+        }
+
+        foreach (var s in m_specialStatusEffect)
+        {
+            s.Value.Clear();
+        }
+        foreach(var n in m_numericStatusEffect)
+        {
+            n.Value.Clear();
+        }
+    }
+
+    public void ToDamage(Flow flow, bool isDamage, float amount)
+    {
+        // 기록
+        var Record = new ChangeHPResult()
+        {
+            Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+            IsDamage = isDamage,
+            AttackStatusType = EStatusEffectType.E_NONE,
+            Amount = amount,
+        };
+        flow.Record(Record);
+
+        // 피해량 쉴드에 적용
+        if (ShieldValue.Now > 0)
+        {
+            ShieldValue.Now -= amount;
+            amount -= ShieldValue.Now;
+        }
+
+        // 쉴드 감쇄가 들어가도 피해량 남았으면 피해량 적용
+        if (amount > 0)
+        {
+            HealthValue.Now -= amount;
+        }
+    }
+
+    public void ToHeal(Flow flow, bool isDamage, float amount)
+    {
+        float OverHeal = HealthValue.Now + amount - HealthValue.Max;
+
+        // 오버 힐 처리
+        if (OverHeal > 0) amount -= OverHeal;
+        else OverHeal = 0;
+        HealthValue.Now += amount;
+
+        var Record = new ChangeHPResult()
+        {
+            Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+            IsDamage = false,
+            AttackStatusType = EStatusEffectType.E_NONE,
+            Amount = amount,
+            OverAmount = OverHeal
+        };
+        flow.Record(Record);
+    }
+
+    public void ToSheild(Flow flow, float amount)
+    {
+
+        ShieldValue.Now += amount;
+
+        var Record = new AddShieldResult()
+        {
+            Target = new TargetPair() { isCharacter = IsCharacter, position = Position },
+            Amount = amount
+        };
+        // 기록
+        flow.Record(Record);
     }
 }

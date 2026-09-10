@@ -7,15 +7,31 @@ public abstract class FlowInput
 
 }
 
-public class AbilityFlowInput : FlowInput
+public class CardAbilityFlowInput : FlowInput
 {
     public Unit CasterUnit;
     public Card CasterCard;
+    public int SelectTargetPosition;
 
-    public AbilityFlowInput(Unit unit, Card card)
+    public CardAbilityFlowInput(Unit unit, Card card, int selectTargetPosition)
     {
         CasterUnit = unit;
         CasterCard = card;
+        SelectTargetPosition = selectTargetPosition;    
+    }
+}
+
+public class SkillAbilityFlowInput : FlowInput
+{
+    public Unit CasterUnit;
+    public Card CasterCard;
+    public int SelectTargetPosition;
+
+    public SkillAbilityFlowInput(Unit unit, Card card, int selectTargetPosition)
+    {
+        CasterUnit = unit;
+        CasterCard = card;
+        SelectTargetPosition = selectTargetPosition;
     }
 }
 
@@ -32,6 +48,14 @@ public class UnitDyingFlowInput : FlowInput
 public class TurnEndFlowInput : FlowInput
 {
     public TurnEndFlowInput()
+    {
+
+    }
+}
+
+public class RoundEndFlowInput : FlowInput
+{
+    public RoundEndFlowInput()
     {
 
     }

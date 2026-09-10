@@ -1,32 +1,74 @@
-ID,Name,CardType,CardRarity,Cost,CardText,Texture,SkillID
-0,DEFAULT,E_DEFAULT,E_NONE,0,"""""",Card0Texture,0
-1,CharacterSkillCard1,E_SKILL,E_NONE,0,"""스킬 사용 시 즉시 힐 및 디버프 해제""",CharacterSkillCard1Texture,[1/2]
-2,CharacterSkillCard2,E_SKILL,E_NONE,0,"""코스트를 즉시 최대치까지 회복""",CharacterSkillCard2Texture,3
-3,CharacterSkillCard3,E_SKILL,E_NONE,0,"""모든 적의 방어력을 40% 감소""",CharacterSkillCard3Texture,4
-4,CharacterSkillCard4,E_ATTACK,E_NONE,0,"""2턴 간 공격 카드 사용 시 적 전체에게 공격력의 150%로 피해를 가하는 추가 공격 발동""",CharacterSkillCard4Texture,5
-,,,,,,,
-1000,DEFAULT,E_DEFAULT,E_NONE,0,"""""",Card0Texture,0
-1001,Card1,E_ATTACK,E_NORMAL,1,"""적 1명에게 공격력의 100%의 피해를 입힌다.""",Card1Texture,1001
-1002,Card2,E_ATTACK,E_NORMAL,2,"""적 3명에게 공격력의 150%의 피해를 입힌다.""",Card2Texture,1002
-1003,Card3,E_ATTACK,E_RARE,2,"""적 1명에게 공격력의 200%의 피해를 입힌다.""",Card3Texture,1003
-1004,Card4,E_ATTACK,E_SUPERRARE,4,"""적 3명에게 공격력의 150%의 피해를 입히고, 출혈을 부여한다.""",Card4Texture,1004
-1005,Card5,E_ATTACK,E_RARE,2,"""적 2명에게 공격력의 120%의 피해를 입힌다. 입힌 피해의 50%를 회복한다.""",Card5Texture,[1005/1006]
-1006,Card6,E_SKILL,E_RARE,1,"""적 1명에게 공격력의 80%의 피해를 2회 입힌다.""",Card7Texture,1007
-1007,Card7,E_SKILL,E_RARE,2,"""에테르를 2 회복한다.""",Card8Texture,1008
-1008,Card8,E_SKILL,E_RARE,2,"""카드를 2장 드로우한다.""",Card9Texture,1009
-1009,Card9,E_SKILL,E_NORMAL,1,"""본인의 방어력이 40% 증가한다.""",Card10Texture,1010
-1010,Card10,E_ATTACK,E_RARE,1,"""적 1명에게 공격력의 120% 피해를 입히고, 출혈을 부여한다.""",Card11Texture,1011
-1011,Card11,E_ATTACK,E_RARE,1,"""적 1명에게 공격력의 90% 피해를 2회 입힌다.""",Card12Texture,1012
-1012,Card12,E_SKILL,E_RARE,1,"""본인의 속도가 3 증가하고, 카드를 1장 드로우한다.""",Card13Texture,[1013/1014]
-1013,Card13,E_ATTACK,E_RARE,1,"""적 전체에게 공격력의 100% 피해를 입힌다.""",Card14Texture,1015
-1014,Card14,E_SKILL,E_RARE,1,"""아군 1명에게 방어력의 30%만큼의 실드를 제공한다.""",Card15Texture,1016
-1015,Card15,E_ATTACK,E_RARE,1,"""적 1명에게 공격력의 100% 피해를 입히고, 쇼크 스택을 부여한다.""",Card16Texture,1017
-1016,Card16,E_ATTACK,E_NORMAL,1,"""적 1명에게 공격력의 80%의 피해를 입힌다.""",Card17Texture,1018
-1017,Card17,E_SKILL,E_NORMAL,1,"""적 1명에게 쇼크 스택을 부여한다.""",Card18Texture,1019
-1018,Card18,E_SKILL,E_NORMAL,1,"""적 1명에게 오버로드를 부여한다.""",Card19Texture,1020
-1019,Card19,E_ATTACK,E_RARE,2,"""적 1명에게 공격력의 80%의 피해를 입힌다. 쇼크 상태일 경우 추가 공격이 발생한다.""",Card20Texture,[1021/1022]
-1020,Card20,E_ATTACK,E_RARE,2,"""적 1명에게 60%의 피해를 입히고, 쇼크 스택을 부여한다.""",Card21Texture,1023
-1021,Card21,E_ATTACK,E_RARE,2,"""적 1명에게 120%의 피해를 입히고, 오버로드를 부여한다.""",Card22Texture,1024
-1022,Card22,E_ATTACK,E_RARE,3,"""적 1명에게 공격력의 70%의 피해를 입힌다. 쇼크 상태일 경우 오버로드를 부여한다.""",Card23Texture,[1025/1026]
-1023,Card23,E_ATTACK,E_RARE,3,"""모든 적에게 공격력의 60%의 피해를 입힌다. 쇼크 상태일 경우 추가 공격이 발생한다.""",Card24Texture,[1027/1022]
-,,E_DEFAULT,,,,,
+ID,Name,CardType,CardRarity,Cost,TargetType,CardText,Texture,SkillID,Sound
+0,DEFAULT,E_DEFAULT,E_NONE,0,E_NONE,"""""","""Card0Texture""",[0],"""없음"""
+1,아이비 스킬,E_SKILL,E_RARE,20,E_SELECT,"""대상에게 오버로드를 4 부여한다.""","""CharacterSkillCard1Texture""",[101/102/103/104],"""없음"""
+2,시스템 간섭,E_SKILL,E_RARE,20,E_SELECT,"""대상이 아군일 시 모든 해로운 효과 제거, 적군일 시 5턴간 공격력, 방어력, 15%, 속도를 5 감소 시킨다.""","""CharacterSkillCard2Texture""",[0],"""없음"""
+3,록온,E_SKILL,E_RARE,40,E_SELF,"""도발 상태 부여, 2턴 간 자신의 방어력 15% 증가""","""CharacterSkillCard3Texture""",[0],"""없음"""
+,,,,,,,,,
+5,각성,E_SKILL,E_SUPERRARE,70,E_SELF,"""5턴간 치명타 확률 100% 증가, 속도, 에테르 회복량 15증가."" ","""CharacterSkillCard5Texture""",[501/502],"""없음"""
+,,,,,,,,,
+1101,타격,E_ATTACK,E_NORMAL,1,E_ENEMY,"""적 1명에게 공격력의 40%의 피해를 입힌다.""","""Card1101Texture""",[10011],"""없음"""
+1102,휩쓸기,E_ATTACK,E_NORMAL,1,E_ENEMY,"""적 2명에게 공격력의 30%의 피해를 입힌다.""","""Card1102Texture""",[10021],"""없음"""
+1103,찌르기,E_ATTACK,E_NORMAL,2,E_ENEMY,"""적 1명에게 공격력의 50%의 피해를 입힌다.""","""Card1103Texture""",[10031],"""없음"""
+1111,오버로드 회수,E_ATTACK,E_RARE,2,E_ENEMY,"""적 1명에게 공격력의 50%의 피해를 입히고 자신에게 오버로드를 1 부여한다.""","""Card1111Texture""",[10031/11112],"""없음"""
+1112,핑크노이즈 ,E_ATTACK,E_RARE,2,E_ENEMY,"""적 2명에게 공격력의 40%의 피해를 입히고, 대상에게 오버로드를 1 부여한다.""","""Card1112Texture""",[11121],"""없음"""
+1121,백플로우,E_ATTACK,E_RARE,1,E_ENEMY,"""적 3명에게 공격력의 50%의 피해를 입히고, 자신에게 오버로드를 1 부여한다.""","""Card1121Texture""",[11211/11112],"""없음"""
+1122,냉각 프로토콜,E_SKILL,E_RARE,2,E_SELF,"""오버로드를 1 소모하고 체력을 10% 회복한다.""","""Card1122Texture""",[11221],"""없음"""
+1123,출력 해방 ,E_SKILL,E_RARE,3,E_SELF,"""오버로드를 1 소모하여, 공격력의 10% + 오버로드 당 1%만큼 공격력이 증가한다.""","""Card1123Texture""",[11231/11232],"""없음"""
+1124,엔드포인트,E_ATTACK,E_SUPERRARE,2,E_ENEMY,"""적 전체에게 공격력의 65% 피해를 입히고, 자신의 오버로드를 1 소모하여 자신의 오버로드 당 대상의 최대 체력의 2%만큼의 고정 피해를 입힌다. 입힌 피해량에 비례해 체력을 회복한다.""","""Card1124Texture""",[11241/11242/11243],"""없음"""
+1131,심층감 ,E_ATTACK,E_RARE,1,E_ENEMY,"""적 1명에게 공격력의 60%의 피해를 입히고, 대상에게 오버로드를 2 부여한다.""","""Card1131Texture""",[11311],"""없음"""
+1132,확산 프로토콜,E_ATTACK,E_RARE,1,E_ENEMY,"""적 전체에게 공격력의 45%의 피해를 입히고, 대상에게 오버로드를 1 부여한다.""","""Card1132Texture""",[11321],"""없음"""
+1133,붕괴,E_ATTACK,E_RARE,1,E_ENEMY,"""적 전체에게 공격력의 50%의 피해를 입히고, 오버로드 상태의 대상의 방어력을 10%감소시킨다.""","""Card1133Texture""",[11331/11332],"""없음"""
+1134,초기화 프로토콜,E_ATTACK,E_SUPERRARE,2,E_ENEMY,"""적 1명에게 공격력의 70% 피해를 입히고, 대상의 오버로드 수치를 모두 소모하여 오버로드 당 대상의 최대 체력의 2%만큼의 고정 피해를 입힌다.""","""Card1134Texture""",[11341/11342],"""없음"""
+,,,,,,,,,
+1301,진압,E_SKILL,E_RARE,2,E_ALLIES,"""적 하나에게 공격력의 100%의 피해를 입힌다.""","""Card1301Texture""",[10011],"""없음"""
+1302,입자 방벽,E_SKILL,E_RARE,2,E_ALLIES,"""본인에게 방어력의 120%만큼 실드를 부여한다.""","""Card1302Texture""",[15111/15112/15113],"""없음"""
+1303,에테르 융해 주사,E_SKILL,E_RARE,2,E_ALLIES,"""본인의 체력을 방어력의 25%만큼 회복한다.""","""Card1303Texture""",[0],"""없음"""
+1304,압수,E_SKILL,E_RARE,2,E_ALLIES,"""적 하나에게 공격력의 120%의 피해를 입히고, 본인이 [도발] 상태일 경우 본인의 잃은 체력의 5%를 회복한다.""","""Card1304Texture""",[0],"""없음"""
+1305,밀집 방열,E_SKILL,E_RARE,2,E_ALLIES,"""본인에게 방어력의 100%만큼 실드를 부여하고, [도발] 상태일 경우 아군 전체의 체력을 방어력의 10%만큼 회복한다.""","""Card1305Texture""",[0],"""없음"""
+1306,경계 태세,E_SKILL,E_RARE,2,E_ALLIES,"""본인의 체력을 방어력의 20%만큼 회복하고, [도발] 상태일 경우 스킬 게이지를 10% 회복한다.""","""Card1306Texture""",[0],"""없음"""
+1307,자기방어,E_SKILL,E_RARE,2,E_ALLIES,"""적 하나에게 방어력의 140%의 피해를 입힌다.""","""Card1307Texture""",[0],"""없음"""
+1308,저지선,E_SKILL,E_RARE,2,E_ALLIES,"""2턴간 본인의 방어력이 20% 증가한다.""","""Card1308Texture""",[0],"""없음"""
+1309,전환: 역장,E_SKILL,E_RARE,2,E_ALLIES,"""본인에게 방어력의 70%만큼 에테르 역장을 부여한다.""","""Card1309Texture""",[0],"""없음"""
+1310,강행돌파,E_SKILL,E_RARE,2,E_ALLIES,"""적 하나에게 방어력의 100%의 피해를 입힌다. 본인에게 에테르 역장이 존재한다면 현재 에테르 역장 수치의 50%만큼 추가 피해를 입힌다.""","""Card1310Texture""",[0],"""없음"""
+1311,희생양,E_SKILL,E_RARE,2,E_ALLIES,"""본인의 에테르 역장을 제거하고,  모든 적에게 제거한 수치의 60%만큼 피해를 입힌다. 에테르 역장이 존재하지 않는다면 이 카드를 사용할 수 없다. or 사용해도 에테르만 소모되고 효과 발생 X""","""Card1311Texture""",[0],"""없음"""
+1312,불굴,E_SKILL,E_RARE,2,E_ALLIES,"""본인의 체력 30%가 감소하고 감소한 수치만큼 에테르 역장으로 전환한다.""","""Card1312Texture""",[0],"""없음"""
+1313,집결,E_SKILL,E_RARE,2,E_ALLIES,"""모든 아군에게 본인 방어력의 30%만큼 에테르 역장을 부여한다.""","""Card1313Texture""",[0],"""없음"""
+,,,,,,,,,
+1501,치유,E_SKILL,E_NORMAL,1,E_ALLIES,"""아군 1명의 체력을 공격력의 20%만큼 회복한다.""","""Card1501Texture""",[10091],"""없음"""
+1502,보호,E_SKILL,E_NORMAL,1,E_ALLIES,"""아군 1명에게 본인 공격력의 20%만큼 보호막을 부여한다.""","""Card1502Texture""",[10101],"""없음"""
+1511,양자화,E_SKILL,E_RARE,1,E_SELF,"""에테르를 2 회복한다.""","""Card1513Texture""",[10081],"""없음"""
+1512,가속,E_SKILL,E_NORMAL,2,E_ALLIES,"""본인의 속도를 1증가시키고, 모든 아군의 속도를 1증가시킨다.""","""Card1512Texture""",[15121/15122],"""없음"""
+1513,동기화,E_SKILL,E_NORMAL,1,E_SELF,"""본인의 에테르 회복량이 1 증가한다.""","""Card1511Texture""",[15131],"""없음"""
+1514,재구성,E_SKILL,E_RARE,1,E_ALLIES,"""아군 1명에게 공격력의 20% + 에테르 회복량의 2000%만큼 회복한다.""","""Card1514Texture""",[10091/15141],"""없음"""
+1515,양자 장벽,E_SKILL,E_RARE,1,E_ALLIES,"""아군 1명에게 공격력의 20% + 에테르 회복량의 2000%만큼 보호막을 부여한다.""","""Card1515Texture""",[10101/15151],"""없음"""
+1516,오버클럭,E_SKILL,E_SUPERRARE,3,E_NONE,"""최대 에테르 보유량을 1 증가시킨다.""","""Card1516Texture""",[15161],"""없음"""
+1521,파동 붕괴,E_ATTACK,E_SUPERRARE,2,E_ENEMY,"""최대 체력의 10%와 에테르 회복량 1을 소비하고, 지정한 유닛에게 공격력의 85%의 피해를 입히고, 후방 두 유닛에게 공격력의 50%의 피해를 입힌다. 모든 피해량은 에테르 회복량 * 3%만큼 증폭된다.(체력은 1이하로 내려가지 않습니다.)""","""Card1521Texture""",[15211/15212/15213/15214/15215],"""없음"""
+1522,집중포화,E_ATTACK,E_SUPERRARE,2,E_ENEMY,"""최대 체력의 10%와 에테르 회복량 1을 소비하고, 지정한 유닛에게 공격력의 55%의 피해를 3번 입힌다. 모든 피해량은 에테르 회복량 * 3%만큼 증폭된다.(체력은 1이하로 내려가지 않습니다.)""","""Card1522Texture""",[15211/15212/15223],"""없음"""
+1531,순환 가속,E_SKILL,E_SUPERRARE,1,E_SELF,"""본인의 에테르 회복량이 7턴 간 5 증가한다.""","""Card1531Texture""",[15311],"""없음"""
+1532,에테르 포격,E_ATTACK,E_SUPERRARE,2,E_ENEMY,"""공격력의 20%로 에테르 회복량 + 3 회 피해를 입힌다. 피해를 가할 때마다 임의의 적을 표적으로 한다.""","""Card1532Texture""",[15321],"""없음"""
+,,,,,,,,,
+1201,공격,E_ATTACK,E_NORMAL,1,E_ENEMY,"""적 1명에게 공격력의 100%의 피해를 입힌다.""","""Card101Texture""",[1001],"""없음"""
+1202,휩쓸기,E_ATTACK,E_NORMAL,2,E_ENEMY,"""적 2명에게 공격력의 100%의 피해를 입힌다.""","""Card102Texture""",[1002],"""없음"""
+1203,암습,E_ATTACK,E_RARE,2,E_ENEMY,"""적 1명에게 공격력의 200%의 피해를 입힌다.""","""Card103Texture""",[1003],"""없음"""
+1204,양자화,E_SKILL,E_RARE,1,E_NONE,"""에테르를 2 회복한다.""","""Card104Texture""",[1008],"""없음"""
+1205,다른 가능성,E_SKILL,E_RARE,1,E_NONE,"""카드를 2장 드로우한다.""","""Card105Texture""",[1009],"""없음"""
+1206,가속화,E_SKILL,E_RARE,1,E_ALLIES,"""속도와 에테르 회복량이 1증가한다.""","""Card106Texture""",[1015],"""없음"""
+1211,Card110,E_ATTACK,E_RARE,1,E_ENEMY,"""적 1명에게 공격력의 100% 피해를 입히고, 쇼크 스택을 부여한다.""","""Card110Texture""",[1017],"""없음"""
+1212,Card111,E_ATTACK,E_NORMAL,1,E_ENEMY,"""적 1명에게 공격력의 80%의 피해를 입힌다.""","""Card111Texture""",[1018],"""없음"""
+1213,Card112,E_SKILL,E_NORMAL,1,E_ENEMY,"""적 1명에게 쇼크 스택을 부여한다.""","""Card112Texture""",[1019],"""없음"""
+1214,Card113,E_SKILL,E_NORMAL,1,E_ENEMY,"""적 1명에게 오버로드를 부여한다.""","""Card113Texture""",[1020],"""없음"""
+1215,Card114,E_ATTACK,E_RARE,2,E_ENEMY,"""적 1명에게 공격력의 80%의 피해를 입힌다. 쇼크 상태일 경우 추가 공격이 발생한다.""","""Card114Texture""",[1021/1022],"""없음"""
+1216,Card115,E_ATTACK,E_RARE,2,E_ENEMY,"""적 1명에게 60%의 피해를 입히고, 쇼크 스택을 부여한다.""","""Card115Texture""",[1023],"""없음"""
+1217,Card116,E_ATTACK,E_RARE,2,E_ENEMY,"""적 1명에게 120%의 피해를 입히고, 오버로드를 부여한다.""","""Card116Texture""",[1024],"""없음"""
+1218,Card117,E_ATTACK,E_RARE,3,E_ENEMY,"""적 1명에게 공격력의 70%의 피해를 입힌다. 쇼크 상태일 경우 오버로드를 부여한다.""","""Card117Texture""",[1025/1026],"""없음"""
+1219,Card118,E_ATTACK,E_RARE,3,E_ENEMY,"""모든 적에게 공격력의 60%의 피해를 입힌다. 쇼크 상태일 경우 추가 공격이 발생한다.""","""Card118Texture""",[1027/1022],"""없음"""
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+97,에테르 폭발,E_ATTACK,E_SUPERRARE,2,E_ENEMY,"""최대 체력의 10%와 에테르 회복량 1을 소비하고, 지정한 유닛에게 공격력의 85%의 피해를 입히고, 인접한 적에게 공격력의 40%의 피해를 입힌다. 모든 피해량은 에테르 회복량 * 3%만큼 증폭된다.(체력은 1이하로 내려가지 않습니다.)""","""Card1532Texture""",[15321],"""없음"""
+98,기적의 구현,E_SKILL,E_RARE,2,E_ALLIES,"""아군 전체의 체력을 공격력의 15% + 에테르 회복량의 2000%만큼 회복한다.""","""Card1521Texture""",[15211/15212/15213],"""없음"""
+99,다중 역장,E_SKILL,E_RARE,2,E_ALLIES,"""아군 전체에게 공격력의 15% + 에테르 회복량의 2000%만큼 보호막을 부여한다.""","""Card1522Texture""",[15221/15222],"""없음"""
+101,CharacterSkillCard1,E_SKILL,E_NONE,0,E_ALLIES,"""스킬 사용 시 즉시 힐 및 디버프 해제""","""CharacterSkillCard1Texture""",[101],"""없음"""
+102,CharacterSkillCard2,E_SKILL,E_NONE,0,E_NONE,"""코스트를 즉시 최대치까지 회복""","""CharacterSkillCard2Texture""",[103],"""없음"""
+103,CharacterSkillCard3,E_SKILL,E_NONE,0,E_ENEMY,"""모든 적의 방어력을 40% 감소""","""CharacterSkillCard3Texture""",[104],"""없음"""
+104,CharacterSkillCard4,E_ATTACK,E_NONE,0,E_ENEMY,"""2턴 간 공격 카드 사용 시 적 전체에게 공격력의 150%로 피해를 가하는 추가 공격 발동""","""CharacterSkillCard4Texture""",[105],"""없음"""

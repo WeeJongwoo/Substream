@@ -14,6 +14,7 @@ class ContextWriterFactory
         {
             { typeof(BattleContext), new BattleContextWriter() },
             { typeof(TurnEndActionContext), new TurnEndContextWriter() },
+            { typeof(RoundEndActionContext), new RoundEndContextWriter() },
             { typeof(UnitDyingActionContext), new UnitDyingContextWriter() },
             { typeof(DrawCardActionContext), new DrawCardContextWriter() },
         };
@@ -38,19 +39,39 @@ class BattleContextWriter : IContextWriter
 #if UNITY_EDITOR
         Debug.Log("###########스킬 컨텍스트 작성 시작###########");
 #endif
-        float CriticalTriggerRate = 0;
-        CriticalTriggerRate = ((AbilityFlowInput)(flow.Input)).CasterUnit.CriticalTriggerRate.Now;
-        ctx.PresentationType = ctx.SkillData.PresentationType;
-        ctx.HitCount = ctx.SkillData.HitCount;
-        ctx.SkillType = ctx.SkillData.SkillType;
-        ctx.SkillTrigger = ctx.SkillData.Trigger;
-        ctx.TriggerConditionValue = ctx.SkillData.TriggerConditionValue;
-        ctx.SkillSource = ctx.SkillData.SkillSource;
-        ctx.StatusType = ctx.SkillData.StatusType;
+        ctx.SkillID = ctx.SkillData.ID;
+        float CriticalTriggerRate = ((CardAbilityFlowInput)(flow.Input)).CasterUnit.CriticalRate.Now;
         ctx.IsCritical = (UnityEngine.Random.Range(0, 101) < (CriticalTriggerRate * 100));
+
+        ctx.SkillType = ctx.SkillData.SkillType;
+        ctx.PresentationType = ctx.SkillData.PresentationType;
+
+        ctx.Trigger = ctx.SkillData.Trigger;
+        ctx.TriggerTargetType = ctx.SkillData.TriggerTargetType;
+        ctx.TriggerConditionValue = ctx.SkillData.TriggerConditionValue;
+
+        ctx.SkillSource = ctx.SkillData.SkillSource;
+        ctx.SkillSourceTargetType = ctx.SkillData.SkillSourceTargetType;
         ctx.EffectValue = ctx.SkillData.EffectValue;
-        ctx.TargetSource = ctx.SkillData.TargetSource;
+        ctx.UpgradeValue = ctx.SkillData.UpgradeValue;
+        ctx.IsFixed = ctx.SkillData.IsFixed;
+        ctx.HitCount = ctx.SkillData.HitCount;
+
+        ctx.ScaleType = ctx.SkillData.ScaleType;
+        ctx.ScaleTypeTargetType = ctx.SkillData.ScaleTypeTargetType;
+        ctx.ScaleFactor = ctx.SkillData.ScaleFactor;
+        ctx.ScaleLimit = ctx.SkillData.ScaleLimit;
+
+        ctx.StatusType = ctx.SkillData.StatusType;
+        ctx.StatusCount = ctx.SkillData.StatusCount;
+        ctx.RoundDuration = ctx.SkillData.RoundDuration;
         ctx.StatusDuration = ctx.SkillData.StatusDuration;
+
+        ctx.TargetType = ctx.SkillData.TargetType;
+        ctx.TargetCount = ctx.SkillData.TargetCount;
+        ctx.TargetStatSource = ctx.SkillData.TargetStatSource;
+
+        ctx.SkillData = null;
     }
 }
 
@@ -61,6 +82,14 @@ class TurnEndContextWriter : IContextWriter
         // 턴 종료 시 필요한 값 세팅
         var ctx = context as TurnEndActionContext;
 
+    }
+}
+
+class RoundEndContextWriter : IContextWriter
+{
+    public void WriteContext(Flow flow, ActionContext context)
+    {
+        var ctx = context as RoundEndActionContext;
     }
 }
 

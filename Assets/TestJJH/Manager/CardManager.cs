@@ -3,52 +3,59 @@ using System.Collections.Generic;
 using System.Net;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using static Spine.Unity.Editor.SkeletonBaker.BoneWeightContainer;
 
 public class CardManager : BaseSystem
 {
     private TurnManager m_turnManager;
     private CharacterManager m_characterManager;
     private MonsterManager m_monsterManager;
+    private CardUIManager m_cardUIManager;
     struct UnitCardPair
     {
         public Unit s_unit;
         public List<Card> s_card;
     };
 
-    private UnitCardPair m_hand;
-    private Dictionary<Unit,List<Card>> m_deck;
-    private Dictionary<Unit,List<Card>> m_graveyard;
+    private Dictionary<Unit, List<Card>> m_hand;
+    private Dictionary<Unit, List<Card>> m_deck;
+    private Dictionary<Unit, List<Card>> m_graveyard;
     private Dictionary<Unit, List<Card>> m_tempQueueForCardsToBeAdded;
 
     public List<Card> TemtQueueForCardsToBeAdded
     {
-        get { return m_tempQueueForCardsToBeAdded[m_hand.s_unit]; }
+        get { return m_tempQueueForCardsToBeAdded[m_turnManager.CurrentTurnUnit]; }
     }
 
-    public List<Card> Hand
+    public Dictionary<Unit, List<Card>> Hand
     {
-        get { return m_hand.s_card; }
+        get { return m_hand; }
     }
-    public List<Card> Deck
+    public Dictionary<Unit, List<Card>> Deck
     {
-        get { return m_deck[m_hand.s_unit]; }
+        get { return m_deck; }
     }
-    public List<Card> Graveyard
+    public Dictionary<Unit, List<Card>> Graveyard
     {
-        get { return m_graveyard[m_hand.s_unit]; }
+        get { return m_graveyard; }
+    }
+
+    public List<Card> NowHand
+    {
+        get { return m_hand[m_turnManager.CurrentTurnUnit]; }
     }
 
     [SerializeField]
     private int m_activeCardNum;
+
     public int ActiveCardNum
     {
         get { return m_activeCardNum; }
     }
+
     public override void Initialize()
     {
-        m_hand = new UnitCardPair();
-        m_hand.s_card = new List<Card>();
-
+        m_hand = new Dictionary<Unit, List<Card>>();
         m_deck = new Dictionary<Unit, List<Card>>();
         m_graveyard = new Dictionary<Unit, List<Card>>();
         m_tempQueueForCardsToBeAdded = new Dictionary<Unit, List<Card>>();
@@ -60,164 +67,108 @@ public class CardManager : BaseSystem
         m_turnManager = masterManager.TurnManager;
         m_characterManager = masterManager.CharacterManager;
         m_monsterManager = masterManager.MonsterManager;
+
+        m_cardUIManager = masterManager.CardUIManager;
     }
 
     public override void DataInitialize()
     {
         Unit NowTurnUnit = m_turnManager.CurrentTurnUnit;
-        UnitCardPair NowTurnUnitpair = new UnitCardPair();
-        NowTurnUnitpair.s_unit = NowTurnUnit;
-        NowTurnUnitpair.s_card = new List<Card>();
+        m_deck.Add(NowTurnUnit, new List<Card>());
+        m_hand.Add(NowTurnUnit, new List<Card>());
+        m_graveyard.Add(NowTurnUnit, new List<Card>());
+        m_tempQueueForCardsToBeAdded.Add(NowTurnUnit, new List<Card>());
+
         foreach (var uc in DataBase.UseCardDataBase.UseCardTable)
         {
             if (NowTurnUnit.IngameUnitID() == uc.Value.UnitID)
             {
                 Card newCard = new Card();
-                newCard.Initialize(
-                    NowTurnUnitpair.s_unit,
-                    DataBase.CardTable(uc.Value.CardID));
-                NowTurnUnitpair.s_card.Add(newCard);
+                newCard.Initialize(NowTurnUnit, DataBase.CardTable(uc.Value.CardID));
+                m_deck[NowTurnUnit].Add(newCard);
             }
-        }
-        if (!m_deck.ContainsKey(NowTurnUnitpair.s_unit))
-        {
-            m_deck.Add(NowTurnUnitpair.s_unit, NowTurnUnitpair.s_card);
-            m_graveyard.Add(NowTurnUnitpair.s_unit, new List<Card>());
-            m_tempQueueForCardsToBeAdded.Add(NowTurnUnitpair.s_unit, new List<Card>());
         }
 
         foreach (var unit in m_turnManager.Units)
         {
-            UnitCardPair pair = new UnitCardPair();
-            pair.s_unit = unit;
-            pair.s_card = new List<Card>();
+            m_deck.Add(unit, new List<Card>());
+            m_hand.Add(unit, new List<Card>());
+            m_graveyard.Add(unit, new List<Card>());
+            m_tempQueueForCardsToBeAdded.Add(unit, new List<Card>());
+
             foreach (var uc in DataBase.UseCardDataBase.UseCardTable)
             {
-                if (unit.IngameUnitID() == uc.Value.UnitID)
+                if(unit.IngameUnitID() == uc.Value.UnitID)
                 {
                     Card newCard = new Card();
-                    newCard.Initialize(
-                        pair.s_unit,
-                        DataBase.CardTable(uc.Value.CardID));
-                    pair.s_card.Add(newCard);
+                    newCard.Initialize(unit,DataBase.CardTable(uc.Value.CardID));
+                    m_deck[unit].Add(newCard);
                 }
             }
-            if (!m_deck.ContainsKey(pair.s_unit))
-            {
-                m_deck.Add(pair.s_unit, pair.s_card);
-                m_graveyard.Add(pair.s_unit, new List<Card>());
-                m_tempQueueForCardsToBeAdded.Add(pair.s_unit, new List<Card>());
-            }
-        }
-        // 현 턴이 몬스터면 동작 없음
-        if (!m_turnManager.CurrentTurnUnit.IsCharacter)
-        {
-            return;
         }
 
-        // 현 턴의 유닛을 지정
-        m_hand.s_unit = m_turnManager.CurrentTurnUnit;
-
-        if (!m_deck.ContainsKey(m_hand.s_unit)) return;
-
-        Unit key = m_hand.s_unit;
-        // 무조건 5장 뽑음
-        for (int i = 0; i < 5; i++)
-        {
-            // 덱에 카드 없으면 묘지의 카드 모두 이동
-            if (m_deck[key].Count == 0)
-            {
-                foreach (var g in m_graveyard[key])
-                {
-                    m_deck[key].Add(g);
-                }
-                m_graveyard[key].Clear();
-            }
-            // 랜덤으로 1장 뽑아 핸드에 넣고 덱에서 제외
-            int address = UnityEngine.Random.Range(0, m_deck[key].Count);
-            var a = m_deck[key][address];
-            m_hand.s_card.Add(m_deck[key][address]);
-            m_deck[key].RemoveAt(address);
-        }
-
-        m_activeCardNum = m_hand.s_card.Count;
+        HandShaker();
+        AddTemtQueueCardsToHand();
     }
 
     public void HandShaker()
     {
-        // 전 턴의 핸드를 묘지로 이동 
-        foreach(var g in m_hand.s_card)
-        {
-            m_graveyard[m_hand.s_unit].Add(g);
-        }
-        m_hand.s_card.Clear();
-
-        // 전 턴의 임시 추가 카드도 묘지로 이동
-        foreach (var gt in m_tempQueueForCardsToBeAdded[m_hand.s_unit])
-        {
-            m_graveyard[m_hand.s_unit].Add(gt);
-        }
-        m_tempQueueForCardsToBeAdded[m_hand.s_unit].Clear();
+        Unit NowTurnUnit = m_turnManager.CurrentTurnUnit;
 
         // 현 턴이 몬스터면 동작 없음
-        if (!m_turnManager.CurrentTurnUnit.IsCharacter)
+        if (!NowTurnUnit.IsCharacter) return;
+
+        // 핸드의 남은 카드를 묘지로 이동 
+        foreach (var g in m_hand[NowTurnUnit])
         {
-            return;
+            m_graveyard[NowTurnUnit].Add(g);
         }
+        m_hand[NowTurnUnit].Clear();
 
-        // 현 턴의 유닛을 지정
-        m_hand.s_unit = m_turnManager.CurrentTurnUnit;
-        
-        if (!m_deck.ContainsKey(m_hand.s_unit)) return;
-
-        Unit key = m_hand.s_unit;
-        // 무조건 5장 뽑음
-        for (int i = 0; i < 5; i++)
+        // 임시 추가 카드도 묘지로 이동
+        foreach (var gt in m_tempQueueForCardsToBeAdded[NowTurnUnit])
         {
-            // 덱에 카드 없으면 묘지의 카드 모두 이동
-            if (m_deck[key].Count == 0)
-            {
-                foreach (var g in m_graveyard[key])
-                {
-                    m_deck[key].Add(g);
-                }
-                m_graveyard[key].Clear();
-            }
-            // 랜덤으로 1장 뽑아 핸드에 넣고 덱에서 제외
-            int address = UnityEngine.Random.Range(0, m_deck[key].Count);
-            var a = m_deck[key][address];
-            m_hand.s_card.Add(m_deck[key][address]);
-            m_deck[key].RemoveAt(address);
+            m_graveyard[NowTurnUnit].Add(gt);
         }
+        m_tempQueueForCardsToBeAdded[NowTurnUnit].Clear();
 
-        m_activeCardNum = m_hand.s_card.Count;
+        DrawCard(NowTurnUnit, 5);
+
+        m_activeCardNum = m_hand[NowTurnUnit].Count;
     }
 
-    public void DrawCard(Flow flow, int amount)
+    public void DrawCard(Unit unit, int amount)
     {
-        amount = amount < m_deck.Count ? amount : m_deck.Count;
-        Unit key = m_hand.s_unit;
-
         for (int i = 0; i < amount; i++) 
         {
+            // 덱에 카드 없으면 묘지의 카드 모두 이동
+            if (m_deck[unit].Count == 0)
+            {
+                foreach (var g in m_graveyard[unit])
+                {
+                    m_deck[unit].Add(g);
+                }
+                m_graveyard[unit].Clear();
+            }
             // 랜덤으로 1장 뽑아 핸드에 넣고 덱에서 제외
-            int address = UnityEngine.Random.Range(0, m_deck[key].Count);
-
-            m_tempQueueForCardsToBeAdded[key].Add(m_deck[key][address]);
-            
-            m_deck[key].RemoveAt(address);
+            int address = UnityEngine.Random.Range(0, m_deck[unit].Count);
+            var a = m_deck[unit][address];
+            m_tempQueueForCardsToBeAdded[unit].Add(m_deck[unit][address]);
+            m_deck[unit].RemoveAt(address);
         }
-    }
-
-    public void DiscardCard(int position)
-    {
-
     }
 
     public override void SetTurn()
     {
         HandShaker();
+        AddTemtQueueCardsToHand();
     }
+
+    public override void SetRound()
+    {
+        
+    }
+
     public override void UnitDying(Unit unit)
     {
         if (m_deck.ContainsKey(unit))
@@ -234,23 +185,32 @@ public class CardManager : BaseSystem
 
     public override void UseCard(Card card)
     {
+        Unit key = card.Unit;
+
         m_activeCardNum--;
-        if(m_hand.s_card.Contains(card))
+        if (m_hand.ContainsKey(key))
         {
-            m_hand.s_card.Remove(card);
+            m_hand[key].Remove(card);
         }
-        if (m_graveyard.ContainsKey(card.Unit))
+        if (m_graveyard.ContainsKey(key))
         {
-            m_graveyard [card.Unit].Add(card);
+            m_graveyard[key].Add(card);
         } 
     }
 
     public void AddTemtQueueCardsToHand()
     {
-        foreach(var card in m_tempQueueForCardsToBeAdded[m_turnManager.CurrentTurnUnit])
+        Unit key = m_turnManager.CurrentTurnUnit;
+
+        foreach (var card in m_tempQueueForCardsToBeAdded[key])
         {
-            m_hand.s_card.Add(card);
+            m_hand[key].Add(card);
         }
         m_tempQueueForCardsToBeAdded[m_turnManager.CurrentTurnUnit].Clear();
+    }
+
+    public void DrawNewHandCard()
+    {
+        m_cardUIManager.DrawNewHandCard();
     }
 }

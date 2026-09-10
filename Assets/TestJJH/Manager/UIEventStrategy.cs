@@ -66,6 +66,28 @@ class UICastEvent : UIEventStrategy
     }
 }
 
+class UISkillEvent : UIEventStrategy
+{
+    public UISkillEvent(UIFacade facade)
+    {
+        Facade = facade;
+    }
+
+    public override void Execute(ContextResult contextResult)
+    {
+        var result = contextResult as CastResult;
+
+        if (result.Caster.isCharacter)
+        {
+            Facade.CharacterUIManager.CastEvent(result.Caster.position);
+        }
+        else
+        {
+            Facade.MonsterUIManager.CastEvent(result.Caster.position);
+        }
+    }
+}
+
 class UIChangeHPEvent : UIEventStrategy
 {
     public UIChangeHPEvent(UIFacade facade)
@@ -121,11 +143,11 @@ class UIChangeStackEvent : UIEventStrategy
         
         if (result.Target.isCharacter)
         {
-            Facade.CharacterUIManager.ChangeStack(result.Target.position, result.StatusType, result.Duration, result.Stack, result.IsNew);
+            Facade.CharacterUIManager.ChangeStack(result.Target.position, result.StatusType, result.TurnDuration, result.Stack, result.IsNew);
         }
         else
         {
-            Facade.MonsterUIManager.ChangeStack(result.Target.position, result.StatusType, result.Duration, result.Stack, result.IsNew);
+            Facade.MonsterUIManager.ChangeStack(result.Target.position, result.StatusType, result.TurnDuration, result.Stack, result.IsNew);
         }
     }
 }
@@ -141,7 +163,7 @@ class UIChangeAetherEvent : UIEventStrategy
     {
         var result = contextResult as ChangeAetherResult;
 
-        Facade.TurnUIManager.SetTurnAetherInfo();
+        Facade.TurnUIManager.SetRoundAetherInfo();
     }
 }
 
@@ -166,7 +188,7 @@ class UIDrawCardEvent : UIEventStrategy
     {
         var result = contextResult as CardDrawResult;
 
-        Facade.CardUIManager.DrawCard();
+        //Facade.CardUIManager.DrawNewHandCard();
     }
 }
 
@@ -198,7 +220,7 @@ class UIUnitDeathEvent : UIEventStrategy
     {
         var result = contextResult as UnitDyingResult;
 
-        Facade.MasterManager.ApplyUnitDying(result.Victim);
+        Facade.MasterManager.ApplyUIUnitDying(result.Victim);
     }
 }
 
@@ -211,6 +233,18 @@ class UIEndTurnEvent : UIEventStrategy
     public override void Execute(ContextResult contextResult)
     {
         Facade.MasterManager.ApplyUISetTurn();
+    }
+}
+
+class UIEndRoundEvent : UIEventStrategy
+{
+    public UIEndRoundEvent(UIFacade facade)
+    {
+        Facade = facade;
+    }
+    public override void Execute(ContextResult contextResult)
+    {
+        Facade.MasterManager.ApplyUISetRound();
     }
 }
 

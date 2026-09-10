@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Data;
 
 public class CSVManager : MonoBehaviour
 {
@@ -76,6 +77,8 @@ public class CSVManager : MonoBehaviour
 
     private bool ConvertCSVToScriptableObject(string dataName, List<Dictionary<string, object>> parsedData, Dictionary<string,DataScriptableObjects> datacontainers)
     {
+        Debug.Log(dataName);
+
         //불러올 data파일 + "Data" 문자열을 추가하여 타입을 찾음
         Type type = Type.GetType(dataName + "Data");
         if (type == null)
@@ -116,7 +119,8 @@ public class CSVManager : MonoBehaviour
                 }
                 // 속성들 중에 해당 속성 값이 이름과 같다면
                 if (dataTable.ContainsKey(fieldesName[i]))
-                {                    
+                {
+                    //Debug.Log(fieldesName[i]);
                     if (fieldesType[i].FieldType.IsGenericType &&
                         fieldesType[i].FieldType.GetGenericTypeDefinition() == typeof(List<>))
                     {
@@ -125,7 +129,7 @@ public class CSVManager : MonoBehaviour
 
                         Type elementType = fieldesType[i].FieldType.GetGenericArguments()[0];
                         var list = (IList)Activator.CreateInstance(fieldesType[i].FieldType);
-
+                        
                         foreach (var token in tokens)
                         {
                             object elementValue = Convert.ChangeType(token, elementType);
@@ -147,6 +151,7 @@ public class CSVManager : MonoBehaviour
                         // data에서 가져온 값을 속성의 타입에 맞게 변환하여 newData의 해당 속성에 저장
                         fieldesType[i].SetValue(newData, Convert.ChangeType(dataTable[fieldesName[i]], fieldesType[i].FieldType));
                     }
+                    Debug.Log(fieldesName[i]);
                 }
             }
             if (!datacontainers.ContainsKey(dataName))

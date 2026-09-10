@@ -26,8 +26,6 @@ public class TurnUIManager : BaseUI<TurnManager>
     [SerializeField]
     private Text m_turnText;
     [SerializeField]
-    private Text m_aetherText1;
-    [SerializeField]
     private Text m_aetherText2;
     [SerializeField]
     private Text m_aetherText3;
@@ -39,7 +37,8 @@ public class TurnUIManager : BaseUI<TurnManager>
         m_portraits = new List<PortraitSlot>();
 
         m_turnEndButton.onClick.AddListener(() => {
-            m_masterManager.SetTurn();
+            if (!m_model.IsTurnInputLocked)
+                m_masterManager.SetTurn();
         });
     }
 
@@ -63,49 +62,26 @@ public class TurnUIManager : BaseUI<TurnManager>
             m_portraits.Add(NPS);
         }
 
-        SetTurnEtherInfo();
+        SetRoundAetherInfo();
         SetPortrait();
         SetNowTurnIndicator();
     }
 
-    public void SetTurnEtherInfo()
+    public void SetRoundAetherInfo( )
     {
         m_stringBuilder.Clear();
         m_stringBuilder
-            .Append("Turn")
-            .Append(m_model.TurnCount);
+            .Append("Round ")
+            .Append(m_model.RoundCount);
         m_turnText.text = m_stringBuilder.ToString();
 
         m_stringBuilder.Clear();
         m_stringBuilder
-            .Append("\n")
-            .Append(m_model.CurrentAetherCount);
-        m_aetherText2.text = m_stringBuilder.ToString();
-        
-        m_stringBuilder.Clear();
-        m_stringBuilder    
-            .Append("\n")
-            .Append(m_model.CurrentTurnMaxEtherCount);
-        m_aetherText3.text = m_stringBuilder.ToString();
-    }
-
-    public void SetTurnAetherInfo( )
-    {
-        m_stringBuilder.Clear();
-        m_stringBuilder
-            .Append("Turn")
-            .Append(m_model.TurnCount);
-        m_turnText.text = m_stringBuilder.ToString();
-
-        m_stringBuilder.Clear();
-        m_stringBuilder
-            .Append("\n")
             .Append(m_model.CurrentAetherCount);
         m_aetherText2.text = m_stringBuilder.ToString();
 
         m_stringBuilder.Clear();
         m_stringBuilder
-            .Append("\n")
             .Append(m_model.CurrentTurnMaxEtherCount);
         m_aetherText3.text = m_stringBuilder.ToString();
     }
@@ -119,11 +95,13 @@ public class TurnUIManager : BaseUI<TurnManager>
         }
                 
         m_currentTurnUnitPortrait.Portrait.sprite = ResourcesManager.Unit_Portrait(m_model.CurrentTurnUnit.IngameUnitID());
+        m_currentTurnUnitPortrait.NameText.text = ((UnitTableData)m_model.CurrentTurnUnit).Name;
 
         int j = 0;
         foreach (var unit in m_model.Units)
         {
             m_portraits[j].Portrait.sprite = ResourcesManager.Unit_Portrait(unit.IngameUnitID());
+            m_portraits[j].NameText.text = ((UnitTableData)unit).Name;
             if (unit.IsCharacter) m_portraits[j].Arrow.color = Color.blue;
             else m_portraits[j].Arrow.color = Color.red;
             j++;
@@ -132,9 +110,13 @@ public class TurnUIManager : BaseUI<TurnManager>
 
     public override void SetTurn()
     {
-        SetTurnEtherInfo();
         SetPortrait();
         SetNowTurnIndicator();
+    }
+
+    public override void SetRound()
+    {
+        SetRoundAetherInfo();
     }
 
     public void SetNowTurnIndicator()
@@ -145,10 +127,8 @@ public class TurnUIManager : BaseUI<TurnManager>
 
     public override void UseCard(Card card)
     {
-        //SetTurnEtherInfo();
+        SetRoundAetherInfo();
     }
-
-
 
     public override void UnitDying(Unit unit)
     {

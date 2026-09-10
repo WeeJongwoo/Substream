@@ -32,7 +32,7 @@ public class AmountText : UIObject
     [SerializeField]
     private ObjectPool<AmountText> ObjectPool;
 
-    public void Initialize(string txt, ESkillType type, ESkillStatusType statusType, Vector3 pos, ObjectPool<AmountText> objectPool)
+    public void Initialize(string txt, ESkillType type, EStatusEffectType statusType, Vector3 pos, ObjectPool<AmountText> objectPool)
     {
         ObjectPool = objectPool;
 
@@ -46,9 +46,9 @@ public class AmountText : UIObject
             case ESkillType.E_DAMAGE:
                 StartCoroutine(FadeOut(DamageColor));
                 break;
-            case ESkillType.E_CONDITIONAL_DAMAGE:
+            /*case ESkillType.E_CONDITIONAL:
                 ConditionalDamage(statusType);
-                break;
+                break;*/
             case ESkillType.E_HEAL:
                 text.text = "+" + txt;
                 StartCoroutine(FadeOut(HealColor));
@@ -63,19 +63,19 @@ public class AmountText : UIObject
         }
     }
 
-    public void ConditionalDamage(ESkillStatusType statusType)
+    public void ConditionalDamage(EStatusEffectType statusType)
     {
         switch(statusType)
         {
-            case ESkillStatusType.E_NONE:
+            case EStatusEffectType.E_NONE:
                 break;
-            case ESkillStatusType.E_BLEED:
+            case EStatusEffectType.E_BLEED:
                 StartCoroutine(FadeOut(BleedDamageColor));
                 break;
-            case ESkillStatusType.E_SHOCK:
+            case EStatusEffectType.E_SHOCK:
                 StartCoroutine(FadeOut(ShockDamageColor));
                 break;
-            case ESkillStatusType.E_OVERLOAD:
+            case EStatusEffectType.E_OVERLOAD:
                 StartCoroutine(FadeOut(OverloadDamageColor));
                 break;
         }

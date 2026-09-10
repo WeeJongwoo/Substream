@@ -4,76 +4,53 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardPanelSlot : MonoBehaviour
+public abstract class CardPanelSlot : MonoBehaviour
 {
+    [Header("Card")]
     [SerializeField]
-    private GameObject m_cardSlotPrefab;
-    private CardSlot m_cardSlot;
+    protected CardSlot m_cardSlot;
+    [SerializeField]
+    protected int m_slotMaxCount;
 
-    [SerializeField]
-    private int m_slotMaxCount;
-    [SerializeField]
-    private Transform m_slotPoolTransform;
-    [SerializeField]
-    private Transform m_gridTranform;
-    [SerializeField]
-    private Image m_BGI;
+    protected ObjectPool<CardSlot> m_slotObjectPool;
 
-    private ObjectPool<CardSlot> m_slotObjectPool;
-    private Dictionary<int, CardSlot> m_slotDic;
+    [Header("Pool")]
+    [SerializeField]
+    protected Transform m_slotPoolTransform;
+    [SerializeField]
+    protected Transform m_gridTranform;
 
-    [SerializeField]
-    private GameObject m_sliderBar;
-    [SerializeField]
-    private GridLayoutGroup m_gridLayoutGroup;
-    [SerializeField]
-    private ScrollRect m_scrollRect;
+    protected Dictionary<int, CardSlot> m_slotDic;
 
-    public ScrollRect ScrollRect
-    {
-        get { return m_scrollRect; }
-    }
+    [Header("Grid")]
+    [SerializeField]
+    protected GridLayoutGroup m_gridLayoutGroup;
 
     public Transform GridTransform
     {
-        get
-        {
-            return m_gridTranform;
-        }
+        get { return m_gridTranform; }
     }
 
-    public void TurnOn()
+    public virtual void Initialize()
     {
-        this.gameObject.SetActive(true);
-    }
-
-    public void TurnOff()
-    {
-        this.gameObject.SetActive(false);
-    }
-
-    public void Initialize()
-    {
-        m_cardSlot = m_cardSlotPrefab.GetComponentInChildren<CardSlot>();
         m_slotObjectPool = new ObjectPool<CardSlot>(m_cardSlot, m_slotMaxCount, m_slotPoolTransform);
         m_slotDic = new Dictionary<int, CardSlot>();
 
-        
         for (int i = m_gridTranform.childCount - 1; i >= 0; i--)
         {
             Destroy(m_gridTranform.GetChild(i).gameObject);
         }
-
-        m_gridLayoutGroup = m_gridTranform.gameObject.GetComponent<GridLayoutGroup>();
     }
+
     public CardSlot GetObject()
     {
         var obj = m_slotObjectPool.GetObject();
         obj.m_inPool = false;
+        obj.transform.parent = m_gridTranform;
         return obj;
     }
 
-    public void ReleaseObject(CardSlot cardSlot)
+    public virtual void ReleaseObject(CardSlot cardSlot)
     {
         if(m_slotDic.ContainsKey(cardSlot.s_num))
         {
@@ -83,18 +60,18 @@ public class CardPanelSlot : MonoBehaviour
         }
     }
 
-    public void AddSlot(CardSlot cardSlot)
+    public virtual void AddSlot(CardSlot cardSlot)
     {
         if(m_slotDic.ContainsKey(cardSlot.s_num))
         {
-            Debug.Log("같은 키가 있는 카드를 추가함");
-            m_slotDic[cardSlot.s_num] = cardSlot;
+            Debug.Log(this.gameObject.transform.parent.name + "같은 키가 있는 카드를 추가함");
+            ReleaseObject(cardSlot);
             return;
         }
         m_slotDic.Add(cardSlot.s_num, cardSlot);
     }
 
-    public void SetTurn()
+    public virtual void Synchronization()
     {
         foreach (var slot in m_slotDic.Values)
         {
@@ -106,31 +83,9 @@ public class CardPanelSlot : MonoBehaviour
         m_slotDic.Clear();
     }
 
-    public void SetCardEvent(CardSlot cardSlot)
-    {
-        foreach (var slot in m_slotDic)
-        {
-            if (slot.Value == cardSlot)
-            {
-                continue;
-            }
-            slot.Value.s_isReady = false;
-            slot.Value.s_isDrag = false;
-            slot.Value.MouseExit();
-        }
-    }
-    public void SetCardEvent()
-    {
-        foreach (var slot in m_slotDic)
-        {
-            slot.Value.s_isReady = false;
-            slot.Value.s_isDrag = false;
-            slot.Value.MouseExit();
-        }
-    }
+    public abstract void SetCardEvent(CardSlot cardSlot);
 
-    public void SetBGI(Color color)
-    {
-        m_BGI.color = color;
-    }
+    public abstract void OnMouseCardEvent(CardSlot cardSlot);
+
+    public abstract void SetCardEvent();
 }

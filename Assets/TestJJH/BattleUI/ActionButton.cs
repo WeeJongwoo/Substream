@@ -53,6 +53,11 @@ public class ActionButton : BaseSystem
 
     }
 
+    public override void SetRound()
+    {
+        
+    }
+
     public override void UnitDying(Unit unit)
     {
         int a = unit.Position;

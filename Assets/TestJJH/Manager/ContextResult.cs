@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public static class IdGenerator
+public static class ResultIdGenerator
 {
     private static int _id = 0;
 
@@ -32,6 +32,7 @@ public enum EResultType
     // 유닛 행동
     E_ATTACK,
     E_CAST,
+    E_SKILL,
 
     // 수치 변화
     E_CHANGEHP,
@@ -46,6 +47,7 @@ public enum EResultType
     // 시스템
     E_UNITDYING,
     E_TURNEND,
+    E_ROUNDEND,
     E_PAUSE
 }
 
@@ -53,12 +55,13 @@ public class ContextResult
 {
     public EResultType ResultType;
 
-    public int ID;
+    public readonly int ID;
 
+    public int SourceSkillID;
     public ContextResult(EResultType resultType)
     {
         ResultType = resultType;
-        ID = IdGenerator.Next();
+        ID = ResultIdGenerator.Next();
     }
 }
 
@@ -110,7 +113,7 @@ public class ChangeHPResult : ContextResult
     /// </summary>
     public TargetPair Target;
     public bool IsDamage;
-    public ESkillStatusType AttackStatusType;
+    public EStatusEffectType AttackStatusType;
     public float Amount;
     public float OverAmount;
     public ChangeHPResult() : base(EResultType.E_CHANGEHP)
@@ -132,8 +135,9 @@ public class AddShieldResult : ContextResult
 public class ChangeStackResult : ContextResult
 {
     public TargetPair Target;
-    public ESkillStatusType StatusType;
-    public int Duration;
+    public EStatusEffectType StatusType;
+    public int RoundDuration;
+    public int TurnDuration;
     public int Stack;
 
     public bool IsNew;
@@ -185,6 +189,14 @@ public class UnitDyingResult : ContextResult
 public class TurnEndResult : ContextResult
 {
     public TurnEndResult() : base(EResultType.E_TURNEND)
+    {
+
+    }
+}
+
+public class RoundEndResult : ContextResult
+{
+    public RoundEndResult() : base(EResultType.E_ROUNDEND)
     {
 
     }

@@ -22,6 +22,11 @@ public class FlowScheduler
         return Flow;
     }
 
+    public Flow GetFirstFlow()
+    {
+        return m_flow.First.Value;
+    }
+
     public bool SkillQueueIsEmpty()
     {
         if (m_flow.Count == 0) return true;
@@ -43,7 +48,7 @@ public class FlowScheduler
 
             switch(node.Value.Input)
             {
-                case AbilityFlowInput Input:
+                case CardAbilityFlowInput Input:
 
                     if (Input.CasterUnit.Equals(unit))
                     {

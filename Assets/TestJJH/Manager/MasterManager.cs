@@ -38,8 +38,6 @@ public class MasterManager : MonoBehaviour
     [SerializeField]
     private MonsterUIManager m_monsterUIManager;
 #endif
-    [SerializeField]
-    private ActionButton m_actionButton;
 
 #if true // DataBase
     [SerializeField]
@@ -57,7 +55,6 @@ public class MasterManager : MonoBehaviour
     public TurnUIManager TurnUIManager { get => m_turnUIManager; }
     public CardUIManager CardUIManager { get => m_cardUIManager; }
     public MonsterUIManager MonsterUIManager { get => m_monsterUIManager; }
-    public ActionButton ActionButton { get => m_actionButton; }
 #endif
 
 #if true // Container
@@ -74,10 +71,7 @@ public class MasterManager : MonoBehaviour
         m_managers.AddLast(m_monsterManager);
         m_managers.AddLast(m_turnManager);
         m_managers.AddLast(m_cardManager);
-
         m_managers.AddLast(m_flowScheduleManager);
-        m_managers.AddLast(m_actionButton);
-
 
         m_UIManagers.AddLast(m_characterUIManager);
         m_UIManagers.AddLast(m_monsterUIManager);
@@ -187,20 +181,67 @@ public class MasterManager : MonoBehaviour
 
     public void SetTurn()
     {
+        if (m_turnManager.IsTurnInputLocked) return;
+
         m_flowScheduleManager.RegistSetTurnEventFlow();
+        m_turnManager.TurnInputLockOn();
+        m_cardUIManager.TurnInputLockOn();
     }
 
-    public bool UseCard(Card card)
+    public void SetRound()
     {
-        if(!m_turnManager.UseAether(card.CardData.Cost))
+        m_flowScheduleManager.RegistSetRoundEventFlow();
+    }
+
+    public void ApplySetRound()
+    {
+        foreach (var manager in m_managers)
+        {
+            manager.SetRound();
+        }
+    }
+
+    public void ApplyUISetRound()
+    {
+        foreach (var uiManager in m_UIManagers)
+        {
+            uiManager.SetRound();
+        }
+    }
+
+    public bool UseSkill(Card card, int unitPos)
+    {
+        m_flowScheduleManager.RegistCharacterSkillAbilityFlow(card, unitPos);
+
+        return true;
+    }
+
+    public bool UseCard(Card card, int unitPos)
+    {
+        if (m_turnManager.IsTurnInputLocked)
         {
             return false;
         }
-        m_turnUIManager.SetTurnAetherInfo();
-
-        m_flowScheduleManager.RegistAbilityFlow(card.Unit, card);
+        if (!m_turnManager.UseAether(card.CardData.Cost))
+        {
+            return false;
+        }
+        m_turnUIManager.SetRoundAetherInfo();
+        m_flowScheduleManager.RegistCardAbilityFlow(card, unitPos);
 
         return true;
+    }
+
+    public void ApplyUseCard(Card card)
+    {
+        foreach(var manager in m_managers)
+        {
+            manager.UseCard(card);
+        }
+        foreach (var manager in m_UIManagers)
+        {
+            manager.UseCard(card);
+        }
     }
 
     public void UnitDying(Unit unit)
@@ -221,13 +262,27 @@ public class MasterManager : MonoBehaviour
             victim = m_monsterManager.Unit(unit.position);
         }
 
-        foreach (var uiManager in m_UIManagers)
-        {
-            uiManager.UnitDying(victim);
-        }
         foreach (var manager in m_managers)
         {
             manager.UnitDying(victim);
+        }
+    }
+
+    public void ApplyUIUnitDying(TargetPair unit)
+    {
+        Unit victim;
+        if (unit.isCharacter)
+        {
+            victim = m_characterManager.Unit(unit.position);
+        }
+        else
+        {
+            victim = m_monsterManager.Unit(unit.position);
+        }
+
+        foreach (var uiManager in m_UIManagers)
+        {
+            uiManager.UnitDying(victim);
         }
     }
 }

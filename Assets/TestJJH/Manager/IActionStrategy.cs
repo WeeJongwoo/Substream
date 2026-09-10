@@ -7,85 +7,44 @@ public interface IActionStrategy
     public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade);
 }
 
-public class DamageSkillStrategy : IActionStrategy
-{
-    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
-    {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
-        if (!battleFacade.IsAlive(input.CasterUnit))
-        {
-            return false;
-        }
-        battleFacade.ApplyDamage(flow, (BattleContext)context);
-        return true;
-    }
-}
-
-public class ConditionalDamageStrategy : IActionStrategy
-{
-    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
-    {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
-        if (!battleFacade.IsAlive(input.CasterUnit))
-        {
-            return false;
-        }
-        battleFacade.ConditionalDamage(flow, (BattleContext)context);
-        return true;
-    }
-}
-
-public class HealingSkillStrategy : IActionStrategy
-{
-    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
-    {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
-        if (!battleFacade.IsAlive(input.CasterUnit))
-        {
-            return false;
-        }
-        battleFacade.ApplyHeal(flow, (BattleContext)context);
-        return true;
-    }
-}
-public class ShieldSkillStrategy : IActionStrategy
-{
-    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
-    {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
-        if (!battleFacade.IsAlive(input.CasterUnit))
-        {
-            return false;
-        }
-        battleFacade.ApplyShield(flow, (BattleContext)context);
-        return true;
-    }
-}
-
 public class VariationSkillStrategy : IActionStrategy
 {
-    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade )
+    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
     {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
         if (!battleFacade.IsAlive(input.CasterUnit))
         {
             return false;
         }
-        battleFacade.ChangeVariation(flow, (BattleContext)context, input.CasterUnit);
+        battleFacade.ApplyChangeVariation(flow, (BattleContext)context, input.CasterUnit);
+        return true;
+    }
+}
+
+public class DrawSkillStrategy : IActionStrategy
+{
+    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
+    {
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
+        if (!battleFacade.IsAlive(input.CasterUnit))
+        {
+            return false;
+        }
+        battleFacade.DrawCard(flow, input, (BattleContext)context);
         return true;
     }
 }
 
 public class StatusEffectSkillStrategy : IActionStrategy
-{ 
+{
     public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
     {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
         if (!battleFacade.IsAlive(input.CasterUnit))
         {
             return false;
         }
-        battleFacade.AddStatusEffect(flow, (BattleContext)context, input.CasterUnit);
+        battleFacade.ApplyStatusEffect(flow, (BattleContext)context, input.CasterUnit);
         return true;
     }
 }
@@ -94,7 +53,7 @@ public class ETCStrategy : IActionStrategy
 {
     public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
     {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
         if (!battleFacade.IsAlive(input.CasterUnit))
         {
             return false;
@@ -109,33 +68,86 @@ public class ETCStrategy : IActionStrategy
 
 
 
+public class DamageSkillStrategy : IActionStrategy
+{
+    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
+    {
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
+        if (!battleFacade.IsAlive(input.CasterUnit))
+        {
+            return false;
+        }
+        battleFacade.ApplyDamage(flow, (BattleContext)context);
+        return true;
+    }
+}
+
+public class BounceSkillStrategy : IActionStrategy
+{
+    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
+    {
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
+        if (!battleFacade.IsAlive(input.CasterUnit))
+        {
+            return false;
+        }
+        battleFacade.ApplyBounce(flow, (BattleContext)context);
+        return true;
+    }
+}
+
+public class HealSkillStrategy : IActionStrategy
+{
+    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
+    {
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
+        if (!battleFacade.IsAlive(input.CasterUnit))
+        {
+            return false;
+        }
+        battleFacade.ApplyHeal(flow, (BattleContext)context);
+        return true;
+    }
+}
+public class ShieldSkillStrategy : IActionStrategy
+{
+    public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
+    {
+        CardAbilityFlowInput input = (CardAbilityFlowInput)flow.Input;
+        if (!battleFacade.IsAlive(input.CasterUnit))
+        {
+            return false;
+        }
+        battleFacade.ApplyShield(flow, (BattleContext)context);
+        return true;
+    }
+}
+
+
+
+
+
+
+
+
 
 
 public class TurnEndStrategy : IActionStrategy
 {
     public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
-    {   battleFacade.TurnEnd(flow, (TurnEndActionContext)context);
+    {   battleFacade.TurnEnd( flow, (TurnEndActionContext)context);
         return true;
     }
 }
 
-
-
-
-public class DrawSkillStrategy : IActionStrategy
+public class RoundEndStrategy : IActionStrategy
 {
     public bool Execute(Flow flow, ActionContext context, BattleFacade battleFacade)
     {
-        AbilityFlowInput input = (AbilityFlowInput)flow.Input;
-        if (!battleFacade.IsAlive(input.CasterUnit))
-        {
-            return false;
-        }
-        battleFacade.DrawCard(flow, (BattleContext)context);
+        battleFacade.RoundEnd(flow, (RoundEndActionContext)context);
         return true;
     }
 }
-
 
 public class UnitDyingStrategy : IActionStrategy
 {
@@ -160,7 +172,7 @@ public class DrawSystemStrategy : IActionStrategy
         {
             return false;
         }
-        battleFacade.DrawCard(flow, (DrawCardActionContext)context);
+        battleFacade.DrawCard(flow, input, (DrawCardActionContext)context);
         return true;
     }
 }

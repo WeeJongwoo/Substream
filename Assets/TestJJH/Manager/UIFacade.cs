@@ -15,7 +15,7 @@ public class UIFacade
 
     public IEnumerator Execute(Flow flow)
     {
-        foreach (var fr in flow.ContextResults)
+        foreach (var fr in flow.Collector.Results)
         {
             m_resultExecuteStrategies[fr.ResultType].Execute(fr);
             yield return new WaitForSecondsRealtime(0.4f);
@@ -36,6 +36,7 @@ public class UIFacade
 
             { EResultType.E_ATTACK, new UIAttackEvent(this)},
             { EResultType.E_CAST, new UICastEvent(this)},
+            { EResultType.E_SKILL, new UICastEvent(this)},
 
             { EResultType.E_CHANGESTACK, new UIChangeStackEvent(this)},// 수정 필요
 
@@ -48,6 +49,7 @@ public class UIFacade
 
             { EResultType.E_UNITDYING, new UIUnitDeathEvent(this)},
             { EResultType.E_TURNEND, new UIEndTurnEvent(this)},
+            { EResultType.E_ROUNDEND, new UIEndRoundEvent(this)},
             { EResultType.E_PAUSE, new UIPausaeEvent(this)},
         };
 

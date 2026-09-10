@@ -17,9 +17,14 @@ public class CharacterUIManager : BaseUI<CharacterManager>
     [SerializeField]
     private RectTransform[] m_unitUIPosition;
 
-    private UnitSlot[] m_unitUISlot;
+    private List<UnitSlot> m_unitUISlot;
 
     private ObjectPool<AmountText> m_textPool;
+
+    public List<UnitSlot> UnitSlots
+    {
+        get { return m_unitUISlot; }
+    }
 
     public override void Initialize()
     {
@@ -28,7 +33,7 @@ public class CharacterUIManager : BaseUI<CharacterManager>
 
     public override void DataInitialize()
     {
-        m_unitUISlot = new UnitSlot[m_model.Units.Count];
+        m_unitUISlot = new List<UnitSlot>(m_model.Units.Count);
         //create
         for (int i = 0; i < m_model.Units.Count; i++)
         {
@@ -40,7 +45,7 @@ public class CharacterUIManager : BaseUI<CharacterManager>
             newUnitUI.GetComponent<RectTransform>().position = m_unitUIPosition[i].position;
             newUnitUI.gameObject.name = newUnitUI.gameObject.name + i.ToString();
 
-            m_unitUISlot[i] = newUnitUI;
+            m_unitUISlot.Add(newUnitUI);
         }
 
         InitHP();
@@ -48,18 +53,17 @@ public class CharacterUIManager : BaseUI<CharacterManager>
 
     public void InitHP()
     {
-        int c = 0;
         foreach (var character in m_model.Units)
         {
-            InitHP(c);
-            c++;
+            InitHP(character.Position - 1);
         }
     }
+
     public void InitHP(int pos)
     {
-        m_unitUISlot[pos].HealthPointSlider.maxValue = m_model.Units[pos].HealthPoint.Now + m_model.Units[pos].ShieldPoint.Now;
-        m_unitUISlot[pos].HealthPointSlider.value = m_model.Units[pos].HealthPoint.Now;
-        if (m_model.Units[pos].ShieldPoint.Now > 0) m_unitUISlot[pos].ShieldSliderBGI.gameObject.SetActive(true);
+        m_unitUISlot[pos].HealthPointSlider.maxValue = m_model.Units[pos].HealthValue.Now + m_model.Units[pos].ShieldValue.Now;
+        m_unitUISlot[pos].HealthPointSlider.value = m_model.Units[pos].HealthValue.Now;
+        if (m_model.Units[pos].ShieldValue.Now > 0) m_unitUISlot[pos].ShieldSliderBGI.gameObject.SetActive(true);
         else m_unitUISlot[pos].ShieldSliderBGI.gameObject.SetActive(false);
     }
 
@@ -84,7 +88,7 @@ public class CharacterUIManager : BaseUI<CharacterManager>
         {
             return;
         }
-        m_unitUISlot[exceptionPosition].NowTurnIndicator.gameObject.SetActive(true);
+        m_unitUISlot[exceptionPosition - 1].NowTurnIndicator.gameObject.SetActive(true);
     }
 
     public override void UnitDying(Unit unit)
@@ -92,7 +96,7 @@ public class CharacterUIManager : BaseUI<CharacterManager>
         Debug.Log("캐릭터 사망 이벤트 출력");
         if (unit.IsCharacter)
         {
-            m_unitUISlot[unit.Position].gameObject.SetActive(false);
+            m_unitUISlot[unit.Position - 1].gameObject.SetActive(false);
         }
     }
 
@@ -115,32 +119,32 @@ public class CharacterUIManager : BaseUI<CharacterManager>
         // 상태 이상 애니메이션 출력
     }
 
-    public void ChangeHPEvent(int targetUnitPos, bool isDamage, ESkillStatusType statusType, int amount)
+    public void ChangeHPEvent(int targetUnitPos, bool isDamage, EStatusEffectType statusType, int amount)
     {
-        InitHP(targetUnitPos);
+        InitHP(targetUnitPos - 1);
         var text = m_textPool.GetObject();
         if (isDamage)
         {
-            text.Initialize(amount.ToString(), ESkillType.E_DAMAGE, statusType, m_unitUIPosition[targetUnitPos].position, m_textPool);
+            text.Initialize(amount.ToString(), ESkillType.E_DAMAGE, statusType, m_unitUIPosition[targetUnitPos - 1].position, m_textPool);
         }
         else
         {
-            text.Initialize(amount.ToString(), ESkillType.E_HEAL, ESkillStatusType.E_NONE, m_unitUIPosition[targetUnitPos].position, m_textPool);
+            text.Initialize(amount.ToString(), ESkillType.E_HEAL, EStatusEffectType.E_NONE, m_unitUIPosition[targetUnitPos - 1].position, m_textPool);
         }
     }
 
     public void ShieldEvent(int targetUnitPos, int amount)
     {
-        InitHP(targetUnitPos);
+        InitHP(targetUnitPos - 1);
         var text = m_textPool.GetObject();
-        text.Initialize(amount.ToString(), ESkillType.E_SHIELD, ESkillStatusType.E_NONE, m_unitUIPosition[targetUnitPos].position, m_textPool);
+        text.Initialize(amount.ToString(), ESkillType.E_SHIELD, EStatusEffectType.E_NONE, m_unitUIPosition[targetUnitPos - 1].position, m_textPool);
     }
 
 
 
-    public void ChangeStack(int targetUnitPos, ESkillStatusType statusType, int duration, int stack, bool isNew)
+    public void ChangeStack(int targetUnitPos, EStatusEffectType statusType, int duration, int stack, bool isNew)
     {
-        m_unitUISlot[targetUnitPos].ChangeStatusEffect(ResourcesManager.Status_Effect_Image((int)statusType), statusType, duration, stack, isNew);
+        m_unitUISlot[targetUnitPos - 1].ChangeStatusEffect(ResourcesManager.Status_Effect_Image((int)statusType), statusType, duration, stack, isNew);
     }
 }
     

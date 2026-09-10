@@ -44,8 +44,10 @@ public class Card
             Texture = cardData.Texture,
             CardText = cardData.CardText,
             SkillID = cardData.SkillID,
+            TargetType = cardData.TargetType
         };
     }
+
     public CardTableData CardData
     {
         get { return m_cardData; }
