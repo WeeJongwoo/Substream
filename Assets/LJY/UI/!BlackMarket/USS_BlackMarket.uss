@@ -1,0 +1,28 @@
+.bm_btn {
+    height: 45px;
+    width: 120px;
+    font-size: 18px;
+    -unity-font-style: bold;
+    background-color: rgb(173, 173, 173);
+    border-radius: 5px;
+}
+
+.bm_btn:hover {
+    height: 45px;
+    width: 120px;
+    font-size: 18px;
+    -unity-font-style: bold;
+    background-color: rgb(238, 238, 238);
+    border-radius: 5px;
+    scale: 1 1;
+}
+
+.bm_btn:active {
+    height: 45px;
+    width: 120px;
+    font-size: 18px;
+    -unity-font-style: bold;
+    background-color: rgb(152, 152, 152);
+    border-radius: 5px;
+    scale: 0.9 0.9;
+}

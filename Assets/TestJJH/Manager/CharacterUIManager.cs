@@ -1,58 +1,150 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Threading;
 
-public class CharacterUIManager : BaseManager, IsynchronizeUI
+public class CharacterUIManager : BaseUI<CharacterManager>
 {
     [SerializeField]
-    private Slider[] m_characterHealthPoint;
-    private int s_AttackPosition;
-    public override void Initialize(MasterManager masterManager, TurnManager turnManager)
+    private AmountText m_amountTextPrefab;
+    [SerializeField]
+    private Transform m_amountTextParent;
+
+    [SerializeField]
+    private UnitSlot m_unitPrefab;
+    [SerializeField]
+    private RectTransform[] m_unitUIPosition;
+
+    private List<UnitSlot> m_unitUISlot;
+
+    private ObjectPool<AmountText> m_textPool;
+
+    public List<UnitSlot> UnitSlots
     {
-        m_masterManager = masterManager;
-        s_AttackPosition = 50;
+        get { return m_unitUISlot; }
     }
 
-    public override void DataInitialize(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager)
+    public override void Initialize()
     {
-        int c = 0;
-        foreach(var character in characterManager.Character)
+        m_textPool = new ObjectPool<AmountText>(m_amountTextPrefab, 64, m_amountTextParent);
+    }
+
+    public override void DataInitialize()
+    {
+        m_unitUISlot = new List<UnitSlot>(m_model.Units.Count);
+        //create
+        for (int i = 0; i < m_model.Units.Count; i++)
         {
-            m_characterHealthPoint[c].maxValue = character.HP;
-            m_characterHealthPoint[c].value = m_characterHealthPoint[c].maxValue;
-            c++;
+            UnitSlot newUnitUI = Instantiate(m_unitPrefab);
+            newUnitUI.transform.parent = this.transform;
+            //유닛 스파인 지정 필요
+            //newUnitUI.UnitSpine;
+            newUnitUI.Initialize();
+            newUnitUI.GetComponent<RectTransform>().position = m_unitUIPosition[i].position;
+            newUnitUI.gameObject.name = newUnitUI.gameObject.name + i.ToString();
+
+            m_unitUISlot.Add(newUnitUI);
         }
-        for (int i = characterManager.Character.Count; i < 4; i++)
+
+        InitHP();
+    }
+
+    public void InitHP()
+    {
+        foreach (var character in m_model.Units)
         {
-            m_characterHealthPoint[i].gameObject.SetActive(false);
+            InitHP(character.Position - 1);
         }
     }
 
-    public void Synchronization(BaseManager baseManager)
+    public void InitHP(int pos)
     {
-        if (baseManager is CharacterManager characterManager)
+        m_unitUISlot[pos].HealthPointSlider.maxValue = m_model.Units[pos].HealthValue.Now + m_model.Units[pos].ShieldValue.Now;
+        m_unitUISlot[pos].HealthPointSlider.value = m_model.Units[pos].HealthValue.Now;
+        if (m_model.Units[pos].ShieldValue.Now > 0) m_unitUISlot[pos].ShieldSliderBGI.gameObject.SetActive(true);
+        else m_unitUISlot[pos].ShieldSliderBGI.gameObject.SetActive(false);
+    }
+
+
+    public override void UseCard(Card card)
+    {
+
+    }
+
+    public override void Synchronization()
+    {
+        InitHP();
+    }
+
+    public void SetNowTurnIndicator(bool isCharacter, int exceptionPosition)
+    {
+        foreach (var unitUI in m_unitUISlot)
         {
-            int a = 0;
-            foreach (var character in characterManager.Character)
-            {
-                m_characterHealthPoint[a].value -= character.ID;
-                a++;
-            }
+            unitUI.NowTurnIndicator.gameObject.SetActive(false);
+        }
+        if (!isCharacter)
+        {
+            return;
+        }
+        m_unitUISlot[exceptionPosition - 1].NowTurnIndicator.gameObject.SetActive(true);
+    }
+
+    public override void UnitDying(Unit unit)
+    {
+        Debug.Log("캐릭터 사망 이벤트 출력");
+        if (unit.IsCharacter)
+        {
+            m_unitUISlot[unit.Position - 1].gameObject.SetActive(false);
         }
     }
 
-    public override void SetTurn(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager,  CardManager cardManager)
-    {
 
+
+
+    public void AttackEvent(int sourceUnitpos,
+     bool targetUnitIsCharacter, int targetUnitpos)
+    {
+        // m_unitUISlot[sourceUnitpos];
+    }
+    public void CastEvent(int sourceUnitpos)
+    {
+        // m_unitUISlot[sourceUnitpos];
     }
 
-    public void SetHealthPoint(int position, CharacterManager characterManager)
+
+    public void ChangeStatusEffectEvent(int targetUnitPos)
     {
-        m_characterHealthPoint[position].value--;
-        //실제 데미지 UI 적용
-        //m_characterHealthPoint[position].value = characterManager.Character[position].HealthPoint
+        // 상태 이상 애니메이션 출력
+    }
+
+    public void ChangeHPEvent(int targetUnitPos, bool isDamage, EStatusEffectType statusType, int amount)
+    {
+        InitHP(targetUnitPos - 1);
+        var text = m_textPool.GetObject();
+        if (isDamage)
+        {
+            text.Initialize(amount.ToString(), ESkillType.E_DAMAGE, statusType, m_unitUIPosition[targetUnitPos - 1].position, m_textPool);
+        }
+        else
+        {
+            text.Initialize(amount.ToString(), ESkillType.E_HEAL, EStatusEffectType.E_NONE, m_unitUIPosition[targetUnitPos - 1].position, m_textPool);
+        }
+    }
+
+    public void ShieldEvent(int targetUnitPos, int amount)
+    {
+        InitHP(targetUnitPos - 1);
+        var text = m_textPool.GetObject();
+        text.Initialize(amount.ToString(), ESkillType.E_SHIELD, EStatusEffectType.E_NONE, m_unitUIPosition[targetUnitPos - 1].position, m_textPool);
+    }
+
+
+
+    public void ChangeStack(int targetUnitPos, EStatusEffectType statusType, int duration, int stack, bool isNew)
+    {
+        m_unitUISlot[targetUnitPos - 1].ChangeStatusEffect(ResourcesManager.Status_Effect_Image((int)statusType), statusType, duration, stack, isNew);
     }
 }
     

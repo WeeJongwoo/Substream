@@ -5,26 +5,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Data;
 
 public class CSVManager : MonoBehaviour
 {
     private static CSVManager instance;
 
+    [SerializeField]
     private List<string> FILE_NAME = new List<string> { 
-        "UseCard",
-        "CardSkillTable",
         "CardTable",
-        "CharacterTable",
+        "UseCardTable",
+        "SkillTable",
+        "UnitTable",
         "LocalUser",
-        "StatusEffect",
+        //"StatusEffect",
     };
     //CSV파일 파싱 직후 저장 공간
-    private List<Dictionary<string, object>> CardSkillTable = new List<Dictionary<string, object>>();
     private List<Dictionary<string, object>> CardTable = new List<Dictionary<string, object>>();
-    private List<Dictionary<string, object>> CharacterTable = new List<Dictionary<string, object>>();
+    private List<Dictionary<string, object>> UseCardTable = new List<Dictionary<string, object>>();
+    private List<Dictionary<string, object>> SkillTable = new List<Dictionary<string, object>>();
+    private List<Dictionary<string, object>> UnitTable = new List<Dictionary<string, object>>();
     private List<Dictionary<string, object>> LocalUser = new List<Dictionary<string, object>>();
     private List<Dictionary<string, object>> StatusEffect = new List<Dictionary<string, object>>();
-    private List<Dictionary<string, object>> UseCard = new List<Dictionary<string, object>>();
 
     public void Initialize(Dictionary<string, DataScriptableObjects> database)
     {
@@ -75,6 +77,8 @@ public class CSVManager : MonoBehaviour
 
     private bool ConvertCSVToScriptableObject(string dataName, List<Dictionary<string, object>> parsedData, Dictionary<string,DataScriptableObjects> datacontainers)
     {
+        Debug.Log(dataName);
+
         //불러올 data파일 + "Data" 문자열을 추가하여 타입을 찾음
         Type type = Type.GetType(dataName + "Data");
         if (type == null)
@@ -83,20 +87,20 @@ public class CSVManager : MonoBehaviour
             return false;
         }
         //동적으로 생성한 객체의 속성들을 불러옴
-        FieldInfo[] fieldes = type.GetFields();
+        FieldInfo[] fieldesType = type.GetFields();
 
         //불러온 속성들의 이름을 저장할 공간을 생성
-        string[] fieldesName = new string[fieldes.Length];
+        string[] fieldesName = new string[fieldesType.Length];
         int counter = 0;
 
         //불러온 속성들의 이름들을 저장
-        foreach (FieldInfo field in fieldes)
+        foreach (FieldInfo field in fieldesType)
         {
             fieldesName[counter] = field.Name;
             counter++;
         }
 
-        foreach (Dictionary<string, object> data in parsedData)
+        foreach (Dictionary<string, object> dataTable in parsedData)
         {
             // 찾은 타입에 맞게 해당 타입을 동적 생성
             object newData = Activator.CreateInstance(type);// ~~Data 클래스
@@ -108,23 +112,46 @@ public class CSVManager : MonoBehaviour
 
             for (int i = 0; i < fieldesName.Length; i++)
             {
+               // Debug.Log(dataName + " : " + fieldesName[i]);
                 if (fieldesName[i].StartsWith('#'))
                 {
                     fieldesName[i] = fieldesName[i].Substring(1);
                 }
                 // 속성들 중에 해당 속성 값이 이름과 같다면
-                if (data.ContainsKey(fieldesName[i]))
+                if (dataTable.ContainsKey(fieldesName[i]))
                 {
-                    if (fieldes[i].FieldType.IsEnum) 
+                    //Debug.Log(fieldesName[i]);
+                    if (fieldesType[i].FieldType.IsGenericType &&
+                        fieldesType[i].FieldType.GetGenericTypeDefinition() == typeof(List<>))
+                    {
+                        string inner = dataTable[fieldesName[i]].ToString().Trim('[', ']');
+                        string[] tokens = inner.Split('/');
+
+                        Type elementType = fieldesType[i].FieldType.GetGenericArguments()[0];
+                        var list = (IList)Activator.CreateInstance(fieldesType[i].FieldType);
+                        
+                        foreach (var token in tokens)
+                        {
+                            object elementValue = Convert.ChangeType(token, elementType);
+                            list.Add(elementValue);
+                        }
+
+                        fieldesType[i].SetValue(newData, list);
+                        continue;
+                    }
+
+                    if (fieldesType[i].FieldType.IsEnum) 
                     {
                         // enum 타입이라면 enum으로 파싱해서 해당 속성에 저장
-                        fieldes[i].SetValue(newData, Enum.Parse(fieldes[i].FieldType, data[fieldesName[i]].ToString()));
+                        fieldesType[i].SetValue(newData, Enum.Parse(fieldesType[i].FieldType, dataTable[fieldesName[i]].ToString()));
+                        continue;
                     }
                     else
                     {
                         // data에서 가져온 값을 속성의 타입에 맞게 변환하여 newData의 해당 속성에 저장
-                        fieldes[i].SetValue(newData, Convert.ChangeType(data[fieldesName[i]], fieldes[i].FieldType));
+                        fieldesType[i].SetValue(newData, Convert.ChangeType(dataTable[fieldesName[i]], fieldesType[i].FieldType));
                     }
+                    Debug.Log(fieldesName[i]);
                 }
             }
             if (!datacontainers.ContainsKey(dataName))

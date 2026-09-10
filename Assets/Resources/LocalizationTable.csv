@@ -1,0 +1,180 @@
+TextKey,KR,EN,JP,CN
+UI_Btn_Confirm,확인,Confirm,確認,确定
+UI_Btn_Close,닫기,Close,閉じる,关闭
+UI_Btn_Setting,설정,Setting,設定,设置
+UI_Btn_Exit,나가기,Exit,退出,退出
+UI_Setting_Title,설정,Setting,設定,设置
+UI_Setting_Btn_Audio,사운드,Sound,サウンド,声音
+UI_Setting_Btn_Language,언어,Language,言語,语言
+UI_Setting_Audio_Title,사운드,Sound,サウンド,声音
+UI_Setting_Audio_Master,전체 소리,Master,全体 音声,整体声音
+UI_Setting_Audio_BGM,배경음악,BGM,背景音楽,背景音乐
+UI_Setting_Audio_SFX,효과음,SFX,効果音,效果音
+UI_Setting_Audio_VO,캐릭터 음성,VO,キャラクター 音声,卡通语音
+UI_Setting_Language_Title,언어,Language,言語,语言
+UI_Setting_Language_Dropdown_Title,게임 표시 언어,Game Display Language,ゲーム表示言語,游戏标识语言
+UI_Setting_Language_Description,* 언어를 변경하면 즉시 게임 내 UI에 반영됩니다.,"* If you change the language, it will be immediately reflected in the in-game UI.",* 言語を変更すると、すぐにゲーム内UIに反映されます。,* 更改语言后会立即反映到游戏内的UI上。
+UI_BM_TotalCoin_Title,보유 재화,Possession,所持資産,库存货物
+UI_BM_Btn_Purchase,구매,Purchase,購買,购买
+UI_BM_Btn_Refresh,새로고침,Refresh,リフレッシュ,重新装入
+UI_BM_Btn_Savings,저축,Savings,貯蓄,储蓄
+UI_BM_Btn_Membership,멤버십,Membership,メンバーシップ,成员资格
+UI_BlackMarket_Purchase_RequiredAmount,필요 금액   ,Required Amount,必要金額   ,所需金额   
+UI_BM_Savings_Title,블랙마켓 뱅크,Black Market Bank,ブラックマーケットバンク,黑市银行
+UI_BM_Savings_CurrentLevel,현재 저축 단계,Current Savings Stage,現在の貯蓄段階,当前储蓄阶段
+UI_BM_Savings_Accumulate,누적 저축액,Cumulative Savings,累積貯蓄額,累积储蓄额
+UI_BM_Savings_TransactionAmount,거래 금액,Transaction Amount,取引金額,交易额
+UI_BM_Savings_Btn_Deposit,저축,Save,貯蓄,储蓄
+UI_BM_Savings_Btn_Withdraw,인출,Withdraw,出金,提取
+UI_BM_Membership_Title,VIP 멤버십,VIP Membership,VIPメンバーシップ,贵宾会员
+UI_BM_Membership_Description,더 높은 등급의 아이템과 오파츠를 만나보세요!,Meet higher-rated items and Oparts!,より高いランクのアイテムとオパーツに出会いましょう！,来看看更高等级的单品和OPATZ吧！
+UI_BM_Membership_CurrentLevel,현재 멤버십 등급,Current Membership Rating,現在のメンバーシップ等級,当前会员级别
+UI_BM_Membership_PromotionRequirment,다음 승급 요구 비용,next promotion requirement cost,次の昇格要求費用,下次升级要求费用
+UI_BM_Membership_Btn_Upgrade,승급,Promotion,昇級,升级
+NPC_Name_BlackMarket,블랙마켓 딜러,Black Market Dealer,闇市の売人,黑市商人
+BM_Enter_01,어둠의 상점에 오신 것을 환영합니다.,Welcome to the shadow market.,闇の市場へようこそ。,欢迎来到地下黑市。
+BM_Enter_02,"목숨을 건졌다면, 돈을 쓸 차례입니다.",Survived? Then it's time to spend.,生き延びたなら、金を使う番だ。,既然活下来了，就该花钱了。
+BM_Exit_01,무운을 빌지요.,Hope you survive until next time.,生きてまた会えることを祈るよ。,希望下次还能见到活着的你。
+BM_Greet_Norm_01,물건을 보시려면 돈부터 꺼내시죠.,Show me the coin first.,品物を見たければ、まずは金を出せ。,想看货的话，先把钱拿出来。
+BM_Greet_VIP_01,"오, VIP 고객님. 어떤 귀한 물건을 찾아오셨습니까?","Ah, our VIP. What rare goods do you seek?",おお、VIPのお客様。どのような品をお探しで？,噢，VIP客人。您在寻找什么珍贵的货物？
+BM_Greet_Poor_01,돈도 없는 놈이 기웃거리긴. 꺼져라.,Broke? Don't waste my time. Get lost.,金もない奴がうろつくな。消えろ。,没钱还敢来瞎逛。滚开。
+BM_Ref_Disabled_01,저와의 신뢰가 부족하군요.<br>돈을 더 맡기셔야 합니다.,Not enough trust between us.<br>Deposit more first.,私との信頼が足りませんね。<br>もっと金を預けてください。,我们之间的信任还不够。<br>你需要存更多的钱。
+BM_Ref_Locked_01,오늘 보여드릴 수 있는 물건은 다 바닥났습니다.,I've shown you all I have for today.,今日お見せできる品はもう底をつきました。,今天能给您看的货已经全没了。
+BM_Ref_Success_01,뒷골목에서 갓 들어온 따끈따끈한 물건들입니다.,"Fresh goods, straight from the back alleys.",裏路地から届いたばかりの、新鮮な品です。,这些是刚从暗巷里搞来的新货。
+BM_Buy_Success_01,탁월한 안목이군요. 후회하지 않으실 겁니다.,Excellent choice. You won't regret it.,素晴らしい眼力だ。後悔はしないでしょう。,眼光真不错。您不会后悔的。
+BM_Buy_Success_02,거래가 아주 깔끔해서 좋군.,I like a smooth transaction.,スムーズな取引で実に良い。,我喜欢这么痛快的交易。
+BM_Not_Enough_01,돈이 모자란 것 같군요. 장난하십니까?,Short on coin? Are you kidding me?,金が足りないようですね。ふざけているんですか？,钱好像不够啊。您在开玩笑吗？
+BM_Not_Enough_02,거지는 사절입니다.,No beggars allowed.,乞食はお断りです。,乞丐谢绝入内。
+BM_Deposit_01,안전하게 보관해 드리죠.<br>물론 제 수수료는 떼고 말입니다.,"Kept safe.<br>Minus my fee, of course.",安全に保管しておきましょう。<br>もちろん、私の手数料は引かせていただきますよ。,会为您安全保管的。<br>当然，得扣除我的手续费。
+BM_Withdraw_01,여기 있습니다. 쓸데없는 곳에 낭비하지 마시길.,Here it is. Try not to waste it.,ほら。無駄なことに使わないように。,给您。希望您别浪费在无用的地方。
+BM_Withdraw_Fail_01,혜택은 다 누려놓고 돈을 빼시겠다?<br>양심이 없으시군요.,You enjoyed the perks and now want your money back?<br>Shameless.,特典だけ享受して金を引き出すと？<br>良心がありませんね。,好处都占尽了还想取钱？<br>真是不讲良心。
+BM_Mem_Up_01,훌륭합니다! 다음엔 더 확실한 물건을 준비해 두죠.,Splendid! I'll prepare better goods next time.,素晴らしい！次はもっと確実な品を用意しておきましょう。,太棒了！下次我会准备更好的货。
+BM_Mem_Max_01,당신은 이미 이 바닥 최고의 VVIP입니다.,You're already the top VVIP around here.,あなたはすでに、この界隈で最高のVVIPです。,您已经是这一带最顶级的VVIP了。
+Item_Name_1001,낡은 회중시계,Old Pocket Watch,古い懐中時計,破旧的怀表
+Item_Info_1001,태엽이 감기지 않는 오래된 시계입니다.,An old watch that won't wind.,ゼンマイが巻けない古い時計です。,无法上发条的旧表。
+Item_Name_1002,부서진 뼈 부적,Shattered Bone Amulet,砕けた骨のお守り,碎骨护身符
+Item_Info_1002,미약한 힘이 남아있는 뼛조각입니다.,A bone fragment with a faint power remaining.,微かな力が残っている骨の欠片です。,残留着微弱力量的骨头碎片。
+Item_Name_1003,핏빛 헝겊,Bloodstained Cloth,血まみれの布,血染的破布
+Item_Info_1003,누군가의 피가 깊게 밴 천 조각입니다.,A piece of cloth deeply stained with blood.,誰かの血が深く染み込んだ布切れです。,深深浸透了鲜血的布块。
+Item_Name_1004,은빛 늑대의 송곳니,Silver Wolf's Fang,銀狼の牙,银狼之牙
+Item_Info_1004,야성의 힘이 깃들어 있습니다.,Imbued with the power of the wild.,野生の力が宿っています。,蕴含着野性的力量。
+Item_Name_1005,이단자의 성인,Heretic's Holy Symbol,異端者の聖印,异端者的圣印
+Item_Info_1005,교단에서 금지한 불길한 조각상입니다.,An ominous statue banned by the church.,教団から禁じられた不吉な彫像です。,被教团禁止的不详雕像。
+Item_Name_1006,그을린 마녀의 재,Scorched Witch's Ashes,焦げた魔女の灰,烧焦的魔女骨灰
+Item_Info_1006,마력이 타다 남은 흔적입니다.,The burnt remains of magical power.,魔力が燃え残った痕跡です。,魔力燃烧后残存的痕迹。
+Item_Name_1007,심연의 눈동자,Eye of the Abyss,深淵の瞳,深渊之眼
+Item_Info_1007,들여다보면 끝없는 어둠이 보입니다.,Looking into it reveals endless darkness.,覗き込むと果てしない闇が見えます。,凝视它便会看到无尽的黑暗。
+Item_Name_1008,용맹한 기사의 심장,Heart of a Valiant Knight,勇猛な騎士の心臓,英勇骑士的心脏
+Item_Info_1008,여전히 희미하게 고동치고 있습니다.,It still beats faintly.,未だに微かに鼓動しています。,依然在微弱地跳动着。
+Item_Name_1009,잊혀진 왕의 왕관,Forgotten King's Crown,忘れられた王の王冠,被遗忘的王冠
+Item_Info_1009,타락한 왕조의 잃어버린 영광이 담겨 있습니다.,Contains the lost glory of a fallen dynasty.,堕落した王朝の失われた栄光が込められています。,蕴含着堕落王朝失去的荣耀。
+Item_Name_1010,태초의 불씨,Primeval Ember,太初の火種,初火的余烬
+Item_Info_1010,결코 꺼지지 않는 영겁의 불꽃입니다.,An eternal flame that never goes out.,決して消えることのない永劫の炎です。,永不熄灭的永恒之火。
+Item_Name_1011,녹슨 구리 열쇠,Rusty Copper Key,錆びた銅の鍵,生锈的铜钥匙
+Item_Info_1011,어디에 쓰이는지 알 수 없는 낡은 열쇠입니다.,An old key with an unknown purpose.,何に使われるか分からない古い鍵です。,不知道有何用途的旧钥匙。
+Item_Name_1012,깨진 거울 조각,Broken Mirror Shard,割れた鏡の破片,破碎的镜片
+Item_Info_1012,불길한 기운을 내뿜는 거울 파편입니다.,A mirror shard emitting an ominous aura.,不吉な気を放つ鏡の破片です。,散发着不详气息的镜子碎片。
+Item_Name_1013,말라비틀어진 약초,Withered Herb,干からびた薬草,枯萎的药草
+Item_Info_1013,효능이 거의 남아있지 않은 약초입니다.,An herb with almost no efficacy left.,効能がほとんど残っていない薬草です。,几乎失去功效的药草。
+Item_Name_1014,빛바랜 은화,Faded Silver Coin,色あせた銀貨,褪色的银币
+Item_Info_1014,망자들의 노잣돈으로 쓰였던 동전입니다.,A coin used as a toll for the dead.,亡者たちの渡し銭として使われた硬貨です。,曾作为亡者买路钱的硬币。
+Item_Name_1015,뼛가루 병,Bone Dust Vial,骨の粉の瓶,骨灰瓶
+Item_Info_1015,정체불명의 뼛가루가 담겨 있습니다.,A vial containing unidentified bone dust.,正体不明の骨の粉が入っています。,装有不明骨灰的瓶子。
+Item_Name_1016,처형인의 장갑,Executioner's Glove,処刑人の手袋,行刑者的手套
+Item_Info_1016,수많은 목을 벤 자의 피가 배어 있습니다.,Stained with the blood of one who severed many heads.,数多くの首を刎ねた者の血が染み込んでいます。,沾满了斩首无数者鲜血的手套。
+Item_Name_1017,저주받은 펜던트,Cursed Pendant,呪われたペンダント,被诅咒的吊坠
+Item_Info_1017,소유자에게 환청을 들려주는 펜던트입니다.,A pendant that causes auditory hallucinations.,所有者に幻聴を聞かせるペンダントです。,会让佩戴者听到幻听的吊坠。
+Item_Name_1018,무명 기사의 반지,Nameless Knight's Ring,無名騎士の指輪,无名骑士的戒指
+Item_Info_1018,잊혀진 맹세가 새겨진 낡은 반지입니다.,An old ring engraved with a forgotten oath.,忘れられた誓いが刻まれた古い指輪です。,刻有被遗忘誓言的旧戒指。
+Item_Name_1019,까마귀 깃털 망토,Raven Feather Cloak,鴉の羽の外套,渡鸦羽风衣
+Item_Info_1019,어둠 속에서 몸을 숨기기 좋은 망토입니다.,A cloak perfect for hiding in the dark.,闇に身を潜めるのに適した外套です。,非常适合在黑暗中隐蔽身形的斗篷。
+Item_Name_1020,독이 발린 비수,Poisoned Dagger,毒塗りの短剣,涂毒的匕首
+Item_Info_1020,칼날에 치명적인 맹독이 묻어 있습니다.,The blade is coated with a deadly poison.,刃に致命的な猛毒が塗られています。,刀刃上涂有致命的剧毒。
+Item_Name_1021,성기사의 부러진 검,Paladin's Broken Sword,聖騎士の折れた剣,圣骑士的断剑
+Item_Info_1021,빛을 잃어버린 성스러운 검의 잔해입니다.,The remains of a holy sword that lost its light.,光を失った聖なる剣の残骸です。,失去光芒的神圣之剑残骸。
+Item_Name_1022,환영의 나비,Phantom Butterfly,幻影の蝶,幻影蝴蝶
+Item_Info_1022,허상을 만들어내는 기묘한 나비의 표본입니다.,A strange butterfly specimen that creates illusions.,虚像を作り出す奇妙な蝶の標本です。,能制造幻象的奇特蝴蝶标本。
+Item_Name_1023,고위 사제의 기도창,High Priest's Prayer Beads,高位司祭の祈りの数珠,高阶祭司的念珠
+Item_Info_1023,광기에 물든 사제가 쥐고 있던 묵주입니다.,Beads held by a priest tainted with madness.,狂気に染まった司祭が握っていた数珠です。,被疯狂侵蚀的祭司所握持的念珠。
+Item_Name_1024,붉은 달의 조각,Fragment of the Red Moon,赤い月の欠片,红月碎片
+Item_Info_1024,바라보고 있으면 피가 끓어오릅니다.,Looking at it makes one's blood boil.,見つめていると血が沸き立ちます。,注视它会让人热血沸腾。
+Item_Name_1025,이형의 두개골,Aberrant Skull,異形の頭蓋骨,畸形头骨
+Item_Info_1025,인간의 것이 아닌 기괴한 형태의 뼈입니다.,A grotesque bone that is not human.,人間の物ではない奇怪な形の骨です。,形态怪异、绝非人类的头骨。
+Item_Name_1026,얼어붙은 영혼석,Frozen Soul Shard,凍りついた魂の石,冻结的灵魂石
+Item_Info_1026,극한의 추위 속에서 굳어버린 영혼입니다.,A soul frozen solid in extreme cold.,極限の寒さの中で固まってしまった魂です。,在极寒中凝固的灵魂。
+Item_Name_1027,심연을 걷는 자의 반지,Abysswalker's Ring,深淵を歩く者の指輪,漫步深渊者之戒
+Item_Info_1027,어둠의 침식을 막아주는 전설의 반지입니다.,A legendary ring that wards off abyssal corruption.,闇の侵食を防いでくれる伝説の指輪です。,能够抵御黑暗侵蚀的传说戒指。
+Item_Name_1028,고룡의 역린,Ancient Dragon's Scale,古竜の逆鱗,古龙的逆鳞
+Item_Info_1028,태초의 용이 지녔던 파괴적인 힘의 근원입니다.,The source of destructive power of a primeval dragon.,太初の竜が持っていた破壊的な力の源です。,太初之龙所拥有的毁灭性力量之源。
+Item_Name_1029,여신의 눈물,Goddess's Tear,女神の涙,女神之泪
+Item_Info_1029,세상의 멸망을 슬퍼하며 흘린 단 하나의 눈물입니다.,A single tear shed in mourning for the world's ruin.,世界の滅亡を悲しんで流した唯一の涙です。,为世界毁灭而悲伤流下的唯一泪水。
+Item_Name_1030,멸망한 왕의 옥좌,Throne of the Ruined King,滅亡した王の玉座,覆灭之王的王座
+Item_Info_1030,권력의 무게와 파멸의 저주가 공존하는 파편입니다.,A fragment where the weight of power and curse of ruin coexist.,権力の重さと破滅の呪いが共存する破片です。,权力的沉重与毁灭的诅咒并存的碎片。
+Item_Name_2001,연속 베기,Consecutive Slashes,連続斬り,连续斩击
+Item_Info_2001,전방을 향해 3번 연속으로 무기를 휘두릅니다.,Swings the weapon 3 times forward.,前方に向かって3回連続で武器を振り回します。,朝前方连续挥舞武器3次。
+Item_Name_2002,찌르기,Thrust,突き,突刺
+Item_Info_2002,무기를 앞으로 강하게 내지릅니다.,Thrusts the weapon forward strongly.,武器を前に強く突き出します。,将武器猛力向前刺出。
+Item_Name_2003,구르기,Roll,回避,翻滚
+Item_Info_2003,짧은 거리를 굴러 회피합니다.,Rolls a short distance to evade.,短い距離を転がって回避します。,向短距离翻滚以进行闪避。
+Item_Name_2004,방패 밀치기,Shield Bash,シールドバッシュ,盾牌猛击
+Item_Info_2004,방패로 적을 쳐서 밀어냅니다.,Strikes the enemy with a shield to push them back.,盾で敵を殴って押し出します。,用盾牌猛击敌人将其击退。
+Item_Name_2005,화염구,Fireball,ファイアボール,火球术
+Item_Info_2005,작은 불덩이를 날려 보냅니다.,Shoots a small fireball.,小さな火の玉を飛ばします。,发射出一团小火球。
+Item_Name_2006,응급 처치,First Aid,応急処置,急救
+Item_Info_2006,체력을 아주 조금 회복합니다.,Restores a very small amount of health.,体力をほんの少し回復します。,恢复极少量的生命值。
+Item_Name_2007,그림자 걸음,Shadow Step,シャドウステップ,暗影步
+Item_Info_2007,적의 등 뒤로 순간이동합니다.,Teleports behind the enemy.,敵の背後にテレポートします。,瞬间移动到敌人的背后。
+Item_Name_2008,맹독 부여,Venom Coating,猛毒付与,剧毒涂层
+Item_Info_2008,무기에 치명적인 독을 바릅니다.,Applies deadly poison to the weapon.,武器に致命的な毒を塗ります。,在武器上涂抹致命的毒药。
+Item_Name_2009,운석 낙하,Meteor Strike,メテオストライク,陨石坠落
+Item_Info_2009,하늘에서 거대한 운석을 소환합니다.,Summons a massive meteor from the sky.,空から巨大な隕石を召喚します。,从天空中召唤一颗巨大的陨石。
+Item_Name_2010,시간 역행,Time Reversal,時間逆行,时间回溯
+Item_Info_2010,자신의 상태를 몇 초 전으로 되돌립니다.,Rewinds own state to a few seconds ago.,自身の状態を数秒前に戻します。,将自身状态回溯到几秒前。
+Item_Name_2011,올려 베기,Upward Slash,斬り上げ,上挑斩
+Item_Info_2011,적을 공중으로 띄우는 강한 일격을 가합니다.,Deals a heavy blow that launches the enemy into the air.,敵を宙に浮かせる強力な一撃を加えます。,造成将敌人击飞到空中的强力一击。
+Item_Name_2012,내려 찍기,Downward Strike,振り下ろし,下劈
+Item_Info_2012,공중에서 무기를 강하게 내리찍습니다.,Strikes down with the weapon forcefully from the air.,空中から武器を強く振り下ろします。,从空中猛烈地向下劈砍武器。
+Item_Name_2013,방어 태세,Defensive Stance,防御の構え,防御姿态
+Item_Info_2013,일시적으로 받는 피해를 크게 줄입니다.,Temporarily reduces incoming damage significantly.,一時的に受けるダメージを大幅に減らします。,暂时大幅减少受到的伤害。
+Item_Name_2014,백스텝,Backstep,バックステップ,后撤步
+Item_Info_2014,뒤로 빠르게 물러나 공격을 회피합니다.,Quickly retreats backwards to evade attacks.,後ろに素早く下がって攻撃を回避します。,迅速向后退避以躲避攻击。
+Item_Name_2015,투척 단검,Throwing Knife,投げナイ프,飞刀
+Item_Info_2015,원거리에서 적을 견제하는 단검을 던집니다.,Throws a dagger to harass the enemy from a distance.,遠距離から敵を牽制する短剣を投げます。,投掷匕首从远处牵制敌人。
+Item_Name_2016,회전 베기,Spinning Slash,回転斬り,旋风斩
+Item_Info_2016,몸을 회전시키며 주변의 모든 적을 벱니다.,"Spins around, slashing all surrounding enemies.",体を回転させ、周囲のすべての敵を斬りつけます。,旋转身体斩击周围所有的敌人。
+Item_Name_2017,벼락 창,Lightning Spear,雷の槍,雷电枪
+Item_Info_2017,번개로 이루어진 창을 전방으로 투척합니다.,Throws a spear made of lightning forward.,雷でできた槍を前方に投げつけます。,向前投掷由雷电凝聚而成的长枪。
+Item_Name_2018,얼음 화살,Ice Bolt,氷の矢,冰霜箭
+Item_Info_2018,적의 이동속도를 늦추는 얼음 파편을 쏩니다.,Shoots an ice shard that slows the enemy's movement.,敵の移動速度を遅くする氷の破片を撃ちます。,发射降低敌人移动速度的冰霜碎片。
+Item_Name_2019,피의 일격,Blood Strike,血の一撃,鲜血打击
+Item_Info_2019,자신의 체력을 깎아 강력한 피해를 줍니다.,Sacrifices own health to deal massive damage.,自身の体力を削って強力なダメージを与えます。,消耗自身生命值造成巨大伤害。
+Item_Name_2020,전투 함성,Warcry,ウォークライ,战吼
+Item_Info_2020,공격력을 일시적으로 증폭시킵니다.,Temporarily amplifies attack power.,攻撃力を一時的に増幅させます。,暂时大幅提升攻击力。
+Item_Name_2021,그림자 환영,Shadow Illusion,影の幻影,暗影幻象
+Item_Info_2021,적의 공격을 유도하는 분신을 생성합니다.,Creates a clone that attracts enemy attacks.,敵の攻撃を誘導する分身を作り出します。,制造一个吸引敌人攻击的幻象。
+Item_Name_2022,성스러운 빛,Holy Light,聖なる光,神圣之光
+Item_Info_2022,주변의 어둠을 걷어내고 체력을 회복합니다.,Dispels surrounding darkness and restores health.,周囲の闇を払い、体力を回復します。,驱散周围的黑暗并恢复生命值。
+Item_Name_2023,대지 파쇄,Earth Shatter,大地砕き,大地粉碎
+Item_Info_2023,지면을 강타하여 충격파를 발생시킵니다.,Strikes the ground to create a shockwave.,地面を強打して衝撃波を発生させます。,猛击地面产生强大的冲击波。
+Item_Name_2024,흡혈의 칼날,Vampiric Blade,吸血の刃,吸血之刃
+Item_Info_2024,적에게 입힌 피해의 일부를 체력으로 흡수합니다.,Heals for a portion of the damage dealt to the enemy.,敵に与えたダメージの一部を体力として吸収します。,将对敌人造成伤害的一部分转化为生命值。
+Item_Name_2025,마력 폭발,Mana Burst,魔力爆発,魔力爆发
+Item_Info_2025,응축된 마력을 한 번에 터뜨려 광역 피해를 줍니다.,Detonates condensed mana for area damage.,凝縮された魔力を一気に爆発させ、広範囲ダメージを与えます。,引爆凝聚的魔力造成广域伤害。
+Item_Name_2026,폭풍의 눈,Eye of the Storm,嵐の目,风暴之眼
+Item_Info_2026,적을 끌어당기는 강력한 회오리를 소환합니다.,Summons a powerful tornado that pulls enemies in.,敵を引き寄せる強力な竜巻を召喚します。,召唤出将敌人卷入其中的强力龙卷风。
+Item_Name_2027,종말의 검,Blade of Doom,終末の剣,末日之刃
+Item_Info_2027,일정 확률로 적을 즉사시키는 필살의 일격입니다.,A lethal strike with a chance to instantly kill the enemy.,一定の確率で敵を即死させる必殺の一撃です。,有一定几率直接秒杀敌人的必杀一击。
+Item_Name_2028,절대 방벽,Absolute Aegis,絶対防壁,绝对屏障
+Item_Info_2028,짧은 시간 동안 모든 피해를 완전히 무효화합니다.,Completely nullifies all damage for a short duration.,短い間、すべてのダメージを完全に無効化します。,在短时间内完全免疫所有伤害。
+Item_Name_2029,시공 절단,Space-Time Rift,時空切断,时空斩
+Item_Info_2029,공간을 베어내어 방어력을 무시하는 피해를 줍니다.,"Slashes through space, dealing damage that ignores armor.",空間を切り裂き、防御力を無視するダメージを与えます。,斩断空间，造成无视防御力的伤害。
+Item_Name_2030,신의 심판,Wrath of the Gods,神の裁き,神之审判
+Item_Info_2030,하늘에서 파멸의 빛줄기가 쏟아져 내립니다.,Rays of ruinous light pour down from the sky.,空から破滅の光の筋が降り注ぎます。,毁灭的光芒从天而降。
+NAME_PLAYER,용사,Hero,勇者,勇者
+NAME_NPC,마을 사람,Villager,村人,村民
+NAME_ENEMY,암살자,Assassin,暗殺者,刺客
+EP01_TXT_001,이상하군... 주변이 너무 조용한데.,Strange... It's too quiet around here.,おかしいな… 周りが静かすぎる。,真奇怪……周围太安静了。
+EP01_TXT_002,용사님! 조심하세요. 등 뒤의 그림자에서 무언가 움직였습니다!,Hero! Watch out. Something moved in the shadows behind you!,勇者様！気をつけて。背後の影で何かが動きました！,勇者大人！小心。你背后的阴影里有东西在动！
+EP01_TXT_003,"큭, 함정인가. 모두 무기를 들어라!","Ugh, a trap. Everyone, draw your weapons!",くっ、罠か。皆、武器を構えろ！,呃，是陷阱吗。大家举起武器！
+EP01_TXT_004,크히힛! 눈치는 빠르지만 이미 늦었다. 네놈들의 목숨을 가져가주마!,"Hehe! Quick wits, but too late. I'll take your lives!",ヒヒッ！勘はいいが遅すぎた。貴様らの命、もらうぞ！,嘿嘿！反应挺快但已经晚了。我要拿走你们的命！
+EP01_TXT_005,"안 돼! 용사님, 제가 방패막이가 되겠습니다!","No! Hero, I will be your shield!",駄目です！勇者様、私が盾になります！,不行！勇者大人，我来当你的盾牌！

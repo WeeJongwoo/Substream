@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="LogPanelRoot" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.85); padding: 5%;">
+        
+        <ui:VisualElement style="flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom-width: 2px; border-bottom-color: rgba(255, 255, 255, 0.2); padding-bottom: 10px;">
+            <ui:Label text="Dialogue Log" style="color: white; font-size: 24px; -unity-font-style: bold;" />
+            <ui:Button name="Btn_CloseLog" text="닫기" style="background-color: rgba(80, 80, 80, 0.8); color: white; border-width: 0; padding: 5px 15px; font-size: 16px; border-radius: 5px; -unity-font-style: bold;" />
+        </ui:VisualElement>
+
+        <ui:ScrollView name="LogScrollView" style="flex-grow: 1; width: 100%;" />
+        
+    </ui:VisualElement>
+</ui:UXML>

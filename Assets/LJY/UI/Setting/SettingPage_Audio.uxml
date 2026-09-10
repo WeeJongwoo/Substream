@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="Page_Audio" style="flex-grow: 1;">
+        <ui:Label text="사운드 설정" name="Title" style="font-size: 24px; color: white; -unity-font-style: bold; margin-bottom: 30px;" />
+        <ui:VisualElement name="Master" style="margin-bottom: 20px;">
+            <ui:Toggle name="Tgl_Master" label="전체 소리 (Master)" value="true" style="color: white; font-size: 16px; margin-bottom: 5px;" />
+            <ui:Slider name="Sld_Master" low-value="0" high-value="1" value="1" style="margin-left: 5px; margin-right: 5px;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="margin-bottom: 20px;">
+            <ui:Toggle name="Tgl_BGM" label="배경음악 (BGM)" value="true" style="color: white; font-size: 16px; margin-bottom: 5px;" />
+            <ui:Slider name="Sld_BGM" low-value="0" high-value="1" value="1" style="margin-left: 5px; margin-right: 5px;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="margin-bottom: 20px;">
+            <ui:Toggle name="Tgl_SFX" label="효과음 (SFX)" value="true" style="color: white; font-size: 16px; margin-bottom: 5px;" />
+            <ui:Slider name="Sld_SFX" low-value="0" high-value="1" value="1" style="margin-left: 5px; margin-right: 5px;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="margin-bottom: 30px;">
+            <ui:Toggle name="Tgl_VO" label="캐릭터 음성 (VO)" value="true" style="color: white; font-size: 16px; margin-bottom: 5px;" />
+            <ui:Slider name="Sld_VO" low-value="0" high-value="1" value="1" style="margin-left: 5px; margin-right: 5px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

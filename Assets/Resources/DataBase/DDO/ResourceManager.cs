@@ -52,18 +52,17 @@ public class ResourceManager : MonoBehaviour
         "Battle_BGI",
         "Card_Cost",
         "Card_Frame",
-        "Character_Portrait"
+        "Unit_Portrait",
+        "Card_Image",
+        "Status_Effect_Image"
     };
 
     private Dictionary<string, Sprite> Battle_BGI_Dic = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> Card_Cost_Dic = new Dictionary<string, Sprite>();
+    private Dictionary<string, Sprite> Card_Image_Dic = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> Card_Frame_Dic = new Dictionary<string, Sprite>();
-    private Dictionary<string, Sprite> Character_Portrait_Dic = new Dictionary<string, Sprite>();
-
-    public Dictionary<string, Sprite> Battle_BGI_DIC { get { return  Battle_BGI_Dic; } }
-    public Dictionary<string, Sprite> Card_Cost_DIC { get { return Card_Cost_Dic; } }
-    public Dictionary<string, Sprite> Card_Frame_DIC { get { return Card_Frame_Dic; } }
-    public Dictionary<string, Sprite> Character_Portrait_DIC { get { return Character_Portrait_Dic; } }
+    private Dictionary<string, Sprite> Unit_Portrait_Dic = new Dictionary<string, Sprite>();
+    private Dictionary<string, Sprite> Status_Effect_Image_Dic = new Dictionary<string, Sprite>();
 
     public Sprite Battle_BGI(int id)
     {
@@ -73,14 +72,23 @@ public class ResourceManager : MonoBehaviour
     {
         return Card_Cost_Dic[KeyConvert(id)];
     }
+    public Sprite Card_Image(int id)
+    {
+        return Card_Image_Dic[KeyConvert(id)];
+    }
     public Sprite Card_Frame(int id)
     {
         return Card_Frame_Dic[KeyConvert(id)];
     }
-    public Sprite Character_Portrait(int id)
+    public Sprite Unit_Portrait(int id)
     {
-        return Character_Portrait_Dic[KeyConvert(id)];
+        return Unit_Portrait_Dic[KeyConvert(id)];
     }
+    public Sprite Status_Effect_Image(int id)
+    {
+        return Status_Effect_Image_Dic[KeyConvert(id)];
+    }
+
 
     public void Awake()
     {

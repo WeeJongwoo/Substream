@@ -1,0 +1,50 @@
+#Slot_Container .unity-scroller {
+    width: 11px;
+}
+
+#Slot_Container .unity-scroller__low-button, 
+.unity-scroller__high-button {
+    display: none;
+}
+
+#Slot_Container .unity-base-slider__drag-container {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+#Slot_Container .unity-base-slider__tracker {
+    background-color: rgba(0, 0, 0, 0.3);
+
+    border-width: 0px;
+    border-radius: 4px;
+
+    position: absolute;
+    width: 11px;
+    height: 100%;
+
+    top: 0;
+    bottom: 0;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#Slot_Container .unity-base-slider__dragger {
+    background-color: rgb(150, 150, 150);
+    border-width: 0px; 
+    border-radius: 3px;
+
+    position: absolute;
+    width: 5px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#Slot_Container .unity-base-slider__dragger:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+#Slot_Container .unity-base-slider__dragger:active {
+    background-color: rgb(220, 220, 220);
+}

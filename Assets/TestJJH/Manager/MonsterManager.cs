@@ -1,44 +1,51 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class MonsterManager : BaseManager
+public class MonsterManager : UnitManagingSystem
 {
-    private LinkedList<Unit> m_monster;
-
-    public LinkedList<Unit> Monster
+    public override void Initialize()
     {
-        get { return m_monster; }
+        m_isSystemAboutCharacter = false;
+        m_units = new Dictionary<int, Unit>();
     }
-    public override void Initialize(MasterManager masterManager, TurnManager turnManager)
+
+    public override void InitializeReference(MasterManager masterManager)
     {
         m_masterManager = masterManager;
-
-        m_monster = new LinkedList<Unit>();
+        m_turnManager = masterManager.TurnManager;
     }
 
-    public override void DataInitialize(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager)
+    public override void DataInitialize()
     {
-        for (int i = 0; i < 1; i++)
+        // 파티 정보
+        int[] monsterID = { 1001 };
+        int i = 1;
+        foreach (var a in monsterID)
         {
-            MonsterData monster = new MonsterData();
-            monster.UserID = 0;
-            monster.PrototypeUnitID = i;
-            monster.InstanceID = 0;
-            monster.Speed = 9;
+            UnitTableData MU = DataBase.UnitTable(a);
+            UnitTableData newUnit = new UnitTableData(MU);
 
-            
-            m_monster.AddLast(monster);
+            newUnit.Init(this, false, i, MU.HP, MU.ATK, MU.DEF, MU.Speed, MU.CriticalRate, MU.CriticalDamage, MU.Penetration, MU.AetherRecoverPoint);
+
+            m_units.Add(i, newUnit);
+            i++;
         }
+        m_partyCount = monsterID.Length;
     }
 
-    public override void SetTurn(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager, CardManager cardManager)
+    public override void UseCard(Card card)
     {
-       
+        base.UseCard(card);
     }
 
-    public void SetHealthPoint(int position, float damage)
+    public override void UnitDying(Unit unit)
     {
-
+        if (!unit.IsCharacter)
+        {
+            m_units.Remove(unit.Position);
+        }
     }
 }

@@ -1,0 +1,29 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Popup_Background" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center;">
+        <ui:VisualElement name="Popup_Panel" style="width: 450px; height: 450px; background-color: rgb(40, 40, 45); border-radius: 15px; padding: 25px; align-items: center; border-width: 2px; border-color: rgb(100, 100, 120);">
+            <ui:Label text="블랙마켓 뱅크" name="SavingsTitle" style="color: rgb(255, 255, 255); font-size: 24px; -unity-font-style: bold; margin-bottom: 20px;" />
+            <ui:VisualElement style="width: 100%; background-color: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                <ui:VisualElement name="CurSavingsLevel" style="flex-direction: row; justify-content: space-between; margin-bottom: 10px;">
+                    <ui:Label text="현재 저축 단계:" name="Title" style="color: rgb(200, 200, 200); font-size: 18px; -unity-font-style: bold;" />
+                    <ui:Label name="Value" text="Lv. 0" style="color: rgb(100, 200, 255); font-size: 18px; -unity-font-style: bold;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="CumulativeSavings" style="flex-direction: row; justify-content: space-between;">
+                    <ui:Label text="누적 저축액:" name="Title" style="color: rgb(200, 200, 200); font-size: 18px; -unity-font-style: bold;" />
+                    <ui:Label name="Value" text="0 G" style="color: rgb(255, 215, 0); font-size: 18px; -unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="VisualElement" style="width: 100%; background-color: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                <ui:VisualElement name="TransactionAmount" style="flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <ui:Label text="거래 금액:" name="Title" style="color: rgb(200, 200, 200); font-size: 16px; -unity-font-style: bold;" />
+                    <ui:Label name="Value" text="100 G" style="color: rgb(255, 255, 255); font-size: 20px; -unity-font-style: bold;" />
+                </ui:VisualElement>
+                <ui:SliderInt name="Sld_Amount" low-value="100" high-value="7000" value="100" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; justify-content: space-around; width: 100%; margin-bottom: 20px;">
+                <ui:Button name="Btn_Withdraw" text="인출" style="width: 140px; height: 45px; font-size: 18px; background-color: rgb(180, 60, 60); color: white; border-radius: 8px; -unity-font-style: bold;" />
+                <ui:Button name="Btn_Deposit" text="입금" style="width: 140px; height: 45px; font-size: 18px; background-color: rgb(60, 150, 80); color: white; border-radius: 8px; -unity-font-style: bold;" />
+            </ui:VisualElement>
+            <ui:Button name="Btn_CloseSavings" text="닫기" style="width: 100px; height: 40px; font-size: 16px; background-color: rgb(70, 70, 70); color: white; border-radius: 5px; -unity-font-style: bold;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -3,17 +3,37 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System;
 
+[Serializable]
 public class Card
 {
+    [SerializeField]
     private Unit m_unit;
+    [SerializeField]
     private CardTableData m_cardData;
-    private CardSkillTableData m_Skills;
-    private SkillScheduleManager m_skillScheduler;
-    public void Initialize(Unit unit, CardTableData cardData, SkillScheduleManager skillScheduler)
-    {
-        m_unit = unit;
 
+    private float RecordAmount;
+
+    public float RecordedAmount()
+    {
+        return RecordAmount;
+    }
+
+    public void Recorde(float amount)
+    {
+        RecordAmount += amount;
+    }
+
+    public void ReInit()
+    {
+        RecordAmount = 0;
+    }
+
+    public void Initialize(Unit unit, CardTableData cardData)
+    {
+        RecordAmount = 0;
+        m_unit = unit;
         m_cardData = new CardTableData
         {
             ID = cardData.ID,
@@ -24,13 +44,8 @@ public class Card
             Texture = cardData.Texture,
             CardText = cardData.CardText,
             SkillID = cardData.SkillID,
+            TargetType = cardData.TargetType
         };
-
-        m_skillScheduler = skillScheduler;
-        
-        DontDestroyOnLoadManager ddo = DontDestroyOnLoadManager.Instance;
-        CardSkillTableData Skill = ddo.CardSkillTable(m_cardData.SkillID);
-        m_Skills = (Skill);
     }
 
     public CardTableData CardData
@@ -39,21 +54,8 @@ public class Card
         set { m_cardData = value; }
     }
 
-    public void Execute()
+    public Unit Unit
     {
-        //Debug.Log("Use Card In Turn: " + m_cardData.ID + " " + m_cardData.Name + " " + m_cardData.CardType + " " + m_cardData.CardRarity + " " + m_cardData.Cost + " " + m_cardData.Texture + " " + m_cardData.CardText + " " + m_cardData.SkillID);
-        switch (m_cardData.CardType)
-        {
-            case ECardType.E_DEFAULT:
-                Debug.Log("DEFAULT DATA IS IN CARD :" + m_cardData.ID + "," + m_cardData.Name);
-                break;
-            case ECardType.E_ATTACK:
-
-                break;
-            case ECardType.E_SKILL:
-                break;
-        }
-
-        m_skillScheduler.RegistCardSkill(m_unit, m_Skills, CardData);
+        get { return m_unit; }
     }
 }

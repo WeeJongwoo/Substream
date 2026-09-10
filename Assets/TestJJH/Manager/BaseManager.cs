@@ -1,29 +1,51 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class BaseManager : AccessableDataBase
 {
     protected MasterManager m_masterManager;
 
-    public abstract void Initialize(MasterManager masterManager, TurnManager turnManager);
+    public abstract void Initialize();
 
-    // 데이터 초기화시 호출
-    public virtual void DataInitialize(TurnManager turnManager, CharacterManager characterManager , MonsterManager monsterManager)
+    public virtual void InitializeReference(MasterManager masterManager)
+    {
+        m_masterManager = masterManager;
+    }
+
+    public virtual void DataInitialize()
     {
     }
 
-    // 턴 종료시 호출
-    public virtual void SetTurn(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager, CardManager cardManager)
+    public virtual void Synchronization()
     {
     }
-}
 
-interface IsynchronizeUI
-{
-    void Synchronization(BaseManager baseManager);
-}
+    public virtual void SetTurn()
+    {
+    }
 
+    public virtual void SetRound()
+    {
+
+    }
+
+    public virtual void UseCard(Card card)
+    {
+    }
+
+    public abstract void UnitDying(Unit unit);
+
+    public bool ConnectsDataBase()
+    {
+        if (!ConnectDataBase())
+        {
+            return false;
+        }
+        return true;
+    }
+}
 
 interface IUpdatableManager
 {
