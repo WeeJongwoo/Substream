@@ -1,58 +1,130 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Threading;
 
-public class CharacterUIManager : BaseManager, IsynchronizeUI
+public class CharacterUIManager : BaseUI<CharacterManager>
 {
     [SerializeField]
-    private Slider[] m_characterHealthPoint;
-    private int s_AttackPosition;
-    public override void Initialize(MasterManager masterManager, TurnManager turnManager)
+    private AmountText m_amountTextPrefab;
+    [SerializeField]
+    private Transform m_amountTextParent;
+
+    [SerializeField]
+    private UnitSlot m_unitPrefab;
+    [SerializeField]
+    private RectTransform[] m_unitUIPosition;
+
+    private UnitSlot[] m_unitUISlot;
+
+    private ObjectPool<AmountText> m_textPool;
+
+    public override void Initialize()
     {
-        m_masterManager = masterManager;
-        s_AttackPosition = 50;
+        m_textPool = new ObjectPool<AmountText>(m_amountTextPrefab, 64, m_amountTextParent);
     }
 
-    public override void DataInitialize(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager)
+    public override void DataInitialize()
+    {
+        m_unitUISlot = new UnitSlot[m_model.Units.Count];
+        //create
+        for (int i = 0; i < m_model.Units.Count; i++)
+        {
+            UnitSlot newUnitUI = Instantiate(m_unitPrefab);
+            newUnitUI.transform.parent = this.transform;
+            //유닛 스파인 지정 필요
+            //newUnitUI.UnitSpine;
+            newUnitUI.Initialize();
+            newUnitUI.GetComponent<RectTransform>().position = m_unitUIPosition[i].position;
+            newUnitUI.gameObject.name = newUnitUI.gameObject.name + i.ToString();
+
+            m_unitUISlot[i] = newUnitUI;
+        }
+
+        InitHP();
+    }
+
+    public void InitHP()
     {
         int c = 0;
-        foreach(var character in characterManager.Character)
+        foreach (var character in m_model.Units)
         {
-            m_characterHealthPoint[c].maxValue = character.HP;
-            m_characterHealthPoint[c].value = m_characterHealthPoint[c].maxValue;
+            m_unitUISlot[c].HealthPointSlider.maxValue = character.HealthPoint.Max;
+            m_unitUISlot[c].HealthPointSlider.value = character.HealthPoint.Now;
             c++;
         }
-        for (int i = characterManager.Character.Count; i < 4; i++)
+    }
+    public void InitHP(int pos)
+    {
+        m_unitUISlot[pos].HealthPointSlider.maxValue = m_model.Units[pos].HealthPoint.Max;
+        m_unitUISlot[pos].HealthPointSlider.value = m_model.Units[pos].HealthPoint.Now;
+    }
+
+    public override void UseCard(Card card)
+    {
+
+    }
+
+    public override void Synchronization()
+    {
+        InitHP();
+    }
+
+    public void SetHPSliderBGI(bool isCharacter, int exceptionPosition)
+    {
+        foreach (var unitUI in m_unitUISlot)
         {
-            m_characterHealthPoint[i].gameObject.SetActive(false);
+            unitUI.HPSliderBGI.gameObject.SetActive(false);
+        }
+        if (!isCharacter)
+        {
+            return;
+        }
+        m_unitUISlot[exceptionPosition].HPSliderBGI.gameObject.SetActive(true);
+    }
+
+    public override void UnitDying(Unit unit)
+    {
+        if (unit.IsCharacter)
+        {
+            m_unitUISlot[unit.Position].gameObject.SetActive(false);
         }
     }
 
-    public void Synchronization(BaseManager baseManager)
+    public void DamageEvent(bool sourceUnitIsCharacter, int sourceUnitpos,
+        bool targetUnitIsCharacter, int targetUnitPos,
+        int damage)
     {
-        if (baseManager is CharacterManager characterManager)
+        if (!sourceUnitIsCharacter)
         {
-            int a = 0;
-            foreach (var character in characterManager.Character)
-            {
-                m_characterHealthPoint[a].value -= character.ID;
-                a++;
-            }
+
+        }
+
+        if (!targetUnitIsCharacter)
+        {
+            InitHP(targetUnitPos);
+            var text = m_textPool.GetObject();
+            text.Initialize(damage.ToString(), ESkillType.E_DAMAGE, m_unitUIPosition[targetUnitPos].position, m_textPool);
         }
     }
 
-    public override void SetTurn(TurnManager turnManager, CharacterManager characterManager, MonsterManager monsterManager,  CardManager cardManager)
+    public void HealEvent(bool sourceUnitIsCharacter, int sourceUnitpos,
+    bool targetUnitIsCharacter, int targetUnitPos,
+    int amount)
     {
+        if (!sourceUnitIsCharacter)
+        {
 
-    }
+        }
 
-    public void SetHealthPoint(int position, CharacterManager characterManager)
-    {
-        m_characterHealthPoint[position].value--;
-        //실제 데미지 UI 적용
-        //m_characterHealthPoint[position].value = characterManager.Character[position].HealthPoint
+        if (!targetUnitIsCharacter)
+        {
+            InitHP(targetUnitPos);
+            var text = m_textPool.GetObject();
+            text.Initialize(amount.ToString(), ESkillType.E_HEAL, m_unitUIPosition[targetUnitPos].position, m_textPool);
+        }
     }
 }
     

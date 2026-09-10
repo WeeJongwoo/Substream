@@ -285,6 +285,7 @@ GameObject:
   - component: {fileID: 1610619458}
   - component: {fileID: 1610619460}
   - component: {fileID: 1610619462}
+  - component: {fileID: 1610619463}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -307,7 +308,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: c6e32529f42ee6c43aba192a7d9388a1, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: fd0c8cd39a3a57b43b8f3f24bfa5c7cb, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: -10
 --- !u!4 &1610619459
 Transform:
   m_ObjectHideFlags: 0
@@ -367,6 +368,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _buttonEffect: 1
+--- !u!114 &1610619463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1610619457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fe6c36fd4c449428fc9f8a5115006f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2035700651
 GameObject:
   m_ObjectHideFlags: 0

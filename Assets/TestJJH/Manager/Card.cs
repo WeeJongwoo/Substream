@@ -3,17 +3,40 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System;
 
+[Serializable]
 public class Card
 {
+    [SerializeField]
     private Unit m_unit;
+    [SerializeField]
     private CardTableData m_cardData;
-    private CardSkillTableData m_Skills;
-    private SkillScheduleManager m_skillScheduler;
-    public void Initialize(Unit unit, CardTableData cardData, SkillScheduleManager skillScheduler)
-    {
-        m_unit = unit;
+    private List<SkillTableData> m_skills;
+    private FlowScheduleManager m_skillSchedulerManager;
 
+    private float RecordAmount;
+
+    public float RecordedAmount()
+    {
+        return RecordAmount;
+    }
+
+    public void Recorde(float amount)
+    {
+        RecordAmount += amount;
+    }
+
+    public void ReInit()
+    {
+        RecordAmount = 0;
+    }
+
+    public void Initialize(Unit unit, CardTableData cardData, FlowScheduleManager skillSchedulerManager)
+    {
+        RecordAmount = 0;
+        m_unit = unit;
+        unitId = unit.IngameUnitID();
         m_cardData = new CardTableData
         {
             ID = cardData.ID,
@@ -25,35 +48,37 @@ public class Card
             CardText = cardData.CardText,
             SkillID = cardData.SkillID,
         };
-
-        m_skillScheduler = skillScheduler;
-        
+        m_skillSchedulerManager = skillSchedulerManager;
         DontDestroyOnLoadManager ddo = DontDestroyOnLoadManager.Instance;
-        CardSkillTableData Skill = ddo.CardSkillTable(m_cardData.SkillID);
-        m_Skills = (Skill);
+        m_skills = new List<SkillTableData>(m_cardData.SkillID.Count);
+        SkillTableData Skill = ddo.SkillTable(m_cardData.SkillID[0]);
+        //  public int ID;
+        //  public ECardSkillType SkillType;
+        //  public ECardSkillSource SkillSource;
+        //  public float EffectValue;
+        //  public float UpgradeEffectValue;
+        //  public ECardSkillStatusType StatusType;
+        //  public ECardSkillTargetType TargetType;
+        //  public int TargetCount;
+        //  public int HitCount;
+        //  public string CardText;
+        //  public int NextSkillID;
+        //  public string Sound;
     }
-
+    public int unitId;
     public CardTableData CardData
     {
         get { return m_cardData; }
         set { m_cardData = value; }
     }
 
+    public Unit Unit
+    {
+        get { return m_unit; }
+    }
+
     public void Execute()
     {
-        //Debug.Log("Use Card In Turn: " + m_cardData.ID + " " + m_cardData.Name + " " + m_cardData.CardType + " " + m_cardData.CardRarity + " " + m_cardData.Cost + " " + m_cardData.Texture + " " + m_cardData.CardText + " " + m_cardData.SkillID);
-        switch (m_cardData.CardType)
-        {
-            case ECardType.E_DEFAULT:
-                Debug.Log("DEFAULT DATA IS IN CARD :" + m_cardData.ID + "," + m_cardData.Name);
-                break;
-            case ECardType.E_ATTACK:
-
-                break;
-            case ECardType.E_SKILL:
-                break;
-        }
-
-        m_skillScheduler.RegistCardSkill(m_unit, m_Skills, CardData);
+        m_skillSchedulerManager.RegistAbilityFlow(m_unit, m_cardData, true);
     }
 }
